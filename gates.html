@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gates Tracker — Bill Gates 추적 대시보드</title>
+<meta name="description" content="Bill Gates의 블로그, SNS, 영상을 한 곳에서 추적하는 대시보드">
+<meta property="og:title" content="Gates Tracker — Bill Gates 추적 대시보드">
+<meta property="og:description" content="Bill Gates의 모든 활동을 한 곳에서">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117;--surface:#1a1d27;--surface2:#232736;--surface3:#2a2e3d;
+  --border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.12);
+  --text:#e8e8ed;--text-sub:#8b8fa3;--text-muted:#5a5e72;
+  --accent:#0ea5e9;--accent-light:#38bdf8;--accent-bg:rgba(14,165,233,0.1);
+  --red:#ef4444;--orange:#f97316;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;
+  --radius:16px;--radius-sm:12px;--radius-xs:8px;
+}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--accent-light);text-decoration:none;transition:color .2s}
+a:hover{color:#bae6fd}
+
+.back-link{position:fixed;top:1rem;left:1rem;font-size:12px;color:var(--text-muted);z-index:10;
+  padding:6px 12px;border-radius:20px;background:var(--surface);border:1px solid var(--border);transition:all .2s}
+.back-link:hover{border-color:var(--accent);color:var(--accent-light)}
+
+.header{
+  background:linear-gradient(135deg,rgba(14,165,233,0.15),rgba(34,197,94,0.08));
+  border-bottom:1px solid var(--border);padding:2rem 1.5rem;
+}
+.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
+.avatar{width:80px;height:80px;border-radius:50%;border:3px solid var(--accent);object-fit:cover;flex-shrink:0}
+.header-info h1{font-size:24px;font-weight:700;letter-spacing:-0.03em}
+.header-info .subtitle{font-size:13px;color:var(--text-sub);margin-top:4px;line-height:1.6}
+.header-info .subtitle span{color:var(--accent-light);font-weight:500}
+.header-badges{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.badge{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:500;border:1px solid var(--border)}
+.badge-tech{background:rgba(14,165,233,0.15);color:var(--accent-light);border-color:rgba(14,165,233,0.3)}
+.badge-health{background:rgba(34,197,94,0.15);color:#86efac;border-color:rgba(34,197,94,0.3)}
+.badge-climate{background:rgba(245,158,11,0.15);color:#fcd34d;border-color:rgba(245,158,11,0.3)}
+.badge-book{background:rgba(168,85,247,0.15);color:#c084fc;border-color:rgba(168,85,247,0.3)}
+
+.tabs-wrap{max-width:1100px;margin:0 auto;padding:0 1.5rem}
+.tabs{display:flex;gap:4px;padding:1rem 0 0;border-bottom:1px solid var(--border);overflow-x:auto}
+.tab{
+  padding:10px 18px;font-size:13px;font-weight:500;color:var(--text-sub);
+  cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;
+  border-radius:var(--radius-xs) var(--radius-xs) 0 0;
+}
+.tab:hover{color:var(--text);background:rgba(255,255,255,0.03)}
+.tab.active{color:var(--accent-light);border-bottom-color:var(--accent);background:rgba(14,165,233,0.06)}
+
+.main{max-width:1100px;margin:0 auto;padding:1.5rem}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+.channels-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:2rem}
+.channel-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:1.25rem;transition:all .25s;cursor:pointer;text-decoration:none;color:var(--text);
+  display:flex;flex-direction:column;gap:10px;
+}
+.channel-card:hover{border-color:var(--border-hover);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+.ch-icon{font-size:28px}
+.ch-name{font-size:14px;font-weight:600}
+.ch-desc{font-size:11px;color:var(--text-sub);line-height:1.5}
+.ch-tag{font-size:10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;margin-top:auto}
+
+.feed-section{margin-bottom:2rem}
+.feed-title{font-size:15px;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.feed-title .dot{width:8px;height:8px;border-radius:50%}
+.feed-list{display:flex;flex-direction:column;gap:10px}
+.feed-item{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:1.25rem;transition:all .2s;
+}
+.feed-item:hover{border-color:var(--border-hover);background:var(--surface2)}
+.feed-item a{display:block}
+.feed-item-title{font-size:14px;font-weight:600;line-height:1.5;margin-bottom:6px}
+.feed-item-title-orig{font-size:11px;color:var(--text-muted);margin-bottom:6px;font-style:italic}
+.feed-item-meta{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;display:flex;gap:12px;align-items:center}
+.feed-item-desc{font-size:12px;color:var(--text-sub);line-height:1.6;margin-top:8px;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.feed-source{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500}
+.src-gatesnotes{background:rgba(14,165,233,0.15);color:var(--accent-light)}
+.src-youtube{background:rgba(239,68,68,0.15);color:#fca5a5}
+.src-news{background:rgba(245,158,11,0.15);color:#fcd34d}
+.src-twitter{background:rgba(29,155,240,0.15);color:#7dd3fc}
+
+.loading{text-align:center;padding:3rem;color:var(--text-muted)}
+.loading .spinner{
+  width:32px;height:32px;border:3px solid var(--surface3);border-top-color:var(--accent);
+  border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-msg{text-align:center;padding:2rem;color:var(--red);font-size:13px;background:rgba(239,68,68,0.08);border-radius:var(--radius-sm)}
+
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.profile-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem}
+.profile-card h3{font-size:13px;font-weight:600;margin-bottom:10px;color:var(--accent-light)}
+.profile-card p,.profile-card li{font-size:12px;color:var(--text-sub);line-height:1.8}
+.profile-card ul{list-style:none;padding:0}
+.profile-card ul li::before{content:'→ ';color:var(--accent)}
+
+.timeline{position:relative;padding-left:24px}
+.timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--surface3)}
+.tl-item{position:relative;margin-bottom:1.5rem}
+.tl-dot{position:absolute;left:-20px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
+.tl-year{font-size:13px;font-weight:700;color:var(--accent-light);margin-bottom:4px}
+.tl-text{font-size:12px;color:var(--text-sub);line-height:1.6}
+
+.refresh-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.refresh-btn{
+  font-size:12px;padding:6px 14px;border-radius:var(--radius-xs);border:1px solid var(--border);
+  background:var(--surface);color:var(--text-sub);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;
+}
+.refresh-btn:hover{border-color:var(--accent);color:var(--accent-light)}
+.last-updated{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
+
+.footer{text-align:center;padding:2rem;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:2rem}
+
+@media(max-width:768px){
+  .header-inner{flex-direction:column;text-align:center}
+  .header-badges{justify-content:center}
+  .channels-grid{grid-template-columns:1fr 1fr}
+  .profile-grid{grid-template-columns:1fr}
+  .tabs{gap:0}
+  .tab{padding:10px 12px;font-size:12px}
+}
+@media(max-width:480px){
+  .channels-grid{grid-template-columns:1fr}
+  .main{padding:1rem}
+}
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Titan Tracker</a>
+
+<!-- 헤더 -->
+<div class="header">
+  <div class="header-inner">
+    <img class="avatar" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Bill_Gates_2017_%28cropped%29.jpg/440px-Bill_Gates_2017_%28cropped%29.jpg" alt="Bill Gates"
+      onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 80 80%22><rect fill=%22%230ea5e9%22 width=%2280%22 height=%2280%22 rx=%2240%22/><text x=%2240%22 y=%2248%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2232%22 font-family=%22sans-serif%22>BG</text></svg>'">
+    <div class="header-info">
+      <h1>Bill Gates Tracker</h1>
+      <div class="subtitle">
+        <span>Microsoft</span> 공동창립자 · <span>Gates Foundation</span> 공동의장 · <span>GatesNotes</span> 저자<br>
+        기술, 글로벌 보건, 기후변화, 교육에 대한 세계에서 가장 영향력 있는 사상가
+      </div>
+      <div class="header-badges">
+        <span class="badge badge-tech">Technology</span>
+        <span class="badge badge-health">Global Health</span>
+        <span class="badge badge-climate">Climate & Energy</span>
+        <span class="badge badge-book">Book Reviewer</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 탭 -->
+<div class="tabs-wrap">
+  <div class="tabs">
+    <div class="tab active" data-tab="feed" onclick="switchTab('feed')">📡 피드</div>
+    <div class="tab" data-tab="channels" onclick="switchTab('channels')">🔗 채널</div>
+    <div class="tab" data-tab="profile" onclick="switchTab('profile')">👤 프로필</div>
+    <div class="tab" data-tab="timeline" onclick="switchTab('timeline')">📅 타임라인</div>
+  </div>
+</div>
+
+<!-- 메인 -->
+<div class="main">
+
+  <!-- 피드 탭 -->
+  <div class="tab-content active" id="tab-feed">
+    <div class="refresh-bar">
+      <span class="last-updated" id="last-updated">마지막 업데이트: —</span>
+      <button class="refresh-btn" onclick="loadAllFeeds()">↻ 새로고침</button>
+    </div>
+
+    <div class="feed-section">
+      <div class="feed-title"><div class="dot" style="background:var(--accent)"></div>GatesNotes 블로그</div>
+      <div class="feed-list" id="gatesnotes-feed">
+        <div class="loading"><div class="spinner"></div>GatesNotes 로딩 중...</div>
+      </div>
+    </div>
+
+    <div class="feed-section">
+      <div class="feed-title"><div class="dot" style="background:var(--orange)"></div>Bill Gates 관련 뉴스</div>
+      <div class="feed-list" id="news-feed">
+        <div class="loading"><div class="spinner"></div>뉴스 로딩 중...</div>
+      </div>
+    </div>
+
+    <div class="feed-section">
+      <div class="feed-title"><div class="dot" style="background:#1d9bf0"></div>X (Twitter) 최신 포스트</div>
+      <div class="feed-list" id="twitter-feed">
+        <div class="loading"><div class="spinner"></div>X 포스트 로딩 중...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 채널 탭 -->
+  <div class="tab-content" id="tab-channels">
+    <div class="channels-grid">
+      <a class="channel-card" href="https://www.gatesnotes.com/" target="_blank" rel="noopener">
+        <div class="ch-icon">📝</div>
+        <div class="ch-name">GatesNotes</div>
+        <div class="ch-desc">개인 블로그 — 책 리뷰, 기후, 보건, AI 등 심층 에세이</div>
+        <div class="ch-tag">gatesnotes.com</div>
+      </a>
+      <a class="channel-card" href="https://x.com/BillGates" target="_blank" rel="noopener">
+        <div class="ch-icon">𝕏</div>
+        <div class="ch-name">X (Twitter)</div>
+        <div class="ch-desc">66M+ 팔로워 · 기술, 보건, 기후 관련 의견</div>
+        <div class="ch-tag">@BillGates</div>
+      </a>
+      <a class="channel-card" href="https://www.youtube.com/@billgates" target="_blank" rel="noopener">
+        <div class="ch-icon">▶️</div>
+        <div class="ch-name">YouTube</div>
+        <div class="ch-desc">강연, 인터뷰, 기후·보건 다큐멘터리</div>
+        <div class="ch-tag">@billgates</div>
+      </a>
+      <a class="channel-card" href="https://www.linkedin.com/in/williamhgates/" target="_blank" rel="noopener">
+        <div class="ch-icon">💼</div>
+        <div class="ch-name">LinkedIn</div>
+        <div class="ch-desc">전문 네트워크 — 비즈니스/기술 인사이트</div>
+        <div class="ch-tag">williamhgates</div>
+      </a>
+      <a class="channel-card" href="https://www.instagram.com/thisisbillgates/" target="_blank" rel="noopener">
+        <div class="ch-icon">📸</div>
+        <div class="ch-name">Instagram</div>
+        <div class="ch-desc">15M+ 팔로워 · 활동 사진, 여행, 일상</div>
+        <div class="ch-tag">@thisisbillgates</div>
+      </a>
+      <a class="channel-card" href="https://www.gatesfoundation.org/" target="_blank" rel="noopener">
+        <div class="ch-icon">🌍</div>
+        <div class="ch-name">Gates Foundation</div>
+        <div class="ch-desc">글로벌 보건, 빈곤, 교육 — 세계 최대 민간 재단</div>
+        <div class="ch-tag">gatesfoundation.org</div>
+      </a>
+      <a class="channel-card" href="https://www.breakthroughenergy.org/" target="_blank" rel="noopener">
+        <div class="ch-icon">⚡</div>
+        <div class="ch-name">Breakthrough Energy</div>
+        <div class="ch-desc">기후 변화 기술 투자 및 혁신 플랫폼</div>
+        <div class="ch-tag">breakthroughenergy.org</div>
+      </a>
+      <a class="channel-card" href="https://www.reddit.com/user/thisisbillgates/" target="_blank" rel="noopener">
+        <div class="ch-icon">🤖</div>
+        <div class="ch-name">Reddit AMA</div>
+        <div class="ch-desc">정기적 AMA(Ask Me Anything) 세션</div>
+        <div class="ch-tag">u/thisisbillgates</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 프로필 탭 -->
+  <div class="tab-content" id="tab-profile">
+    <div class="profile-grid">
+      <div class="profile-card">
+        <h3>📌 기본 정보</h3>
+        <ul>
+          <li>미국 시애틀 출생 (1955년)</li>
+          <li>Harvard 중퇴 (1975) → Microsoft 공동 창립</li>
+          <li>2000~2006 Microsoft CEO → 회장 → 기술 고문</li>
+          <li>2000 Bill & Melinda Gates Foundation 설립</li>
+          <li>2015 Breakthrough Energy 설립</li>
+          <li>순자산 약 $130B (세계 10위권)</li>
+        </ul>
+      </div>
+      <div class="profile-card">
+        <h3>🧠 주요 관심 분야</h3>
+        <ul>
+          <li><strong>AI 혁명</strong> — AI가 교육, 보건, 생산성에 미칠 변혁</li>
+          <li><strong>글로벌 보건</strong> — 말라리아, 소아마비, 팬데믹 대비</li>
+          <li><strong>기후 & 에너지</strong> — 넷제로, 원자력, 그린수소</li>
+          <li><strong>교육 혁신</strong> — AI 튜터, 개인화 학습</li>
+          <li><strong>독서 & 리뷰</strong> — 연간 50권+, 유명 북 리스트</li>
+        </ul>
+      </div>
+      <div class="profile-card">
+        <h3>📚 주요 저서</h3>
+        <ul>
+          <li><strong>How to Avoid a Climate Disaster</strong> (2021) — 기후 위기 해법</li>
+          <li><strong>How to Prevent the Next Pandemic</strong> (2022) — 팬데믹 대비</li>
+          <li><strong>The Road Ahead</strong> (1995) — 디지털 미래 예측</li>
+          <li><strong>Business @ the Speed of Thought</strong> (1999)</li>
+          <li><strong>Source Code</strong> (2025) — 자서전</li>
+        </ul>
+      </div>
+      <div class="profile-card">
+        <h3>🎓 MBA 학습 관련성</h3>
+        <ul>
+          <li><strong>플랫폼 전략</strong> — Windows/Office 생태계 구축 사례</li>
+          <li><strong>AI 비즈니스 임팩트</strong> — 산업별 AI 활용 전망</li>
+          <li><strong>임팩트 투자</strong> — Gates Foundation 모델</li>
+          <li><strong>기후 기술 투자</strong> — Breakthrough Energy Ventures</li>
+          <li><strong>연간 독서 리스트</strong> — 경영·과학·역사 추천도서</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 타임라인 탭 -->
+  <div class="tab-content" id="tab-timeline">
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2025</div>
+        <div class="tl-text">자서전 "Source Code" 출간. AI가 교육과 보건을 혁신할 것이라 강조. Gates Foundation 50주년 로드맵 발표.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2023</div>
+        <div class="tl-text">"AI의 시대가 시작됐다" 에세이 발표. GPT-4를 "내 인생에서 두 번째로 혁명적인 기술"이라 평가 (첫 번째: GUI).</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2022</div>
+        <div class="tl-text">"How to Prevent the Next Pandemic" 출간. COVID-19 이후 글로벌 방역 시스템 혁신 제안.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2021</div>
+        <div class="tl-text">"How to Avoid a Climate Disaster" 출간. 넷제로 달성을 위한 기술·정책 로드맵 제시.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2015</div>
+        <div class="tl-text">Breakthrough Energy 설립. 기후 기술 스타트업에 수십억 달러 투자 시작. TED에서 "다음 전염병에 대비하라" 경고.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2008</div>
+        <div class="tl-text">Microsoft 일선 경영에서 은퇴. Gates Foundation에 전념 시작.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2000</div>
+        <div class="tl-text">Bill & Melinda Gates Foundation 설립. $50B+ 기부. 글로벌 보건·교육에 집중.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">1995</div>
+        <div class="tl-text">Windows 95 출시 — PC 대중화의 결정적 전환점. "The Road Ahead" 출간.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">1985</div>
+        <div class="tl-text">Windows 1.0 출시. GUI 기반 운영체제 시대 개막.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">1981</div>
+        <div class="tl-text">IBM PC에 MS-DOS 공급. "소프트웨어가 왕이다" 전략의 시작.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">1975</div>
+        <div class="tl-text">Paul Allen과 Microsoft 공동 창립. "모든 책상 위에, 모든 가정에 컴퓨터를" 비전.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">1955</div>
+        <div class="tl-text">미국 시애틀 출생. 13세에 프로그래밍 시작. Lakeside School에서 Paul Allen을 만남.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  Gates Tracker · <a href="index.html">Titan Tracker</a> · Point & Line 🌈<br>
+  <span style="font-size:10px;margin-top:4px;display:inline-block">데이터 출처: RSS feed from gatesnotes.com & YouTube</span>
+</div>
+
+<script>
+const TRANSLATE_URL = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ko&dt=t&q=';
+async function translateText(text) {
+  if (!text) return '';
+  try {
+    const res = await fetch(TRANSLATE_URL + encodeURIComponent(text.substring(0, 500)));
+    const data = await res.json();
+    return data[0].map(s => s[0]).join('');
+  } catch (e) { return text; }
+}
+
+const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
+const FEEDS = {
+  gatesnotes: {
+    url: 'https://news.google.com/rss/search?q=site%3Agatesnotes.com&hl=en',
+    container: 'gatesnotes-feed',
+    sourceClass: 'src-gatesnotes',
+    sourceLabel: 'GatesNotes'
+  },
+  news: {
+    url: 'https://news.google.com/rss/search?q=Bill+Gates&hl=ko&gl=KR',
+    container: 'news-feed',
+    sourceClass: 'src-news',
+    sourceLabel: 'News'
+  },
+  twitter: {
+    url: 'https://rsshub.app/twitter/user/BillGates',
+    container: 'twitter-feed',
+    sourceClass: 'src-twitter',
+    sourceLabel: 'X (Twitter)',
+    fallbackUrls: [
+      'https://nitter.privacydev.net/BillGates/rss',
+      'https://twiiit.com/BillGates/rss'
+    ]
+  }
+};
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  const now = new Date();
+  const diff = Math.floor((now - d) / (1000 * 60 * 60 * 24));
+  if (diff === 0) return '오늘';
+  if (diff === 1) return '어제';
+  if (diff < 7) return diff + '일 전';
+  if (diff < 30) return Math.floor(diff / 7) + '주 전';
+  return d.getFullYear() + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + String(d.getDate()).padStart(2, '0');
+}
+
+function stripHtml(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+}
+
+async function renderFeed(items, containerId, sourceClass, sourceLabel) {
+  const container = document.getElementById(containerId);
+  if (!items || items.length === 0) {
+    container.innerHTML = '<div class="error-msg">피드를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.</div>';
+    return;
+  }
+  const sliced = items.slice(0, 8);
+  const translations = await Promise.all(sliced.map(async item => {
+    const desc = stripHtml(item.description || item.content || '').substring(0, 200);
+    const [titleKo, descKo] = await Promise.all([
+      translateText(item.title),
+      desc ? translateText(desc) : Promise.resolve('')
+    ]);
+    return { titleKo, descKo, title: item.title, desc };
+  }));
+  container.innerHTML = sliced.map((item, i) => {
+    const { titleKo, descKo, title } = translations[i];
+    return `
+      <div class="feed-item">
+        <a href="${item.link}" target="_blank" rel="noopener">
+          <div class="feed-item-title">${titleKo}</div>
+          <div class="feed-item-title-orig">${title}</div>
+          <div class="feed-item-meta">
+            <span class="feed-source ${sourceClass}">${sourceLabel}</span>
+            <span>${formatDate(item.pubDate)}</span>
+            ${item.author ? '<span>by ' + item.author + '</span>' : ''}
+          </div>
+          ${descKo ? '<div class="feed-item-desc">' + descKo + '</div>' : ''}
+        </a>
+      </div>`;
+  }).join('');
+}
+
+async function tryFetchFeed(url) {
+  const res = await fetch(RSS_PROXY + encodeURIComponent(url));
+  const data = await res.json();
+  if (data.status === 'ok' && data.items && data.items.length > 0) return data.items;
+  throw new Error('Feed empty or error');
+}
+
+async function loadFeed(feedKey) {
+  const feed = FEEDS[feedKey];
+  const container = document.getElementById(feed.container);
+  container.innerHTML = '<div class="loading"><div class="spinner"></div>로딩 중...</div>';
+  const urls = [feed.url, ...(feed.fallbackUrls || [])];
+  let items = null;
+  for (const url of urls) {
+    try { items = await tryFetchFeed(url); break; } catch (e) { continue; }
+  }
+  if (items) {
+    await renderFeed(items, feed.container, feed.sourceClass, feed.sourceLabel);
+    localStorage.setItem('bg_' + feedKey, JSON.stringify({ items, ts: Date.now() }));
+  } else {
+    const cached = localStorage.getItem('bg_' + feedKey);
+    if (cached) {
+      const { items: cachedItems } = JSON.parse(cached);
+      await renderFeed(cachedItems, feed.container, feed.sourceClass, feed.sourceLabel);
+    } else {
+      const directLinks = { news:'https://news.google.com/search?q=Bill+Gates', twitter:'https://x.com/BillGates' };
+      const link = directLinks[feedKey] || feed.url;
+      container.innerHTML = `<div class="error-msg">피드 로딩 실패 — <a href="${link}" target="_blank">직접 방문하기 →</a></div>`;
+    }
+  }
+}
+
+async function loadAllFeeds() {
+  await Promise.all(Object.keys(FEEDS).map(k => loadFeed(k)));
+  const now = new Date().toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+  document.getElementById('last-updated').textContent = '마지막 업데이트: ' + now;
+}
+
+function switchTab(tabId) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tabId));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === 'tab-' + tabId));
+}
+
+loadAllFeeds();
+</script>
+</body>
+</html>

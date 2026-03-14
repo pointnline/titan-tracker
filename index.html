@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Titan Tracker — 거인의 어깨 위에서</title>
+<meta name="description" content="AI, 과학, 기술 분야 거인들의 활동을 한 곳에서 추적하는 대시보드">
+<meta property="og:title" content="Titan Tracker — 거인의 어깨 위에서">
+<meta property="og:description" content="AI, 과학, 기술 분야 거인들의 블로그·SNS·영상을 한 곳에서 추적">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0b10;--surface:#12141d;--surface2:#1a1d2a;--surface3:#232738;
+  --border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.14);
+  --text:#e8e8ed;--text-sub:#8b8fa3;--text-muted:#4a4e62;
+  --accent:#6366f1;--accent-light:#818cf8;--accent-glow:rgba(99,102,241,0.25);
+  --gold:#f59e0b;--gold-glow:rgba(245,158,11,0.2);
+  --radius:20px;--radius-sm:14px;--radius-xs:8px;
+}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+
+/* 배경 효과 */
+.bg-glow{position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:600px;
+  background:radial-gradient(ellipse,var(--accent-glow) 0%,transparent 70%);pointer-events:none;z-index:0;opacity:0.5}
+.bg-glow2{position:fixed;top:200px;right:-200px;width:500px;height:500px;
+  background:radial-gradient(ellipse,var(--gold-glow) 0%,transparent 70%);pointer-events:none;z-index:0;opacity:0.3}
+
+/* 히어로 */
+.hero{position:relative;z-index:1;text-align:center;padding:5rem 1.5rem 3rem}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;
+  color:var(--gold);background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);
+  padding:6px 14px;border-radius:20px;margin-bottom:1.5rem;letter-spacing:0.05em;text-transform:uppercase}
+.hero h1{font-size:clamp(36px,6vw,56px);font-weight:900;letter-spacing:-0.04em;line-height:1.1;
+  background:linear-gradient(135deg,#e8e8ed 30%,var(--accent-light) 70%,#c084fc);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .subtitle{font-size:clamp(15px,2.5vw,18px);color:var(--text-sub);margin-top:1rem;line-height:1.7;max-width:600px;margin-left:auto;margin-right:auto}
+.hero .subtitle em{color:var(--accent-light);font-style:normal;font-weight:500}
+.hero-quote{font-size:13px;color:var(--text-muted);margin-top:1.5rem;font-style:italic}
+
+/* 통계 바 */
+.stats-bar{position:relative;z-index:1;max-width:700px;margin:0 auto 3rem;display:flex;justify-content:center;gap:2rem;padding:0 1.5rem}
+.stat{text-align:center}
+.stat-val{font-size:28px;font-weight:800;font-family:'JetBrains Mono',monospace;
+  background:linear-gradient(135deg,var(--accent-light),#c084fc);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-label{font-size:11px;color:var(--text-muted);margin-top:4px;letter-spacing:0.03em}
+
+/* 타이탄 그리드 */
+.titans-section{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 1.5rem 4rem}
+.section-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1.5rem}
+.section-title{font-size:16px;font-weight:700;letter-spacing:-0.02em}
+.section-count{font-size:12px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
+.titans-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+
+/* 타이탄 카드 */
+.titan-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:1.75rem;transition:all .35s cubic-bezier(0.4,0,0.2,1);position:relative;overflow:hidden;
+  display:flex;flex-direction:column;gap:14px;cursor:pointer;
+}
+.titan-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--card-accent,var(--accent)),transparent);opacity:0;transition:opacity .3s}
+.titan-card:hover{border-color:var(--border-hover);transform:translateY(-4px);
+  box-shadow:0 12px 40px rgba(0,0,0,0.4),0 0 30px var(--accent-glow)}
+.titan-card:hover::before{opacity:1}
+.titan-top{display:flex;align-items:center;gap:14px}
+.titan-avatar{width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid var(--surface3);flex-shrink:0}
+.titan-name{font-size:16px;font-weight:700;letter-spacing:-0.02em}
+.titan-role{font-size:11px;color:var(--text-sub);margin-top:2px;line-height:1.4}
+.titan-tags{display:flex;gap:6px;flex-wrap:wrap}
+.titan-tag{font-size:10px;padding:3px 8px;border-radius:12px;font-weight:500;
+  background:rgba(255,255,255,0.04);color:var(--text-sub);border:1px solid var(--border)}
+.titan-channels{display:flex;gap:6px;margin-top:auto}
+.titan-ch{font-size:10px;padding:3px 8px;border-radius:6px;background:var(--surface2);color:var(--text-muted);
+  font-family:'JetBrains Mono',monospace}
+.titan-status{position:absolute;top:1.25rem;right:1.25rem;display:flex;align-items:center;gap:5px;
+  font-size:10px;color:var(--text-muted)}
+.status-dot{width:6px;height:6px;border-radius:50%}
+.status-live{background:#22c55e;box-shadow:0 0 6px rgba(34,197,94,0.5)}
+.status-soon{background:var(--gold);box-shadow:0 0 6px var(--gold-glow)}
+
+/* Coming Soon 카드 */
+.titan-card.coming-soon{opacity:0.5;cursor:default}
+.titan-card.coming-soon:hover{transform:none;box-shadow:none;border-color:var(--border)}
+.coming-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(10,11,16,0.6);border-radius:var(--radius);font-size:13px;font-weight:600;color:var(--text-muted);letter-spacing:0.05em}
+
+/* 하단 CTA */
+.cta-section{position:relative;z-index:1;text-align:center;padding:2rem 1.5rem 4rem}
+.cta-text{font-size:13px;color:var(--text-muted);line-height:1.8}
+.cta-text strong{color:var(--text-sub)}
+
+/* 푸터 */
+.footer{position:relative;z-index:1;text-align:center;padding:1.5rem;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border)}
+.footer a{color:var(--accent-light)}
+
+/* 반응형 */
+@media(max-width:640px){
+  .hero{padding:3rem 1rem 2rem}
+  .stats-bar{gap:1.5rem}
+  .stat-val{font-size:22px}
+  .titans-grid{grid-template-columns:1fr}
+  .titan-card{padding:1.25rem}
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.titan-card{animation:fadeUp .5s ease both}
+.titan-card:nth-child(1){animation-delay:.1s}
+.titan-card:nth-child(2){animation-delay:.2s}
+.titan-card:nth-child(3){animation-delay:.3s}
+.titan-card:nth-child(4){animation-delay:.35s}
+.titan-card:nth-child(5){animation-delay:.4s}
+.titan-card:nth-child(6){animation-delay:.45s}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="bg-glow2"></div>
+
+<!-- 히어로 -->
+<div class="hero">
+  <div class="hero-badge">🔭 Knowledge Tracker</div>
+  <h1>Titan Tracker</h1>
+  <div class="subtitle">
+    <em>거인의 어깨 위에서</em> 더 멀리 바라보다<br>
+    AI · 과학 · 기술 분야 거인들의 활동을 한 곳에서 추적합니다
+  </div>
+  <div class="hero-quote">"If I have seen further, it is by standing on the shoulders of giants." — Isaac Newton</div>
+</div>
+
+<!-- 통계 -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-val">1</div>
+    <div class="stat-label">추적 중인 거인</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">4</div>
+    <div class="stat-label">연결된 채널</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">24/7</div>
+    <div class="stat-label">실시간 피드</div>
+  </div>
+</div>
+
+<!-- 타이탄 목록 -->
+<div class="titans-section">
+  <div class="section-header">
+    <div class="section-title">🏛️ Titans</div>
+    <div class="section-count">1 active · 5 coming soon</div>
+  </div>
+
+  <div class="titans-grid">
+
+    <!-- Stephen Wolfram — LIVE -->
+    <a href="wolfram.html" class="titan-card" style="--card-accent:#6366f1">
+      <div class="titan-status"><div class="status-dot status-live"></div>LIVE</div>
+      <div class="titan-top">
+        <img class="titan-avatar" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Stephen_Wolfram_PR.jpg/440px-Stephen_Wolfram_PR.jpg" alt="Stephen Wolfram"
+          onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 52 52%22><rect fill=%22%236366f1%22 width=%2252%22 height=%2252%22 rx=%2226%22/><text x=%2226%22 y=%2232%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2220%22>SW</text></svg>'">
+        <div>
+          <div class="titan-name">Stephen Wolfram</div>
+          <div class="titan-role">Wolfram Research 창립자 · Mathematica · AI & 계산과학</div>
+        </div>
+      </div>
+      <div class="titan-tags">
+        <span class="titan-tag">Mathematica</span>
+        <span class="titan-tag">AI</span>
+        <span class="titan-tag">Physics</span>
+        <span class="titan-tag">Computation</span>
+      </div>
+      <div class="titan-channels">
+        <span class="titan-ch">Writings</span>
+        <span class="titan-ch">Blog</span>
+        <span class="titan-ch">YouTube</span>
+        <span class="titan-ch">X</span>
+      </div>
+    </a>
+
+    <!-- Coming Soon 카드들 -->
+    <div class="titan-card coming-soon" style="--card-accent:#22c55e">
+      <div class="titan-status"><div class="status-dot status-soon"></div>SOON</div>
+      <div class="titan-top">
+        <div class="titan-avatar" style="background:linear-gradient(135deg,#22c55e,#16a34a);display:flex;align-items:center;justify-content:center;font-size:20px;color:white;font-weight:700">AK</div>
+        <div>
+          <div class="titan-name">Andrej Karpathy</div>
+          <div class="titan-role">전 Tesla AI 수장 · 전 OpenAI · AI 교육의 아이콘</div>
+        </div>
+      </div>
+      <div class="coming-overlay">Coming Soon</div>
+    </div>
+
+    <div class="titan-card coming-soon" style="--card-accent:#3b82f6">
+      <div class="titan-status"><div class="status-dot status-soon"></div>SOON</div>
+      <div class="titan-top">
+        <div class="titan-avatar" style="background:linear-gradient(135deg,#3b82f6,#2563eb);display:flex;align-items:center;justify-content:center;font-size:20px;color:white;font-weight:700">YL</div>
+        <div>
+          <div class="titan-name">Yann LeCun</div>
+          <div class="titan-role">Meta AI 수석 과학자 · 딥러닝의 아버지 · 튜링상 수상</div>
+        </div>
+      </div>
+      <div class="coming-overlay">Coming Soon</div>
+    </div>
+
+    <div class="titan-card coming-soon" style="--card-accent:#ef4444">
+      <div class="titan-status"><div class="status-dot status-soon"></div>SOON</div>
+      <div class="titan-top">
+        <div class="titan-avatar" style="background:linear-gradient(135deg,#ef4444,#dc2626);display:flex;align-items:center;justify-content:center;font-size:20px;color:white;font-weight:700">DA</div>
+        <div>
+          <div class="titan-name">Dario Amodei</div>
+          <div class="titan-role">Anthropic CEO · 전 OpenAI VP · AI Safety 리더</div>
+        </div>
+      </div>
+      <div class="coming-overlay">Coming Soon</div>
+    </div>
+
+    <div class="titan-card coming-soon" style="--card-accent:#f59e0b">
+      <div class="titan-status"><div class="status-dot status-soon"></div>SOON</div>
+      <div class="titan-top">
+        <div class="titan-avatar" style="background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;font-size:20px;color:white;font-weight:700">AH</div>
+        <div>
+          <div class="titan-name">Andrew Huberman</div>
+          <div class="titan-role">Stanford 신경과학 교수 · Huberman Lab 팟캐스트</div>
+        </div>
+      </div>
+      <div class="coming-overlay">Coming Soon</div>
+    </div>
+
+    <div class="titan-card coming-soon" style="--card-accent:#a855f7">
+      <div class="titan-status"><div class="status-dot status-soon"></div>SOON</div>
+      <div class="titan-top">
+        <div class="titan-avatar" style="background:linear-gradient(135deg,#a855f7,#9333ea);display:flex;align-items:center;justify-content:center;font-size:20px;color:white;font-weight:700">EM</div>
+        <div>
+          <div class="titan-name">Elon Musk</div>
+          <div class="titan-role">Tesla · SpaceX · xAI · 다중 산업 혁신가</div>
+        </div>
+      </div>
+      <div class="coming-overlay">Coming Soon</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 하단 -->
+<div class="cta-section">
+  <div class="cta-text">
+    <strong>거인들의 생각을 추적하세요.</strong><br>
+    새로운 Titan이 지속적으로 추가됩니다.
+  </div>
+</div>
+
+<div class="footer">
+  Titan Tracker · <a href="https://instagram.com/pointnline_ai" target="_blank">Point & Line</a> 🌈<br>
+  <span style="margin-top:4px;display:inline-block">Built for learning · AI MBA Study</span>
+</div>
+
+</body>
+</html>

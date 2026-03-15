@@ -217,6 +217,15 @@ td{padding:10px;font-size:12px;vertical-align:middle}
   </div>
 </div>
 
+<!-- 🏆 Popular Titans Top 5 -->
+<div class="titans-section" id="popular-section" style="display:none">
+  <div class="section-header">
+    <div class="section-title">🏆 Popular Titans</div>
+    <div class="section-count">조회수 기준 Top 5</div>
+  </div>
+  <div id="popular-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:2rem"></div>
+</div>
+
 <!-- 타이탄 목록 -->
 <div class="titans-section">
   <div class="section-header">
@@ -778,8 +787,28 @@ async function loadSignals(){
   console.log('[Titan Signal]',counts.map(c=>c.name+':'+c.recent).join(', '));
 }
 
-// 페이지 로드 3초 후 신호 수집 (초기 로드 속도 영향 없음)
+// 페이지 로드 3초 후 신호 수집
 setTimeout(loadSignals,3000);
+
+// === Popular Titans Top 5 ===
+function renderPopular(){
+  if(typeof getTitanViews!=='function')return;
+  const views=getTitanViews().filter(v=>v.count>0).slice(0,5);
+  if(!views.length){return;}
+  document.getElementById('popular-section').style.display='block';
+  document.getElementById('popular-grid').innerHTML=views.map((v,i)=>{
+    const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+    const initials=v.name.split(' ').map(w=>w[0]).join('').substring(0,2);
+    return `<a href="${v.page}" style="background:var(--surface,#1a1d27);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:1.25rem;text-align:center;text-decoration:none;color:var(--text,#e8e8ed);transition:all .25s;display:block"
+      onmouseover="this.style.transform='translateY(-3px)';this.style.borderColor='${v.color}'" onmouseout="this.style.transform='';this.style.borderColor='rgba(255,255,255,0.06)'">
+      <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,${v.color},${v.color}88);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:white;margin:0 auto 10px">${initials}</div>
+      <div style="font-size:13px;font-weight:600">${medal} ${v.name.split(' ').pop()}</div>
+      <div style="font-size:20px;font-weight:800;color:${v.color};font-family:'JetBrains Mono',monospace;margin-top:4px">${v.count}</div>
+      <div style="font-size:10px;color:var(--text-muted,#5a5e72);margin-top:2px">views</div>
+    </a>`;
+  }).join('');
+}
+setTimeout(renderPopular,500);
 </script>
 <script src="titan-nav.js"></script>
 </body>

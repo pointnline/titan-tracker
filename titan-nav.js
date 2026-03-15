@@ -102,6 +102,37 @@
     return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
   };
 
+  // === 페이지 조회수 추적 ===
+  (function trackViews() {
+    const page = currentPage;
+    const titanPages = {
+      'wolfram.html':'Stephen Wolfram','gates.html':'Bill Gates','musk.html':'Elon Musk',
+      'bezos.html':'Jeff Bezos','amodei.html':'Dario Amodei','dalio.html':'Ray Dalio',
+      'altman.html':'Sam Altman','huang.html':'Jensen Huang','nadella.html':'Satya Nadella',
+      'karpathy.html':'Andrej Karpathy','lecun.html':'Yann LeCun','huberman.html':'Andrew Huberman',
+      'pichai.html':'Sundar Pichai'
+    };
+    if (titanPages[page]) {
+      const key = 'tv_' + page.replace('.html','');
+      const data = JSON.parse(localStorage.getItem(key) || '{"count":0,"last":0}');
+      data.count++;
+      data.last = Date.now();
+      localStorage.setItem(key, JSON.stringify(data));
+    }
+    // 조회수 읽기 함수
+    window.getTitanViews = function() {
+      const views = [];
+      Object.entries(titanPages).forEach(([page, name]) => {
+        const key = 'tv_' + page.replace('.html','');
+        const data = JSON.parse(localStorage.getItem(key) || '{"count":0,"last":0}');
+        views.push({ page, name, count: data.count, last: data.last,
+          color: window.titanUtils?.ACTIVE_TITANS?.[page.replace('.html','')]?.color || '#6366f1' });
+      });
+      views.sort((a, b) => b.count - a.count || b.last - a.last);
+      return views;
+    };
+  })();
+
   // === 피드 아코디언 시스템 ===
   const feedStyle = document.createElement('style');
   feedStyle.textContent = `

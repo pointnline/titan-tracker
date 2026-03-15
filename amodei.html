@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gates Tracker — Bill Gates 추적 대시보드</title>
-<meta name="description" content="Bill Gates의 블로그, SNS, 영상을 한 곳에서 추적하는 대시보드">
-<meta property="og:title" content="Gates Tracker — Bill Gates 추적 대시보드">
-<meta property="og:description" content="Bill Gates의 모든 활동을 한 곳에서">
+<title>Amodei Tracker — Dario Amodei 추적 대시보드</title>
+<meta name="description" content="Dario Amodei의 Anthropic, AI Safety, Claude 관련 활동을 한 곳에서 추적하는 대시보드">
+<meta property="og:title" content="Amodei Tracker — Dario Amodei 추적 대시보드">
+<meta property="og:description" content="Dario Amodei의 모든 활동을 한 곳에서">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -15,20 +15,20 @@
   --bg:#0f1117;--surface:#1a1d27;--surface2:#232736;--surface3:#2a2e3d;
   --border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.12);
   --text:#e8e8ed;--text-sub:#8b8fa3;--text-muted:#5a5e72;
-  --accent:#0ea5e9;--accent-light:#38bdf8;--accent-bg:rgba(14,165,233,0.1);
+  --accent:#ef4444;--accent-light:#f87171;--accent-bg:rgba(239,68,68,0.1);
   --red:#ef4444;--orange:#f97316;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;
   --radius:16px;--radius-sm:12px;--radius-xs:8px;
 }
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
 a{color:var(--accent-light);text-decoration:none;transition:color .2s}
-a:hover{color:#bae6fd}
+a:hover{color:#fecaca}
 
 .back-link{position:fixed;top:1rem;left:1rem;font-size:12px;color:var(--text-muted);z-index:10;
   padding:6px 12px;border-radius:20px;background:var(--surface);border:1px solid var(--border);transition:all .2s}
 .back-link:hover{border-color:var(--accent);color:var(--accent-light)}
 
 .header{
-  background:linear-gradient(135deg,rgba(14,165,233,0.15),rgba(34,197,94,0.08));
+  background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(168,85,247,0.08));
   border-bottom:1px solid var(--border);padding:2rem 1.5rem;
 }
 .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
@@ -38,10 +38,10 @@ a:hover{color:#bae6fd}
 .header-info .subtitle span{color:var(--accent-light);font-weight:500}
 .header-badges{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .badge{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:500;border:1px solid var(--border)}
-.badge-tech{background:rgba(14,165,233,0.15);color:var(--accent-light);border-color:rgba(14,165,233,0.3)}
-.badge-health{background:rgba(34,197,94,0.15);color:#86efac;border-color:rgba(34,197,94,0.3)}
-.badge-climate{background:rgba(245,158,11,0.15);color:#fcd34d;border-color:rgba(245,158,11,0.3)}
-.badge-book{background:rgba(168,85,247,0.15);color:#c084fc;border-color:rgba(168,85,247,0.3)}
+.badge-safety{background:rgba(239,68,68,0.15);color:#fca5a5;border-color:rgba(239,68,68,0.3)}
+.badge-ai{background:rgba(168,85,247,0.15);color:#c084fc;border-color:rgba(168,85,247,0.3)}
+.badge-research{background:rgba(59,130,246,0.15);color:#93c5fd;border-color:rgba(59,130,246,0.3)}
+.badge-claude{background:rgba(245,158,11,0.15);color:#fcd34d;border-color:rgba(245,158,11,0.3)}
 
 .tabs-wrap{max-width:1100px;margin:0 auto;padding:0 1.5rem}
 .tabs{display:flex;gap:4px;padding:1rem 0 0;border-bottom:1px solid var(--border);overflow-x:auto}
@@ -51,7 +51,7 @@ a:hover{color:#bae6fd}
   border-radius:var(--radius-xs) var(--radius-xs) 0 0;
 }
 .tab:hover{color:var(--text);background:rgba(255,255,255,0.03)}
-.tab.active{color:var(--accent-light);border-bottom-color:var(--accent);background:rgba(14,165,233,0.06)}
+.tab.active{color:var(--accent-light);border-bottom-color:var(--accent);background:rgba(239,68,68,0.06)}
 
 .main{max-width:1100px;margin:0 auto;padding:1.5rem}
 .tab-content{display:none}
@@ -85,8 +85,8 @@ a:hover{color:#bae6fd}
 .feed-item-desc{font-size:12px;color:var(--text-sub);line-height:1.6;margin-top:8px;
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .feed-source{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500}
-.src-gatesnotes{background:rgba(14,165,233,0.15);color:var(--accent-light)}
-.src-youtube{background:rgba(239,68,68,0.15);color:#fca5a5}
+.src-anthropic{background:rgba(239,68,68,0.15);color:#fca5a5}
+.src-research{background:rgba(168,85,247,0.15);color:#c084fc}
 .src-news{background:rgba(245,158,11,0.15);color:#fcd34d}
 .src-twitter{background:rgba(29,155,240,0.15);color:#7dd3fc}
 
@@ -122,18 +122,6 @@ a:hover{color:#bae6fd}
 
 .footer{text-align:center;padding:2rem;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:2rem}
 
-[data-theme="light"]{
-  --bg:#f5f5f7;--surface:#ffffff;--surface2:#f0f0f3;--surface3:#e8e8ec;
-  --border:rgba(0,0,0,0.08);--border-hover:rgba(0,0,0,0.15);
-  --text:#1a1a2e;--text-sub:#4a4a6a;--text-muted:#8888a0;
-}
-.theme-toggle{position:fixed;top:1rem;right:1rem;z-index:50;width:36px;height:36px;border-radius:50%;
-  border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .3s;
-  box-shadow:0 2px 8px rgba(0,0,0,0.1)}
-.theme-toggle:hover{border-color:var(--accent);transform:scale(1.1)}
-[data-theme="light"] .header{background:linear-gradient(135deg,rgba(14,165,233,0.08),rgba(34,197,94,0.05))}
-
 @media(max-width:768px){
   .header-inner{flex-direction:column;text-align:center}
   .header-badges{justify-content:center}
@@ -144,31 +132,30 @@ a:hover{color:#bae6fd}
 }
 @media(max-width:480px){
   .channels-grid{grid-template-columns:1fr}
+  body{font-size:14px}
   .main{padding:1rem}
 }
 </style>
 </head>
 <body>
-<button class="theme-toggle" onclick="toggleTheme()" title="라이트/다크 모드 전환">🌙</button>
 
 <a href="index.html" class="back-link">← Titan Tracker</a>
 
 <!-- 헤더 -->
 <div class="header">
   <div class="header-inner">
-    <img class="avatar" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Bill_Gates_2017_%28cropped%29.jpg/440px-Bill_Gates_2017_%28cropped%29.jpg" alt="Bill Gates"
-      onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 80 80%22><rect fill=%22%230ea5e9%22 width=%2280%22 height=%2280%22 rx=%2240%22/><text x=%2240%22 y=%2248%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2232%22 font-family=%22sans-serif%22>BG</text></svg>'">
+    <div class="avatar" style="background:linear-gradient(135deg,#ef4444,#dc2626);display:flex;align-items:center;justify-content:center;font-size:32px;color:white;font-weight:700">DA</div>
     <div class="header-info">
-      <h1>Bill Gates Tracker</h1>
+      <h1>Dario Amodei Tracker</h1>
       <div class="subtitle">
-        <span>Microsoft</span> 공동창립자 · <span>Gates Foundation</span> 공동의장 · <span>GatesNotes</span> 저자<br>
-        기술, 글로벌 보건, 기후변화, 교육에 대한 세계에서 가장 영향력 있는 사상가
+        <span>Anthropic</span> CEO · 전 <span>OpenAI</span> VP of Research · <span>AI Safety</span> 연구 리더<br>
+        안전하고 유익한 AI 시스템 구축을 주도하는 AI Safety 분야의 핵심 인물
       </div>
       <div class="header-badges">
-        <span class="badge badge-tech">Technology</span>
-        <span class="badge badge-health">Global Health</span>
-        <span class="badge badge-climate">Climate & Energy</span>
-        <span class="badge badge-book">Book Reviewer</span>
+        <span class="badge badge-safety">AI Safety</span>
+        <span class="badge badge-ai">Claude / LLM</span>
+        <span class="badge badge-research">Scaling Laws</span>
+        <span class="badge badge-claude">Constitutional AI</span>
       </div>
     </div>
   </div>
@@ -195,14 +182,21 @@ a:hover{color:#bae6fd}
     </div>
 
     <div class="feed-section">
-      <div class="feed-title"><div class="dot" style="background:var(--accent)"></div>GatesNotes 블로그</div>
-      <div class="feed-list" id="gatesnotes-feed">
-        <div class="loading"><div class="spinner"></div>GatesNotes 로딩 중...</div>
+      <div class="feed-title"><div class="dot" style="background:var(--red)"></div>Anthropic 블로그</div>
+      <div class="feed-list" id="anthropic-feed">
+        <div class="loading"><div class="spinner"></div>Anthropic 블로그 로딩 중...</div>
       </div>
     </div>
 
     <div class="feed-section">
-      <div class="feed-title"><div class="dot" style="background:var(--orange)"></div>Bill Gates 관련 뉴스</div>
+      <div class="feed-title"><div class="dot" style="background:var(--purple)"></div>Anthropic Research</div>
+      <div class="feed-list" id="research-feed">
+        <div class="loading"><div class="spinner"></div>Research 로딩 중...</div>
+      </div>
+    </div>
+
+    <div class="feed-section">
+      <div class="feed-title"><div class="dot" style="background:var(--orange)"></div>Dario Amodei 관련 뉴스</div>
       <div class="feed-list" id="news-feed">
         <div class="loading"><div class="spinner"></div>뉴스 로딩 중...</div>
       </div>
@@ -219,53 +213,41 @@ a:hover{color:#bae6fd}
   <!-- 채널 탭 -->
   <div class="tab-content" id="tab-channels">
     <div class="channels-grid">
-      <a class="channel-card" href="https://www.gatesnotes.com/" target="_blank" rel="noopener">
+      <a class="channel-card" href="https://www.anthropic.com/blog" target="_blank" rel="noopener">
         <div class="ch-icon">📝</div>
-        <div class="ch-name">GatesNotes</div>
-        <div class="ch-desc">개인 블로그 — 책 리뷰, 기후, 보건, AI 등 심층 에세이</div>
-        <div class="ch-tag">gatesnotes.com</div>
+        <div class="ch-name">Anthropic Blog</div>
+        <div class="ch-desc">Claude 업데이트, AI Safety 연구, 회사 소식</div>
+        <div class="ch-tag">anthropic.com/blog</div>
       </a>
-      <a class="channel-card" href="https://x.com/BillGates" target="_blank" rel="noopener">
+      <a class="channel-card" href="https://www.anthropic.com/research" target="_blank" rel="noopener">
+        <div class="ch-icon">🔬</div>
+        <div class="ch-name">Anthropic Research</div>
+        <div class="ch-desc">AI 안전성 논문, 기술 보고서, 스케일링 연구</div>
+        <div class="ch-tag">anthropic.com/research</div>
+      </a>
+      <a class="channel-card" href="https://x.com/DarioAmodei" target="_blank" rel="noopener">
         <div class="ch-icon">𝕏</div>
         <div class="ch-name">X (Twitter)</div>
-        <div class="ch-desc">66M+ 팔로워 · 기술, 보건, 기후 관련 의견</div>
-        <div class="ch-tag">@BillGates</div>
+        <div class="ch-desc">AI Safety, Anthropic 업데이트, 인터뷰 공유</div>
+        <div class="ch-tag">@DarioAmodei</div>
       </a>
-      <a class="channel-card" href="https://www.youtube.com/@billgates" target="_blank" rel="noopener">
-        <div class="ch-icon">▶️</div>
-        <div class="ch-name">YouTube</div>
-        <div class="ch-desc">강연, 인터뷰, 기후·보건 다큐멘터리</div>
-        <div class="ch-tag">@billgates</div>
-      </a>
-      <a class="channel-card" href="https://www.linkedin.com/in/williamhgates/" target="_blank" rel="noopener">
-        <div class="ch-icon">💼</div>
-        <div class="ch-name">LinkedIn</div>
-        <div class="ch-desc">전문 네트워크 — 비즈니스/기술 인사이트</div>
-        <div class="ch-tag">williamhgates</div>
-      </a>
-      <a class="channel-card" href="https://www.instagram.com/thisisbillgates/" target="_blank" rel="noopener">
-        <div class="ch-icon">📸</div>
-        <div class="ch-name">Instagram</div>
-        <div class="ch-desc">15M+ 팔로워 · 활동 사진, 여행, 일상</div>
-        <div class="ch-tag">@thisisbillgates</div>
-      </a>
-      <a class="channel-card" href="https://www.gatesfoundation.org/" target="_blank" rel="noopener">
-        <div class="ch-icon">🌍</div>
-        <div class="ch-name">Gates Foundation</div>
-        <div class="ch-desc">글로벌 보건, 빈곤, 교육 — 세계 최대 민간 재단</div>
-        <div class="ch-tag">gatesfoundation.org</div>
-      </a>
-      <a class="channel-card" href="https://www.breakthroughenergy.org/" target="_blank" rel="noopener">
-        <div class="ch-icon">⚡</div>
-        <div class="ch-name">Breakthrough Energy</div>
-        <div class="ch-desc">기후 변화 기술 투자 및 혁신 플랫폼</div>
-        <div class="ch-tag">breakthroughenergy.org</div>
-      </a>
-      <a class="channel-card" href="https://www.reddit.com/user/thisisbillgates/" target="_blank" rel="noopener">
+      <a class="channel-card" href="https://x.com/AnthropicAI" target="_blank" rel="noopener">
         <div class="ch-icon">🤖</div>
-        <div class="ch-name">Reddit AMA</div>
-        <div class="ch-desc">정기적 AMA(Ask Me Anything) 세션</div>
-        <div class="ch-tag">u/thisisbillgates</div>
+        <div class="ch-name">Anthropic Official</div>
+        <div class="ch-desc">Claude, API, 연구 발표 공식 계정</div>
+        <div class="ch-tag">@AnthropicAI</div>
+      </a>
+      <a class="channel-card" href="https://www.youtube.com/results?search_query=dario+amodei" target="_blank" rel="noopener">
+        <div class="ch-icon">▶️</div>
+        <div class="ch-name">YouTube 인터뷰</div>
+        <div class="ch-desc">팟캐스트 출연, AI 정책 토론, 기술 강연</div>
+        <div class="ch-tag">Dario Amodei</div>
+      </a>
+      <a class="channel-card" href="https://docs.anthropic.com/" target="_blank" rel="noopener">
+        <div class="ch-icon">📚</div>
+        <div class="ch-name">Claude Docs</div>
+        <div class="ch-desc">Claude API 문서, 가이드, 레퍼런스</div>
+        <div class="ch-tag">docs.anthropic.com</div>
       </a>
     </div>
   </div>
@@ -276,42 +258,42 @@ a:hover{color:#bae6fd}
       <div class="profile-card">
         <h3>📌 기본 정보</h3>
         <ul>
-          <li>미국 시애틀 출생 (1955년)</li>
-          <li>Harvard 중퇴 (1975) → Microsoft 공동 창립</li>
-          <li>2000~2006 Microsoft CEO → 회장 → 기술 고문</li>
-          <li>2000 Bill & Melinda Gates Foundation 설립</li>
-          <li>2015 Breakthrough Energy 설립</li>
-          <li>순자산 약 $130B (세계 10위권)</li>
+          <li>이탈리아계 미국인</li>
+          <li>Princeton 대학교 물리학 학사</li>
+          <li>Princeton 대학교 생물물리학 PhD</li>
+          <li>OpenAI VP of Research (2016~2020)</li>
+          <li>2021 Anthropic 공동창립 · CEO</li>
+          <li>여동생 Daniela Amodei — Anthropic 사장</li>
         </ul>
       </div>
       <div class="profile-card">
         <h3>🧠 주요 관심 분야</h3>
         <ul>
-          <li><strong>AI 혁명</strong> — AI가 교육, 보건, 생산성에 미칠 변혁</li>
-          <li><strong>글로벌 보건</strong> — 말라리아, 소아마비, 팬데믹 대비</li>
-          <li><strong>기후 & 에너지</strong> — 넷제로, 원자력, 그린수소</li>
-          <li><strong>교육 혁신</strong> — AI 튜터, 개인화 학습</li>
-          <li><strong>독서 & 리뷰</strong> — 연간 50권+, 유명 북 리스트</li>
+          <li><strong>AI Safety</strong> — 안전한 AI 개발 방법론</li>
+          <li><strong>Constitutional AI</strong> — AI가 스스로 규칙을 따르도록</li>
+          <li><strong>스케일링 법칙</strong> — 모델 크기와 성능의 관계</li>
+          <li><strong>해석 가능성</strong> — 신경망 내부 작동 이해</li>
+          <li><strong>AI 정책</strong> — 정부 규제, 국제 AI 거버넌스</li>
         </ul>
       </div>
       <div class="profile-card">
-        <h3>📚 주요 저서</h3>
+        <h3>📚 핵심 저작</h3>
         <ul>
-          <li><strong>How to Avoid a Climate Disaster</strong> (2021) — 기후 위기 해법</li>
-          <li><strong>How to Prevent the Next Pandemic</strong> (2022) — 팬데믹 대비</li>
-          <li><strong>The Road Ahead</strong> (1995) — 디지털 미래 예측</li>
-          <li><strong>Business @ the Speed of Thought</strong> (1999)</li>
-          <li><strong>Source Code</strong> (2025) — 자서전</li>
+          <li><strong>"Machines of Loving Grace"</strong> (2024) — AI가 가져올 긍정적 미래 에세이</li>
+          <li><strong>Scaling Laws 논문</strong> — GPT 스케일링의 기초 발견</li>
+          <li><strong>Constitutional AI 논문</strong> — RLHF 대안 제시</li>
+          <li><strong>AI Safety 정책 증언</strong> — 미 상원 청문회</li>
+          <li><strong>The Case for AI Optimism</strong> — 기술 낙관론</li>
         </ul>
       </div>
       <div class="profile-card">
         <h3>🎓 MBA 학습 관련성</h3>
         <ul>
-          <li><strong>플랫폼 전략</strong> — Windows/Office 생태계 구축 사례</li>
-          <li><strong>AI 비즈니스 임팩트</strong> — 산업별 AI 활용 전망</li>
-          <li><strong>임팩트 투자</strong> — Gates Foundation 모델</li>
-          <li><strong>기후 기술 투자</strong> — Breakthrough Energy Ventures</li>
-          <li><strong>연간 독서 리스트</strong> — 경영·과학·역사 추천도서</li>
+          <li><strong>AI Safety 비즈니스</strong> — 안전을 차별점으로 경쟁</li>
+          <li><strong>스타트업 전략</strong> — OpenAI에서 분리 후 $60B+ 밸류</li>
+          <li><strong>B2B AI</strong> — API 기반 엔터프라이즈 AI 시장</li>
+          <li><strong>기술 리더십</strong> — 연구자에서 CEO로의 전환</li>
+          <li><strong>AI 정책</strong> — 기업과 정부 간 AI 규제 협력</li>
         </ul>
       </div>
     </div>
@@ -323,62 +305,42 @@ a:hover{color:#bae6fd}
       <div class="tl-item">
         <div class="tl-dot"></div>
         <div class="tl-year">2025</div>
-        <div class="tl-text">자서전 "Source Code" 출간. AI가 교육과 보건을 혁신할 것이라 강조. Gates Foundation 50주년 로드맵 발표.</div>
+        <div class="tl-text">Claude 4 출시. Anthropic 기업 가치 $60B+ 돌파. Amazon과의 전략적 파트너십 $8B 확대. AI Safety 국제 표준 논의 주도.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2024</div>
+        <div class="tl-text">"Machines of Loving Grace" 에세이 발표 — AI 낙관론. Claude 3.5 Sonnet 출시. Computer Use 기능 공개. Google $2B, Amazon $4B 투자 유치.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
         <div class="tl-year">2023</div>
-        <div class="tl-text">"AI의 시대가 시작됐다" 에세이 발표. GPT-4를 "내 인생에서 두 번째로 혁명적인 기술"이라 평가 (첫 번째: GUI).</div>
+        <div class="tl-text">Claude 2 출시. Constitutional AI 논문 발표. 미 상원 AI 청문회 증언. Google $300M, Spark Capital 등 $4.5B 투자 라운드.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
         <div class="tl-year">2022</div>
-        <div class="tl-text">"How to Prevent the Next Pandemic" 출간. COVID-19 이후 글로벌 방역 시스템 혁신 제안.</div>
+        <div class="tl-text">Claude 1 내부 개발 시작. RLHF + Constitutional AI 연구. Anthropic 시리즈B $580M 유치.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
         <div class="tl-year">2021</div>
-        <div class="tl-text">"How to Avoid a Climate Disaster" 출간. 넷제로 달성을 위한 기술·정책 로드맵 제시.</div>
+        <div class="tl-text">Anthropic 공동창립 — OpenAI에서 7명의 연구자와 함께 독립. "안전한 AGI 개발"을 미션으로. 시리즈A $124M.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
-        <div class="tl-year">2015</div>
-        <div class="tl-text">Breakthrough Energy 설립. 기후 기술 스타트업에 수십억 달러 투자 시작. TED에서 "다음 전염병에 대비하라" 경고.</div>
+        <div class="tl-year">2020</div>
+        <div class="tl-text">OpenAI 퇴사. GPT-3 스케일링 법칙 연구에 핵심 기여. AI 안전성에 대한 근본적 방향 차이로 독립 결심.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
-        <div class="tl-year">2008</div>
-        <div class="tl-text">Microsoft 일선 경영에서 은퇴. Gates Foundation에 전념 시작.</div>
+        <div class="tl-year">2016~2019</div>
+        <div class="tl-text">OpenAI VP of Research. GPT-2/3 연구 주도. 스케일링 법칙 발견 — "모델이 커지면 성능이 예측 가능하게 향상된다."</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
-        <div class="tl-year">2000</div>
-        <div class="tl-text">Bill & Melinda Gates Foundation 설립. $50B+ 기부. 글로벌 보건·교육에 집중.</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-year">1995</div>
-        <div class="tl-text">Windows 95 출시 — PC 대중화의 결정적 전환점. "The Road Ahead" 출간.</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-year">1985</div>
-        <div class="tl-text">Windows 1.0 출시. GUI 기반 운영체제 시대 개막.</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-year">1981</div>
-        <div class="tl-text">IBM PC에 MS-DOS 공급. "소프트웨어가 왕이다" 전략의 시작.</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-year">1975</div>
-        <div class="tl-text">Paul Allen과 Microsoft 공동 창립. "모든 책상 위에, 모든 가정에 컴퓨터를" 비전.</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-year">1955</div>
-        <div class="tl-text">미국 시애틀 출생. 13세에 프로그래밍 시작. Lakeside School에서 Paul Allen을 만남.</div>
+        <div class="tl-year">~2016</div>
+        <div class="tl-text">Princeton 물리학 학사 · 생물물리학 PhD. 생물학에서 AI 연구로 전환. Baidu AI, Google Brain 경험 후 OpenAI 합류.</div>
       </div>
     </div>
   </div>
@@ -386,38 +348,11 @@ a:hover{color:#bae6fd}
 </div>
 
 <div class="footer">
-  Gates Tracker · <a href="index.html">Titan Tracker</a> · Point & Line 🌈<br>
-  <span style="font-size:10px;margin-top:4px;display:inline-block">데이터 출처: RSS feed from gatesnotes.com & YouTube</span>
+  Amodei Tracker · <a href="index.html">Titan Tracker</a> · Point & Line 🌈<br>
+  <span style="font-size:10px;margin-top:4px;display:inline-block">데이터 출처: Anthropic Blog, Google News RSS</span>
 </div>
 
 <script>
-// 테마 토글
-(function(){
-  const saved = localStorage.getItem('titan-theme');
-  if(saved) document.documentElement.setAttribute('data-theme', saved);
-  else if(window.matchMedia('(prefers-color-scheme: light)').matches) document.documentElement.setAttribute('data-theme','light');
-  window.addEventListener('DOMContentLoaded',()=>{
-    const btn=document.querySelector('.theme-toggle');
-    if(btn) btn.textContent=document.documentElement.getAttribute('data-theme')==='light'?'🌙':'☀️';
-  });
-})();
-function toggleTheme(){
-  const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-  document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('titan-theme', next);
-  document.querySelector('.theme-toggle').textContent = next === 'light' ? '🌙' : '☀️';
-}
-function escapeHtml(str) {
-  if (!str) return '';
-  const div = document.createElement('div');
-  div.appendChild(document.createTextNode(str));
-  return div.innerHTML;
-}
-function sanitizeUrl(url) {
-  try { const p = new URL(url); if (p.protocol === 'http:' || p.protocol === 'https:') return p.href; } catch(e) {}
-  return '#';
-}
 const TRANSLATE_URL = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ko&dt=t&q=';
 async function translateText(text) {
   if (!text) return '';
@@ -430,26 +365,41 @@ async function translateText(text) {
 
 const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
 const FEEDS = {
-  gatesnotes: {
-    url: 'https://news.google.com/rss/search?q=site%3Agatesnotes.com&hl=en',
-    container: 'gatesnotes-feed',
-    sourceClass: 'src-gatesnotes',
-    sourceLabel: 'GatesNotes'
+  anthropic: {
+    url: 'https://news.google.com/rss/search?q=site%3Aanthropic.com+blog&hl=en',
+    container: 'anthropic-feed',
+    sourceClass: 'src-anthropic',
+    sourceLabel: 'Anthropic Blog',
+    fallbackUrls: [
+      'https://news.google.com/rss/search?q=Anthropic+Claude+announcement&hl=en'
+    ]
+  },
+  research: {
+    url: 'https://news.google.com/rss/search?q=Anthropic+research+AI+safety+paper&hl=en&gl=US',
+    container: 'research-feed',
+    sourceClass: 'src-research',
+    sourceLabel: 'Research',
+    fallbackUrls: [
+      'https://news.google.com/rss/search?q=Anthropic+Claude+AI&hl=en'
+    ]
   },
   news: {
-    url: 'https://news.google.com/rss/search?q=Bill+Gates&hl=ko&gl=KR',
+    url: 'https://news.google.com/rss/search?q=Dario+Amodei+Anthropic&hl=ko&gl=KR',
     container: 'news-feed',
     sourceClass: 'src-news',
-    sourceLabel: 'News'
+    sourceLabel: 'News',
+    fallbackUrls: [
+      'https://news.google.com/rss/search?q=Dario+Amodei&hl=en'
+    ]
   },
   twitter: {
-    url: 'https://rsshub.app/twitter/user/BillGates',
+    url: 'https://rsshub.app/twitter/user/DarioAmodei',
     container: 'twitter-feed',
     sourceClass: 'src-twitter',
     sourceLabel: 'X (Twitter)',
     fallbackUrls: [
-      'https://nitter.privacydev.net/BillGates/rss',
-      'https://twiiit.com/BillGates/rss'
+      'https://nitter.privacydev.net/DarioAmodei/rss',
+      'https://twiiit.com/DarioAmodei/rss'
     ]
   }
 };
@@ -466,9 +416,9 @@ function formatDate(dateStr) {
 }
 
 function stripHtml(html) {
-  if (!html) return '';
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  return doc.body.textContent || '';
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
 }
 
 async function renderFeed(items, containerId, sourceClass, sourceLabel) {
@@ -490,15 +440,15 @@ async function renderFeed(items, containerId, sourceClass, sourceLabel) {
     const { titleKo, descKo, title } = translations[i];
     return `
       <div class="feed-item">
-        <a href="${sanitizeUrl(item.link)}" target="_blank" rel="noopener">
-          <div class="feed-item-title">${escapeHtml(titleKo)}</div>
-          <div class="feed-item-title-orig">${escapeHtml(title)}</div>
+        <a href="${item.link}" target="_blank" rel="noopener">
+          <div class="feed-item-title">${titleKo}</div>
+          <div class="feed-item-title-orig">${title}</div>
           <div class="feed-item-meta">
             <span class="feed-source ${sourceClass}">${sourceLabel}</span>
             <span>${formatDate(item.pubDate)}</span>
-            ${item.author ? '<span>by ' + escapeHtml(item.author) + '</span>' : ''}
+            ${item.author ? '<span>by ' + item.author + '</span>' : ''}
           </div>
-          ${descKo ? '<div class="feed-item-desc">' + escapeHtml(descKo) + '</div>' : ''}
+          ${descKo ? '<div class="feed-item-desc">' + descKo + '</div>' : ''}
         </a>
       </div>`;
   }).join('');
@@ -522,14 +472,14 @@ async function loadFeed(feedKey) {
   }
   if (items) {
     await renderFeed(items, feed.container, feed.sourceClass, feed.sourceLabel);
-    localStorage.setItem('bg_' + feedKey, JSON.stringify({ items, ts: Date.now() }));
+    localStorage.setItem('da_' + feedKey, JSON.stringify({ items, ts: Date.now() }));
   } else {
-    const cached = localStorage.getItem('bg_' + feedKey);
+    const cached = localStorage.getItem('da_' + feedKey);
     if (cached) {
       const { items: cachedItems } = JSON.parse(cached);
       await renderFeed(cachedItems, feed.container, feed.sourceClass, feed.sourceLabel);
     } else {
-      const directLinks = { news:'https://news.google.com/search?q=Bill+Gates', twitter:'https://x.com/BillGates' };
+      const directLinks = { twitter:'https://x.com/DarioAmodei', news:'https://news.google.com/search?q=Dario+Amodei' };
       const link = directLinks[feedKey] || feed.url;
       container.innerHTML = `<div class="error-msg">피드 로딩 실패 — <a href="${link}" target="_blank">직접 방문하기 →</a></div>`;
     }

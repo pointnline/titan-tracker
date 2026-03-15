@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gates Tracker — Bill Gates 추적 대시보드</title>
-<meta name="description" content="Bill Gates의 블로그, SNS, 영상을 한 곳에서 추적하는 대시보드">
-<meta property="og:title" content="Gates Tracker — Bill Gates 추적 대시보드">
-<meta property="og:description" content="Bill Gates의 모든 활동을 한 곳에서">
+<title>Bezos Tracker — Jeff Bezos 추적 대시보드</title>
+<meta name="description" content="Jeff Bezos의 Amazon, Blue Origin, Bezos Earth Fund 활동을 한 곳에서 추적하는 대시보드">
+<meta property="og:title" content="Bezos Tracker — Jeff Bezos 추적 대시보드">
+<meta property="og:description" content="Jeff Bezos의 모든 활동을 한 곳에서">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -15,20 +15,20 @@
   --bg:#0f1117;--surface:#1a1d27;--surface2:#232736;--surface3:#2a2e3d;
   --border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.12);
   --text:#e8e8ed;--text-sub:#8b8fa3;--text-muted:#5a5e72;
-  --accent:#0ea5e9;--accent-light:#38bdf8;--accent-bg:rgba(14,165,233,0.1);
+  --accent:#f59e0b;--accent-light:#fbbf24;--accent-bg:rgba(245,158,11,0.1);
   --red:#ef4444;--orange:#f97316;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;
   --radius:16px;--radius-sm:12px;--radius-xs:8px;
 }
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
 a{color:var(--accent-light);text-decoration:none;transition:color .2s}
-a:hover{color:#bae6fd}
+a:hover{color:#fef3c7}
 
 .back-link{position:fixed;top:1rem;left:1rem;font-size:12px;color:var(--text-muted);z-index:10;
   padding:6px 12px;border-radius:20px;background:var(--surface);border:1px solid var(--border);transition:all .2s}
 .back-link:hover{border-color:var(--accent);color:var(--accent-light)}
 
 .header{
-  background:linear-gradient(135deg,rgba(14,165,233,0.15),rgba(34,197,94,0.08));
+  background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(249,115,22,0.08));
   border-bottom:1px solid var(--border);padding:2rem 1.5rem;
 }
 .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
@@ -38,10 +38,10 @@ a:hover{color:#bae6fd}
 .header-info .subtitle span{color:var(--accent-light);font-weight:500}
 .header-badges{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .badge{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:500;border:1px solid var(--border)}
-.badge-tech{background:rgba(14,165,233,0.15);color:var(--accent-light);border-color:rgba(14,165,233,0.3)}
-.badge-health{background:rgba(34,197,94,0.15);color:#86efac;border-color:rgba(34,197,94,0.3)}
-.badge-climate{background:rgba(245,158,11,0.15);color:#fcd34d;border-color:rgba(245,158,11,0.3)}
-.badge-book{background:rgba(168,85,247,0.15);color:#c084fc;border-color:rgba(168,85,247,0.3)}
+.badge-amazon{background:rgba(245,158,11,0.15);color:#fcd34d;border-color:rgba(245,158,11,0.3)}
+.badge-space{background:rgba(59,130,246,0.15);color:#93c5fd;border-color:rgba(59,130,246,0.3)}
+.badge-earth{background:rgba(34,197,94,0.15);color:#86efac;border-color:rgba(34,197,94,0.3)}
+.badge-media{background:rgba(168,85,247,0.15);color:#c084fc;border-color:rgba(168,85,247,0.3)}
 
 .tabs-wrap{max-width:1100px;margin:0 auto;padding:0 1.5rem}
 .tabs{display:flex;gap:4px;padding:1rem 0 0;border-bottom:1px solid var(--border);overflow-x:auto}
@@ -51,7 +51,7 @@ a:hover{color:#bae6fd}
   border-radius:var(--radius-xs) var(--radius-xs) 0 0;
 }
 .tab:hover{color:var(--text);background:rgba(255,255,255,0.03)}
-.tab.active{color:var(--accent-light);border-bottom-color:var(--accent);background:rgba(14,165,233,0.06)}
+.tab.active{color:var(--accent-light);border-bottom-color:var(--accent);background:rgba(245,158,11,0.06)}
 
 .main{max-width:1100px;margin:0 auto;padding:1.5rem}
 .tab-content{display:none}
@@ -85,9 +85,10 @@ a:hover{color:#bae6fd}
 .feed-item-desc{font-size:12px;color:var(--text-sub);line-height:1.6;margin-top:8px;
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .feed-source{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500}
-.src-gatesnotes{background:rgba(14,165,233,0.15);color:var(--accent-light)}
-.src-youtube{background:rgba(239,68,68,0.15);color:#fca5a5}
-.src-news{background:rgba(245,158,11,0.15);color:#fcd34d}
+.src-amazon{background:rgba(245,158,11,0.15);color:#fcd34d}
+.src-blueorigin{background:rgba(59,130,246,0.15);color:#93c5fd}
+.src-earthfund{background:rgba(34,197,94,0.15);color:#86efac}
+.src-news{background:rgba(249,115,22,0.15);color:#fdba74}
 .src-twitter{background:rgba(29,155,240,0.15);color:#7dd3fc}
 
 .loading{text-align:center;padding:3rem;color:var(--text-muted)}
@@ -122,18 +123,6 @@ a:hover{color:#bae6fd}
 
 .footer{text-align:center;padding:2rem;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:2rem}
 
-[data-theme="light"]{
-  --bg:#f5f5f7;--surface:#ffffff;--surface2:#f0f0f3;--surface3:#e8e8ec;
-  --border:rgba(0,0,0,0.08);--border-hover:rgba(0,0,0,0.15);
-  --text:#1a1a2e;--text-sub:#4a4a6a;--text-muted:#8888a0;
-}
-.theme-toggle{position:fixed;top:1rem;right:1rem;z-index:50;width:36px;height:36px;border-radius:50%;
-  border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .3s;
-  box-shadow:0 2px 8px rgba(0,0,0,0.1)}
-.theme-toggle:hover{border-color:var(--accent);transform:scale(1.1)}
-[data-theme="light"] .header{background:linear-gradient(135deg,rgba(14,165,233,0.08),rgba(34,197,94,0.05))}
-
 @media(max-width:768px){
   .header-inner{flex-direction:column;text-align:center}
   .header-badges{justify-content:center}
@@ -144,31 +133,30 @@ a:hover{color:#bae6fd}
 }
 @media(max-width:480px){
   .channels-grid{grid-template-columns:1fr}
+  body{font-size:14px}
   .main{padding:1rem}
 }
 </style>
 </head>
 <body>
-<button class="theme-toggle" onclick="toggleTheme()" title="라이트/다크 모드 전환">🌙</button>
 
 <a href="index.html" class="back-link">← Titan Tracker</a>
 
 <!-- 헤더 -->
 <div class="header">
   <div class="header-inner">
-    <img class="avatar" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Bill_Gates_2017_%28cropped%29.jpg/440px-Bill_Gates_2017_%28cropped%29.jpg" alt="Bill Gates"
-      onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 80 80%22><rect fill=%22%230ea5e9%22 width=%2280%22 height=%2280%22 rx=%2240%22/><text x=%2240%22 y=%2248%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2232%22 font-family=%22sans-serif%22>BG</text></svg>'">
+    <div class="avatar" style="background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;font-size:32px;color:white;font-weight:700">JB</div>
     <div class="header-info">
-      <h1>Bill Gates Tracker</h1>
+      <h1>Jeff Bezos Tracker</h1>
       <div class="subtitle">
-        <span>Microsoft</span> 공동창립자 · <span>Gates Foundation</span> 공동의장 · <span>GatesNotes</span> 저자<br>
-        기술, 글로벌 보건, 기후변화, 교육에 대한 세계에서 가장 영향력 있는 사상가
+        <span>Amazon</span> 창립자 · <span>Blue Origin</span> 창립자 · <span>Bezos Earth Fund</span> · <span>Washington Post</span> 소유<br>
+        이커머스, 클라우드 컴퓨팅, 우주 산업, 기후 자선의 글로벌 리더
       </div>
       <div class="header-badges">
-        <span class="badge badge-tech">Technology</span>
-        <span class="badge badge-health">Global Health</span>
-        <span class="badge badge-climate">Climate & Energy</span>
-        <span class="badge badge-book">Book Reviewer</span>
+        <span class="badge badge-amazon">Amazon / AWS</span>
+        <span class="badge badge-space">Blue Origin</span>
+        <span class="badge badge-earth">Earth Fund</span>
+        <span class="badge badge-media">Washington Post</span>
       </div>
     </div>
   </div>
@@ -195,23 +183,30 @@ a:hover{color:#bae6fd}
     </div>
 
     <div class="feed-section">
-      <div class="feed-title"><div class="dot" style="background:var(--accent)"></div>GatesNotes 블로그</div>
-      <div class="feed-list" id="gatesnotes-feed">
-        <div class="loading"><div class="spinner"></div>GatesNotes 로딩 중...</div>
+      <div class="feed-title"><div class="dot" style="background:var(--accent)"></div>Amazon / AWS 뉴스</div>
+      <div class="feed-list" id="amazon-feed">
+        <div class="loading"><div class="spinner"></div>Amazon 뉴스 로딩 중...</div>
       </div>
     </div>
 
     <div class="feed-section">
-      <div class="feed-title"><div class="dot" style="background:var(--orange)"></div>Bill Gates 관련 뉴스</div>
+      <div class="feed-title"><div class="dot" style="background:var(--blue)"></div>Blue Origin 뉴스</div>
+      <div class="feed-list" id="blueorigin-feed">
+        <div class="loading"><div class="spinner"></div>Blue Origin 뉴스 로딩 중...</div>
+      </div>
+    </div>
+
+    <div class="feed-section">
+      <div class="feed-title"><div class="dot" style="background:var(--green)"></div>Bezos Earth Fund</div>
+      <div class="feed-list" id="earthfund-feed">
+        <div class="loading"><div class="spinner"></div>Earth Fund 뉴스 로딩 중...</div>
+      </div>
+    </div>
+
+    <div class="feed-section">
+      <div class="feed-title"><div class="dot" style="background:var(--orange)"></div>Jeff Bezos 관련 뉴스</div>
       <div class="feed-list" id="news-feed">
         <div class="loading"><div class="spinner"></div>뉴스 로딩 중...</div>
-      </div>
-    </div>
-
-    <div class="feed-section">
-      <div class="feed-title"><div class="dot" style="background:#1d9bf0"></div>X (Twitter) 최신 포스트</div>
-      <div class="feed-list" id="twitter-feed">
-        <div class="loading"><div class="spinner"></div>X 포스트 로딩 중...</div>
       </div>
     </div>
   </div>
@@ -219,53 +214,41 @@ a:hover{color:#bae6fd}
   <!-- 채널 탭 -->
   <div class="tab-content" id="tab-channels">
     <div class="channels-grid">
-      <a class="channel-card" href="https://www.gatesnotes.com/" target="_blank" rel="noopener">
-        <div class="ch-icon">📝</div>
-        <div class="ch-name">GatesNotes</div>
-        <div class="ch-desc">개인 블로그 — 책 리뷰, 기후, 보건, AI 등 심층 에세이</div>
-        <div class="ch-tag">gatesnotes.com</div>
-      </a>
-      <a class="channel-card" href="https://x.com/BillGates" target="_blank" rel="noopener">
-        <div class="ch-icon">𝕏</div>
-        <div class="ch-name">X (Twitter)</div>
-        <div class="ch-desc">66M+ 팔로워 · 기술, 보건, 기후 관련 의견</div>
-        <div class="ch-tag">@BillGates</div>
-      </a>
-      <a class="channel-card" href="https://www.youtube.com/@billgates" target="_blank" rel="noopener">
-        <div class="ch-icon">▶️</div>
-        <div class="ch-name">YouTube</div>
-        <div class="ch-desc">강연, 인터뷰, 기후·보건 다큐멘터리</div>
-        <div class="ch-tag">@billgates</div>
-      </a>
-      <a class="channel-card" href="https://www.linkedin.com/in/williamhgates/" target="_blank" rel="noopener">
-        <div class="ch-icon">💼</div>
-        <div class="ch-name">LinkedIn</div>
-        <div class="ch-desc">전문 네트워크 — 비즈니스/기술 인사이트</div>
-        <div class="ch-tag">williamhgates</div>
-      </a>
-      <a class="channel-card" href="https://www.instagram.com/thisisbillgates/" target="_blank" rel="noopener">
+      <a class="channel-card" href="https://www.instagram.com/jeffbezos/" target="_blank" rel="noopener">
         <div class="ch-icon">📸</div>
         <div class="ch-name">Instagram</div>
-        <div class="ch-desc">15M+ 팔로워 · 활동 사진, 여행, 일상</div>
-        <div class="ch-tag">@thisisbillgates</div>
+        <div class="ch-desc">5M+ 팔로워 · Blue Origin, 일상, 자선 활동</div>
+        <div class="ch-tag">@jeffbezos</div>
       </a>
-      <a class="channel-card" href="https://www.gatesfoundation.org/" target="_blank" rel="noopener">
+      <a class="channel-card" href="https://www.aboutamazon.com/" target="_blank" rel="noopener">
+        <div class="ch-icon">📦</div>
+        <div class="ch-name">About Amazon</div>
+        <div class="ch-desc">Amazon 뉴스, 혁신, Day One 블로그</div>
+        <div class="ch-tag">aboutamazon.com</div>
+      </a>
+      <a class="channel-card" href="https://www.blueorigin.com/" target="_blank" rel="noopener">
+        <div class="ch-icon">🚀</div>
+        <div class="ch-name">Blue Origin</div>
+        <div class="ch-desc">New Glenn, New Shepard, 달 착륙선</div>
+        <div class="ch-tag">blueorigin.com</div>
+      </a>
+      <a class="channel-card" href="https://www.bezosearthfund.org/" target="_blank" rel="noopener">
         <div class="ch-icon">🌍</div>
-        <div class="ch-name">Gates Foundation</div>
-        <div class="ch-desc">글로벌 보건, 빈곤, 교육 — 세계 최대 민간 재단</div>
-        <div class="ch-tag">gatesfoundation.org</div>
+        <div class="ch-name">Bezos Earth Fund</div>
+        <div class="ch-desc">$10B 기후·자연 보전 기금</div>
+        <div class="ch-tag">bezosearthfund.org</div>
       </a>
-      <a class="channel-card" href="https://www.breakthroughenergy.org/" target="_blank" rel="noopener">
-        <div class="ch-icon">⚡</div>
-        <div class="ch-name">Breakthrough Energy</div>
-        <div class="ch-desc">기후 변화 기술 투자 및 혁신 플랫폼</div>
-        <div class="ch-tag">breakthroughenergy.org</div>
+      <a class="channel-card" href="https://www.washingtonpost.com/" target="_blank" rel="noopener">
+        <div class="ch-icon">📰</div>
+        <div class="ch-name">Washington Post</div>
+        <div class="ch-desc">2013년 $250M 인수 · 디지털 미디어 혁신</div>
+        <div class="ch-tag">washingtonpost.com</div>
       </a>
-      <a class="channel-card" href="https://www.reddit.com/user/thisisbillgates/" target="_blank" rel="noopener">
-        <div class="ch-icon">🤖</div>
-        <div class="ch-name">Reddit AMA</div>
-        <div class="ch-desc">정기적 AMA(Ask Me Anything) 세션</div>
-        <div class="ch-tag">u/thisisbillgates</div>
+      <a class="channel-card" href="https://x.com/JeffBezos" target="_blank" rel="noopener">
+        <div class="ch-icon">𝕏</div>
+        <div class="ch-name">X (Twitter)</div>
+        <div class="ch-desc">Blue Origin 업데이트, 주요 발언</div>
+        <div class="ch-tag">@JeffBezos</div>
       </a>
     </div>
   </div>
@@ -276,42 +259,42 @@ a:hover{color:#bae6fd}
       <div class="profile-card">
         <h3>📌 기본 정보</h3>
         <ul>
-          <li>미국 시애틀 출생 (1955년)</li>
-          <li>Harvard 중퇴 (1975) → Microsoft 공동 창립</li>
-          <li>2000~2006 Microsoft CEO → 회장 → 기술 고문</li>
-          <li>2000 Bill & Melinda Gates Foundation 설립</li>
-          <li>2015 Breakthrough Energy 설립</li>
-          <li>순자산 약 $130B (세계 10위권)</li>
+          <li>미국 뉴멕시코주 앨버커키 출생 (1964년)</li>
+          <li>Princeton 대학교 (전기공학 + 컴퓨터과학)</li>
+          <li>D.E. Shaw 헤지펀드 VP → 1994 Amazon 창립</li>
+          <li>2021 Amazon CEO 퇴임 → 이사회 의장</li>
+          <li>2020 Bezos Earth Fund $10B 기부 서약</li>
+          <li>순자산 약 $200B+ (세계 2~3위)</li>
         </ul>
       </div>
       <div class="profile-card">
         <h3>🧠 주요 관심 분야</h3>
         <ul>
-          <li><strong>AI 혁명</strong> — AI가 교육, 보건, 생산성에 미칠 변혁</li>
-          <li><strong>글로벌 보건</strong> — 말라리아, 소아마비, 팬데믹 대비</li>
-          <li><strong>기후 & 에너지</strong> — 넷제로, 원자력, 그린수소</li>
-          <li><strong>교육 혁신</strong> — AI 튜터, 개인화 학습</li>
-          <li><strong>독서 & 리뷰</strong> — 연간 50권+, 유명 북 리스트</li>
+          <li><strong>Day 1 철학</strong> — 항상 스타트업처럼 사고하기</li>
+          <li><strong>고객 집착</strong> — 경쟁자가 아닌 고객에 집중</li>
+          <li><strong>우주 탐사</strong> — Blue Origin, 인류의 우주 이주</li>
+          <li><strong>기후 변화</strong> — Earth Fund, 탈탄소 기술 투자</li>
+          <li><strong>장기 사고</strong> — 10,000 Year Clock 프로젝트</li>
         </ul>
       </div>
       <div class="profile-card">
-        <h3>📚 주요 저서</h3>
+        <h3>📚 핵심 문서</h3>
         <ul>
-          <li><strong>How to Avoid a Climate Disaster</strong> (2021) — 기후 위기 해법</li>
-          <li><strong>How to Prevent the Next Pandemic</strong> (2022) — 팬데믹 대비</li>
-          <li><strong>The Road Ahead</strong> (1995) — 디지털 미래 예측</li>
-          <li><strong>Business @ the Speed of Thought</strong> (1999)</li>
-          <li><strong>Source Code</strong> (2025) — 자서전</li>
+          <li><strong>주주서한 (1997~2020)</strong> — 경영 철학의 보고</li>
+          <li><strong>"Invent and Wander"</strong> (2020) — 주주서한 + 에세이 모음</li>
+          <li><strong>14 리더십 원칙</strong> — Amazon 문화의 핵심</li>
+          <li><strong>6페이저 메모</strong> — PPT 금지, 서사형 문서 문화</li>
+          <li><strong>2-피자 팀</strong> — 소규모 자율 팀 조직론</li>
         </ul>
       </div>
       <div class="profile-card">
         <h3>🎓 MBA 학습 관련성</h3>
         <ul>
-          <li><strong>플랫폼 전략</strong> — Windows/Office 생태계 구축 사례</li>
-          <li><strong>AI 비즈니스 임팩트</strong> — 산업별 AI 활용 전망</li>
-          <li><strong>임팩트 투자</strong> — Gates Foundation 모델</li>
-          <li><strong>기후 기술 투자</strong> — Breakthrough Energy Ventures</li>
-          <li><strong>연간 독서 리스트</strong> — 경영·과학·역사 추천도서</li>
+          <li><strong>플랫폼 전략</strong> — AWS 탄생, 마켓플레이스 모델</li>
+          <li><strong>Flywheel 효과</strong> — 선순환 성장 모델</li>
+          <li><strong>Day 1 vs Day 2</strong> — 대기업 관료화 방지 철학</li>
+          <li><strong>역산 사고</strong> — 보도자료부터 쓰고 제품 개발</li>
+          <li><strong>장기 투자</strong> — 단기 수익보다 장기 가치</li>
         </ul>
       </div>
     </div>
@@ -322,63 +305,63 @@ a:hover{color:#bae6fd}
     <div class="timeline">
       <div class="tl-item">
         <div class="tl-dot"></div>
-        <div class="tl-year">2025</div>
-        <div class="tl-text">자서전 "Source Code" 출간. AI가 교육과 보건을 혁신할 것이라 강조. Gates Foundation 50주년 로드맵 발표.</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-year">2023</div>
-        <div class="tl-text">"AI의 시대가 시작됐다" 에세이 발표. GPT-4를 "내 인생에서 두 번째로 혁명적인 기술"이라 평가 (첫 번째: GUI).</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-year">2022</div>
-        <div class="tl-text">"How to Prevent the Next Pandemic" 출간. COVID-19 이후 글로벌 방역 시스템 혁신 제안.</div>
+        <div class="tl-year">2024~현재</div>
+        <div class="tl-text">Blue Origin New Glenn 궤도 로켓 발사. Amazon AI 투자 확대 (Anthropic $4B). Earth Fund 자연 보전 프로그램 확장.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
         <div class="tl-year">2021</div>
-        <div class="tl-text">"How to Avoid a Climate Disaster" 출간. 넷제로 달성을 위한 기술·정책 로드맵 제시.</div>
+        <div class="tl-text">Amazon CEO 퇴임, Andy Jassy 후임. 7월 Blue Origin 최초 유인 우주비행 (New Shepard). 우주에서의 "개요 효과" 경험.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2020</div>
+        <div class="tl-text">Bezos Earth Fund $10B 기부 발표 — 기후 변화 대응 역사상 최대 규모. COVID-19 중 Amazon 40만 명 신규 채용.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2018</div>
+        <div class="tl-text">세계 최고 부자 등극 ($150B+). Bezos Day One Fund $2B 출범 — 노숙 가정 + 저소득 유아교육 지원.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
         <div class="tl-year">2015</div>
-        <div class="tl-text">Breakthrough Energy 설립. 기후 기술 스타트업에 수십억 달러 투자 시작. TED에서 "다음 전염병에 대비하라" 경고.</div>
+        <div class="tl-text">Blue Origin New Shepard 로켓 수직 착륙 성공. AWS가 Amazon 영업이익의 대부분을 차지하기 시작.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
-        <div class="tl-year">2008</div>
-        <div class="tl-text">Microsoft 일선 경영에서 은퇴. Gates Foundation에 전념 시작.</div>
+        <div class="tl-year">2013</div>
+        <div class="tl-text">Washington Post $250M 인수. 디지털 전환을 통해 구독자 수 급증.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2007</div>
+        <div class="tl-text">Kindle 출시 — 전자책 시장 혁명. "모든 책을 60초 안에" 비전.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2006</div>
+        <div class="tl-text">AWS (Amazon Web Services) 정식 출시 — 클라우드 컴퓨팅 시대 개막. S3 + EC2.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
         <div class="tl-year">2000</div>
-        <div class="tl-text">Bill & Melinda Gates Foundation 설립. $50B+ 기부. 글로벌 보건·교육에 집중.</div>
+        <div class="tl-text">Blue Origin 설립 — "미래 세대를 위한 우주 인프라 구축" 미션. 닷컴 버블에서 Amazon 주가 90% 하락.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
-        <div class="tl-year">1995</div>
-        <div class="tl-text">Windows 95 출시 — PC 대중화의 결정적 전환점. "The Road Ahead" 출간.</div>
+        <div class="tl-year">1997</div>
+        <div class="tl-text">Amazon IPO. 첫 주주서한 — "It's all about the long term." 이후 매년 이 서한을 첨부.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
-        <div class="tl-year">1985</div>
-        <div class="tl-text">Windows 1.0 출시. GUI 기반 운영체제 시대 개막.</div>
+        <div class="tl-year">1994</div>
+        <div class="tl-text">Amazon.com 설립 — 시애틀 차고에서 온라인 서점으로 시작. "후회 최소화 프레임워크"로 월스트리트 퇴사 결심.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
-        <div class="tl-year">1981</div>
-        <div class="tl-text">IBM PC에 MS-DOS 공급. "소프트웨어가 왕이다" 전략의 시작.</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-year">1975</div>
-        <div class="tl-text">Paul Allen과 Microsoft 공동 창립. "모든 책상 위에, 모든 가정에 컴퓨터를" 비전.</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-year">1955</div>
-        <div class="tl-text">미국 시애틀 출생. 13세에 프로그래밍 시작. Lakeside School에서 Paul Allen을 만남.</div>
+        <div class="tl-year">1964</div>
+        <div class="tl-text">미국 뉴멕시코 앨버커키 출생. 텍사스 할아버지 목장에서 자립심과 문제해결력 습득.</div>
       </div>
     </div>
   </div>
@@ -386,38 +369,11 @@ a:hover{color:#bae6fd}
 </div>
 
 <div class="footer">
-  Gates Tracker · <a href="index.html">Titan Tracker</a> · Point & Line 🌈<br>
-  <span style="font-size:10px;margin-top:4px;display:inline-block">데이터 출처: RSS feed from gatesnotes.com & YouTube</span>
+  Bezos Tracker · <a href="index.html">Titan Tracker</a> · Point & Line 🌈<br>
+  <span style="font-size:10px;margin-top:4px;display:inline-block">데이터 출처: Google News RSS, About Amazon, Blue Origin</span>
 </div>
 
 <script>
-// 테마 토글
-(function(){
-  const saved = localStorage.getItem('titan-theme');
-  if(saved) document.documentElement.setAttribute('data-theme', saved);
-  else if(window.matchMedia('(prefers-color-scheme: light)').matches) document.documentElement.setAttribute('data-theme','light');
-  window.addEventListener('DOMContentLoaded',()=>{
-    const btn=document.querySelector('.theme-toggle');
-    if(btn) btn.textContent=document.documentElement.getAttribute('data-theme')==='light'?'🌙':'☀️';
-  });
-})();
-function toggleTheme(){
-  const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-  document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('titan-theme', next);
-  document.querySelector('.theme-toggle').textContent = next === 'light' ? '🌙' : '☀️';
-}
-function escapeHtml(str) {
-  if (!str) return '';
-  const div = document.createElement('div');
-  div.appendChild(document.createTextNode(str));
-  return div.innerHTML;
-}
-function sanitizeUrl(url) {
-  try { const p = new URL(url); if (p.protocol === 'http:' || p.protocol === 'https:') return p.href; } catch(e) {}
-  return '#';
-}
 const TRANSLATE_URL = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ko&dt=t&q=';
 async function translateText(text) {
   if (!text) return '';
@@ -430,27 +386,38 @@ async function translateText(text) {
 
 const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
 const FEEDS = {
-  gatesnotes: {
-    url: 'https://news.google.com/rss/search?q=site%3Agatesnotes.com&hl=en',
-    container: 'gatesnotes-feed',
-    sourceClass: 'src-gatesnotes',
-    sourceLabel: 'GatesNotes'
+  amazon: {
+    url: 'https://news.google.com/rss/search?q=Amazon+Jeff+Bezos+AWS&hl=en&gl=US',
+    container: 'amazon-feed',
+    sourceClass: 'src-amazon',
+    sourceLabel: 'Amazon / AWS',
+    fallbackUrls: [
+      'https://news.google.com/rss/search?q=site%3Aaboutamazon.com&hl=en'
+    ]
+  },
+  blueorigin: {
+    url: 'https://news.google.com/rss/search?q=Blue+Origin+New+Glenn&hl=en&gl=US',
+    container: 'blueorigin-feed',
+    sourceClass: 'src-blueorigin',
+    sourceLabel: 'Blue Origin',
+    fallbackUrls: [
+      'https://news.google.com/rss/search?q=Blue+Origin&hl=en'
+    ]
+  },
+  earthfund: {
+    url: 'https://news.google.com/rss/search?q=Bezos+Earth+Fund+climate&hl=en&gl=US',
+    container: 'earthfund-feed',
+    sourceClass: 'src-earthfund',
+    sourceLabel: 'Earth Fund',
+    fallbackUrls: [
+      'https://news.google.com/rss/search?q=%22Bezos+Earth+Fund%22&hl=en'
+    ]
   },
   news: {
-    url: 'https://news.google.com/rss/search?q=Bill+Gates&hl=ko&gl=KR',
+    url: 'https://news.google.com/rss/search?q=Jeff+Bezos&hl=ko&gl=KR',
     container: 'news-feed',
     sourceClass: 'src-news',
     sourceLabel: 'News'
-  },
-  twitter: {
-    url: 'https://rsshub.app/twitter/user/BillGates',
-    container: 'twitter-feed',
-    sourceClass: 'src-twitter',
-    sourceLabel: 'X (Twitter)',
-    fallbackUrls: [
-      'https://nitter.privacydev.net/BillGates/rss',
-      'https://twiiit.com/BillGates/rss'
-    ]
   }
 };
 
@@ -466,9 +433,9 @@ function formatDate(dateStr) {
 }
 
 function stripHtml(html) {
-  if (!html) return '';
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  return doc.body.textContent || '';
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
 }
 
 async function renderFeed(items, containerId, sourceClass, sourceLabel) {
@@ -490,15 +457,15 @@ async function renderFeed(items, containerId, sourceClass, sourceLabel) {
     const { titleKo, descKo, title } = translations[i];
     return `
       <div class="feed-item">
-        <a href="${sanitizeUrl(item.link)}" target="_blank" rel="noopener">
-          <div class="feed-item-title">${escapeHtml(titleKo)}</div>
-          <div class="feed-item-title-orig">${escapeHtml(title)}</div>
+        <a href="${item.link}" target="_blank" rel="noopener">
+          <div class="feed-item-title">${titleKo}</div>
+          <div class="feed-item-title-orig">${title}</div>
           <div class="feed-item-meta">
             <span class="feed-source ${sourceClass}">${sourceLabel}</span>
             <span>${formatDate(item.pubDate)}</span>
-            ${item.author ? '<span>by ' + escapeHtml(item.author) + '</span>' : ''}
+            ${item.author ? '<span>by ' + item.author + '</span>' : ''}
           </div>
-          ${descKo ? '<div class="feed-item-desc">' + escapeHtml(descKo) + '</div>' : ''}
+          ${descKo ? '<div class="feed-item-desc">' + descKo + '</div>' : ''}
         </a>
       </div>`;
   }).join('');
@@ -522,16 +489,14 @@ async function loadFeed(feedKey) {
   }
   if (items) {
     await renderFeed(items, feed.container, feed.sourceClass, feed.sourceLabel);
-    localStorage.setItem('bg_' + feedKey, JSON.stringify({ items, ts: Date.now() }));
+    localStorage.setItem('jb_' + feedKey, JSON.stringify({ items, ts: Date.now() }));
   } else {
-    const cached = localStorage.getItem('bg_' + feedKey);
+    const cached = localStorage.getItem('jb_' + feedKey);
     if (cached) {
       const { items: cachedItems } = JSON.parse(cached);
       await renderFeed(cachedItems, feed.container, feed.sourceClass, feed.sourceLabel);
     } else {
-      const directLinks = { news:'https://news.google.com/search?q=Bill+Gates', twitter:'https://x.com/BillGates' };
-      const link = directLinks[feedKey] || feed.url;
-      container.innerHTML = `<div class="error-msg">피드 로딩 실패 — <a href="${link}" target="_blank">직접 방문하기 →</a></div>`;
+      container.innerHTML = `<div class="error-msg">피드 로딩 실패 — <a href="https://news.google.com/search?q=Jeff+Bezos" target="_blank">직접 방문하기 →</a></div>`;
     }
   }
 }

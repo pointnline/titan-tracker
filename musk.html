@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wolfram Tracker — Stephen Wolfram 추적 대시보드</title>
-<meta name="description" content="Stephen Wolfram의 블로그, SNS, 영상을 한 곳에서 추적하는 대시보드">
-<meta property="og:title" content="Wolfram Tracker — Stephen Wolfram 추적 대시보드">
-<meta property="og:description" content="Stephen Wolfram의 모든 활동을 한 곳에서">
+<title>Musk Tracker — Elon Musk 추적 대시보드</title>
+<meta name="description" content="Elon Musk의 Tesla, SpaceX, xAI 활동을 한 곳에서 추적하는 대시보드">
+<meta property="og:title" content="Musk Tracker — Elon Musk 추적 대시보드">
+<meta property="og:description" content="Elon Musk의 모든 활동을 한 곳에서">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -15,17 +15,20 @@
   --bg:#0f1117;--surface:#1a1d27;--surface2:#232736;--surface3:#2a2e3d;
   --border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.12);
   --text:#e8e8ed;--text-sub:#8b8fa3;--text-muted:#5a5e72;
-  --accent:#6366f1;--accent-light:#818cf8;--accent-bg:rgba(99,102,241,0.1);
+  --accent:#a855f7;--accent-light:#c084fc;--accent-bg:rgba(168,85,247,0.1);
   --red:#ef4444;--orange:#f97316;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;
   --radius:16px;--radius-sm:12px;--radius-xs:8px;
 }
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
 a{color:var(--accent-light);text-decoration:none;transition:color .2s}
-a:hover{color:#c7d2fe}
+a:hover{color:#e9d5ff}
 
-/* 헤더 */
+.back-link{position:fixed;top:1rem;left:1rem;font-size:12px;color:var(--text-muted);z-index:10;
+  padding:6px 12px;border-radius:20px;background:var(--surface);border:1px solid var(--border);transition:all .2s}
+.back-link:hover{border-color:var(--accent);color:var(--accent-light)}
+
 .header{
-  background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(168,85,247,0.1));
+  background:linear-gradient(135deg,rgba(168,85,247,0.15),rgba(99,102,241,0.08));
   border-bottom:1px solid var(--border);padding:2rem 1.5rem;
 }
 .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
@@ -35,11 +38,11 @@ a:hover{color:#c7d2fe}
 .header-info .subtitle span{color:var(--accent-light);font-weight:500}
 .header-badges{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .badge{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:500;border:1px solid var(--border)}
-.badge-math{background:rgba(99,102,241,0.15);color:var(--accent-light);border-color:rgba(99,102,241,0.3)}
+.badge-ev{background:rgba(34,197,94,0.15);color:#86efac;border-color:rgba(34,197,94,0.3)}
+.badge-space{background:rgba(59,130,246,0.15);color:#93c5fd;border-color:rgba(59,130,246,0.3)}
 .badge-ai{background:rgba(168,85,247,0.15);color:#c084fc;border-color:rgba(168,85,247,0.3)}
-.badge-physics{background:rgba(59,130,246,0.15);color:#93c5fd;border-color:rgba(59,130,246,0.3)}
+.badge-neuro{background:rgba(236,72,153,0.15);color:#f9a8d4;border-color:rgba(236,72,153,0.3)}
 
-/* 탭 네비게이션 */
 .tabs-wrap{max-width:1100px;margin:0 auto;padding:0 1.5rem}
 .tabs{display:flex;gap:4px;padding:1rem 0 0;border-bottom:1px solid var(--border);overflow-x:auto}
 .tab{
@@ -48,14 +51,12 @@ a:hover{color:#c7d2fe}
   border-radius:var(--radius-xs) var(--radius-xs) 0 0;
 }
 .tab:hover{color:var(--text);background:rgba(255,255,255,0.03)}
-.tab.active{color:var(--accent-light);border-bottom-color:var(--accent);background:rgba(99,102,241,0.06)}
+.tab.active{color:var(--accent-light);border-bottom-color:var(--accent);background:rgba(168,85,247,0.06)}
 
-/* 메인 콘텐츠 */
 .main{max-width:1100px;margin:0 auto;padding:1.5rem}
 .tab-content{display:none}
 .tab-content.active{display:block}
 
-/* 채널 카드 그리드 */
 .channels-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:2rem}
 .channel-card{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
@@ -68,7 +69,6 @@ a:hover{color:#c7d2fe}
 .ch-desc{font-size:11px;color:var(--text-sub);line-height:1.5}
 .ch-tag{font-size:10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;margin-top:auto}
 
-/* 피드 리스트 */
 .feed-section{margin-bottom:2rem}
 .feed-title{font-size:15px;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
 .feed-title .dot{width:8px;height:8px;border-radius:50%}
@@ -85,12 +85,12 @@ a:hover{color:#c7d2fe}
 .feed-item-desc{font-size:12px;color:var(--text-sub);line-height:1.6;margin-top:8px;
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .feed-source{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500}
-.src-writings{background:rgba(99,102,241,0.15);color:var(--accent-light)}
-.src-blog{background:rgba(168,85,247,0.15);color:#c084fc}
-.src-youtube{background:rgba(239,68,68,0.15);color:#fca5a5}
+.src-tesla{background:rgba(239,68,68,0.15);color:#fca5a5}
+.src-spacex{background:rgba(59,130,246,0.15);color:#93c5fd}
+.src-xai{background:rgba(168,85,247,0.15);color:#c084fc}
+.src-news{background:rgba(245,158,11,0.15);color:#fcd34d}
 .src-twitter{background:rgba(29,155,240,0.15);color:#7dd3fc}
 
-/* 로딩 */
 .loading{text-align:center;padding:3rem;color:var(--text-muted)}
 .loading .spinner{
   width:32px;height:32px;border:3px solid var(--surface3);border-top-color:var(--accent);
@@ -99,7 +99,6 @@ a:hover{color:#c7d2fe}
 @keyframes spin{to{transform:rotate(360deg)}}
 .error-msg{text-align:center;padding:2rem;color:var(--red);font-size:13px;background:rgba(239,68,68,0.08);border-radius:var(--radius-sm)}
 
-/* 프로필 섹션 */
 .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .profile-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem}
 .profile-card h3{font-size:13px;font-weight:600;margin-bottom:10px;color:var(--accent-light)}
@@ -107,7 +106,6 @@ a:hover{color:#c7d2fe}
 .profile-card ul{list-style:none;padding:0}
 .profile-card ul li::before{content:'→ ';color:var(--accent)}
 
-/* 타임라인 */
 .timeline{position:relative;padding-left:24px}
 .timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--surface3)}
 .tl-item{position:relative;margin-bottom:1.5rem}
@@ -115,32 +113,16 @@ a:hover{color:#c7d2fe}
 .tl-year{font-size:13px;font-weight:700;color:var(--accent-light);margin-bottom:4px}
 .tl-text{font-size:12px;color:var(--text-sub);line-height:1.6}
 
-/* 리프레시 */
 .refresh-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
 .refresh-btn{
   font-size:12px;padding:6px 14px;border-radius:var(--radius-xs);border:1px solid var(--border);
-  background:var(--surface);color:var(--text-sub);cursor:pointer;transition:all .2s;
-  font-family:'Inter',sans-serif;
+  background:var(--surface);color:var(--text-sub);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;
 }
 .refresh-btn:hover{border-color:var(--accent);color:var(--accent-light)}
 .last-updated{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
 
-/* 푸터 */
 .footer{text-align:center;padding:2rem;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:2rem}
 
-[data-theme="light"]{
-  --bg:#f5f5f7;--surface:#ffffff;--surface2:#f0f0f3;--surface3:#e8e8ec;
-  --border:rgba(0,0,0,0.08);--border-hover:rgba(0,0,0,0.15);
-  --text:#1a1a2e;--text-sub:#4a4a6a;--text-muted:#8888a0;
-}
-.theme-toggle{position:fixed;top:1rem;right:1rem;z-index:50;width:36px;height:36px;border-radius:50%;
-  border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .3s;
-  box-shadow:0 2px 8px rgba(0,0,0,0.1)}
-.theme-toggle:hover{border-color:var(--accent);transform:scale(1.1)}
-[data-theme="light"] .header{background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(168,85,247,0.05))}
-
-/* 반응형 */
 @media(max-width:768px){
   .header-inner{flex-direction:column;text-align:center}
   .header-badges{justify-content:center}
@@ -157,22 +139,24 @@ a:hover{color:#c7d2fe}
 </style>
 </head>
 <body>
-<button class="theme-toggle" onclick="toggleTheme()" title="라이트/다크 모드 전환">🌙</button>
+
+<a href="index.html" class="back-link">← Titan Tracker</a>
 
 <!-- 헤더 -->
 <div class="header">
   <div class="header-inner">
-    <img class="avatar" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Stephen_Wolfram_PR.jpg/440px-Stephen_Wolfram_PR.jpg" alt="Stephen Wolfram" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 80 80%22><rect fill=%22%236366f1%22 width=%2280%22 height=%2280%22/><text x=%2240%22 y=%2248%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2232%22 font-family=%22sans-serif%22>SW</text></svg>'">
+    <div class="avatar" style="background:linear-gradient(135deg,#a855f7,#6366f1);display:flex;align-items:center;justify-content:center;font-size:32px;color:white;font-weight:700">EM</div>
     <div class="header-info">
-      <h1>Stephen Wolfram Tracker</h1>
+      <h1>Elon Musk Tracker</h1>
       <div class="subtitle">
-        <span>Wolfram Research</span> 창립자 · Mathematica · Wolfram Alpha · 계산적 사고의 대가<br>
-        AI, 물리학, 수학, 컴퓨터 과학의 교차점을 탐구하는 과학자
+        <span>Tesla</span> CEO · <span>SpaceX</span> CEO · <span>xAI</span> 창립자 · <span>Neuralink</span> · <span>The Boring Company</span><br>
+        전기차, 우주 탐사, AI, 뇌-컴퓨터 인터페이스를 동시에 추진하는 다중 산업 혁신가
       </div>
       <div class="header-badges">
-        <span class="badge badge-math">Mathematica</span>
-        <span class="badge badge-ai">AI & Computation</span>
-        <span class="badge badge-physics">Physics</span>
+        <span class="badge badge-ev">EV / Tesla</span>
+        <span class="badge badge-space">SpaceX / Mars</span>
+        <span class="badge badge-ai">xAI / Grok</span>
+        <span class="badge badge-neuro">Neuralink</span>
       </div>
     </div>
   </div>
@@ -199,23 +183,30 @@ a:hover{color:#c7d2fe}
     </div>
 
     <div class="feed-section">
-      <div class="feed-title"><div class="dot" style="background:var(--accent)"></div>Stephen Wolfram Writings</div>
-      <div class="feed-list" id="writings-feed">
-        <div class="loading"><div class="spinner"></div>블로그 포스트 로딩 중...</div>
+      <div class="feed-title"><div class="dot" style="background:var(--red)"></div>Tesla 뉴스</div>
+      <div class="feed-list" id="tesla-feed">
+        <div class="loading"><div class="spinner"></div>Tesla 뉴스 로딩 중...</div>
       </div>
     </div>
 
     <div class="feed-section">
-      <div class="feed-title"><div class="dot" style="background:var(--purple)"></div>Wolfram Blog</div>
-      <div class="feed-list" id="wolfram-feed">
-        <div class="loading"><div class="spinner"></div>Wolfram Blog 로딩 중...</div>
+      <div class="feed-title"><div class="dot" style="background:var(--blue)"></div>SpaceX 뉴스</div>
+      <div class="feed-list" id="spacex-feed">
+        <div class="loading"><div class="spinner"></div>SpaceX 뉴스 로딩 중...</div>
       </div>
     </div>
 
     <div class="feed-section">
-      <div class="feed-title"><div class="dot" style="background:var(--red)"></div>YouTube 최신 영상</div>
-      <div class="feed-list" id="youtube-feed">
-        <div class="loading"><div class="spinner"></div>YouTube 영상 로딩 중...</div>
+      <div class="feed-title"><div class="dot" style="background:var(--purple)"></div>xAI / Grok 뉴스</div>
+      <div class="feed-list" id="xai-feed">
+        <div class="loading"><div class="spinner"></div>xAI 뉴스 로딩 중...</div>
+      </div>
+    </div>
+
+    <div class="feed-section">
+      <div class="feed-title"><div class="dot" style="background:var(--orange)"></div>Elon Musk 관련 뉴스</div>
+      <div class="feed-list" id="news-feed">
+        <div class="loading"><div class="spinner"></div>뉴스 로딩 중...</div>
       </div>
     </div>
 
@@ -230,53 +221,53 @@ a:hover{color:#c7d2fe}
   <!-- 채널 탭 -->
   <div class="tab-content" id="tab-channels">
     <div class="channels-grid">
-      <a class="channel-card" href="https://x.com/stephen_wolfram" target="_blank" rel="noopener">
+      <a class="channel-card" href="https://x.com/elonmusk" target="_blank" rel="noopener">
         <div class="ch-icon">𝕏</div>
         <div class="ch-name">X (Twitter)</div>
-        <div class="ch-desc">AI, 과학, 기술 관련 실시간 소식과 의견</div>
-        <div class="ch-tag">@stephen_wolfram</div>
+        <div class="ch-desc">200M+ 팔로워 · 실시간 의견, 제품 발표, 밈</div>
+        <div class="ch-tag">@elonmusk</div>
       </a>
-      <a class="channel-card" href="https://writings.stephenwolfram.com/" target="_blank" rel="noopener">
-        <div class="ch-icon">✍️</div>
-        <div class="ch-name">Writings</div>
-        <div class="ch-desc">AI, 과학, 수학에 대한 심층 에세이와 분석 글</div>
-        <div class="ch-tag">writings.stephenwolfram.com</div>
+      <a class="channel-card" href="https://www.tesla.com/blog" target="_blank" rel="noopener">
+        <div class="ch-icon">🚗</div>
+        <div class="ch-name">Tesla Blog</div>
+        <div class="ch-desc">전기차, 에너지, 자율주행 업데이트</div>
+        <div class="ch-tag">tesla.com/blog</div>
       </a>
-      <a class="channel-card" href="https://blog.wolfram.com/" target="_blank" rel="noopener">
-        <div class="ch-icon">📝</div>
-        <div class="ch-name">Wolfram Blog</div>
-        <div class="ch-desc">Mathematica, Wolfram Language 업데이트 및 활용 사례</div>
-        <div class="ch-tag">blog.wolfram.com</div>
+      <a class="channel-card" href="https://www.spacex.com/" target="_blank" rel="noopener">
+        <div class="ch-icon">🚀</div>
+        <div class="ch-name">SpaceX</div>
+        <div class="ch-desc">Starship, Falcon, 위성 인터넷 Starlink</div>
+        <div class="ch-tag">spacex.com</div>
       </a>
-      <a class="channel-card" href="https://www.youtube.com/@WolframResearch" target="_blank" rel="noopener">
+      <a class="channel-card" href="https://x.ai/" target="_blank" rel="noopener">
+        <div class="ch-icon">🧠</div>
+        <div class="ch-name">xAI</div>
+        <div class="ch-desc">Grok AI 모델 개발 — 우주 이해를 위한 AI</div>
+        <div class="ch-tag">x.ai</div>
+      </a>
+      <a class="channel-card" href="https://neuralink.com/" target="_blank" rel="noopener">
+        <div class="ch-icon">🔌</div>
+        <div class="ch-name">Neuralink</div>
+        <div class="ch-desc">뇌-컴퓨터 인터페이스 · 마비 환자 치료</div>
+        <div class="ch-tag">neuralink.com</div>
+      </a>
+      <a class="channel-card" href="https://www.boringcompany.com/" target="_blank" rel="noopener">
+        <div class="ch-icon">🕳️</div>
+        <div class="ch-name">The Boring Company</div>
+        <div class="ch-desc">터널 굴착 · 도시 교통 혁신</div>
+        <div class="ch-tag">boringcompany.com</div>
+      </a>
+      <a class="channel-card" href="https://www.youtube.com/results?search_query=elon+musk" target="_blank" rel="noopener">
         <div class="ch-icon">▶️</div>
         <div class="ch-name">YouTube</div>
-        <div class="ch-desc">강연, Q&A, 라이브 세션 영상</div>
-        <div class="ch-tag">Wolfram Research</div>
+        <div class="ch-desc">인터뷰, 키노트, 팟캐스트 출연 영상</div>
+        <div class="ch-tag">Elon Musk</div>
       </a>
-      <a class="channel-card" href="https://www.twitch.tv/stephen_wolfram" target="_blank" rel="noopener">
-        <div class="ch-icon">📺</div>
-        <div class="ch-name">Twitch</div>
-        <div class="ch-desc">라이브 AMA, 실시간 질의응답 세션</div>
-        <div class="ch-tag">stephen_wolfram</div>
-      </a>
-      <a class="channel-card" href="https://www.stephenwolfram.com/" target="_blank" rel="noopener">
-        <div class="ch-icon">🌐</div>
-        <div class="ch-name">공식 사이트</div>
-        <div class="ch-desc">종합 허브 — 프로필, 저서, 프로젝트 총정리</div>
-        <div class="ch-tag">stephenwolfram.com</div>
-      </a>
-      <a class="channel-card" href="https://www.wolframalpha.com/" target="_blank" rel="noopener">
-        <div class="ch-icon">🧮</div>
-        <div class="ch-name">Wolfram Alpha</div>
-        <div class="ch-desc">계산 지식 엔진 — 수학, 과학, 데이터 쿼리</div>
-        <div class="ch-tag">wolframalpha.com</div>
-      </a>
-      <a class="channel-card" href="https://www.wolfram.com/mathematica/" target="_blank" rel="noopener">
-        <div class="ch-icon">∑</div>
-        <div class="ch-name">Mathematica</div>
-        <div class="ch-desc">수학/과학 계산 소프트웨어</div>
-        <div class="ch-tag">wolfram.com/mathematica</div>
+      <a class="channel-card" href="https://www.starlink.com/" target="_blank" rel="noopener">
+        <div class="ch-icon">📡</div>
+        <div class="ch-name">Starlink</div>
+        <div class="ch-desc">위성 인터넷 · 글로벌 커버리지</div>
+        <div class="ch-tag">starlink.com</div>
       </a>
     </div>
   </div>
@@ -287,42 +278,42 @@ a:hover{color:#c7d2fe}
       <div class="profile-card">
         <h3>📌 기본 정보</h3>
         <ul>
-          <li>영국 런던 출생 (1959년)</li>
-          <li>20세에 물리학 PhD 취득 (Caltech)</li>
-          <li>Wolfram Research 창립자 & CEO</li>
-          <li>Mathematica 개발 (1988~)</li>
-          <li>Wolfram Alpha 개발 (2009~)</li>
-          <li>Wolfram Language 설계자</li>
+          <li>남아프리카 프리토리아 출생 (1971년)</li>
+          <li>Penn 대학교 (경제학 + 물리학 복수전공)</li>
+          <li>Zip2 공동창립 → PayPal (X.com 합병)</li>
+          <li>2002 SpaceX 창립, 2004 Tesla 투자 → CEO</li>
+          <li>2023 xAI 설립 · 2024 X(Twitter) 인수 완료</li>
+          <li>순자산 약 $200B+ (세계 1~2위)</li>
         </ul>
       </div>
       <div class="profile-card">
         <h3>🧠 주요 관심 분야</h3>
         <ul>
-          <li><strong>계산적 비환원성</strong> — 복잡한 시스템은 단축키가 없다</li>
-          <li><strong>Wolfram Physics Project</strong> — 우주의 근본 이론 탐구</li>
-          <li><strong>AI & LLM</strong> — ChatGPT와 Wolfram Alpha 통합</li>
-          <li><strong>Computational Thinking</strong> — 계산적 사고 교육</li>
-          <li><strong>A New Kind of Science</strong> — 셀룰러 오토마타 기반 과학</li>
+          <li><strong>지속가능 에너지</strong> — Tesla EV, Solar, Powerwall</li>
+          <li><strong>다행성 종</strong> — SpaceX, Starship, 화성 이주</li>
+          <li><strong>AI</strong> — xAI Grok, 오픈소스 AI, AGI 경쟁</li>
+          <li><strong>뇌-컴퓨터 인터페이스</strong> — Neuralink BCI 임플란트</li>
+          <li><strong>인터넷 접근성</strong> — Starlink 글로벌 위성 인터넷</li>
         </ul>
       </div>
       <div class="profile-card">
-        <h3>📚 주요 저서</h3>
+        <h3>🏢 주요 기업</h3>
         <ul>
-          <li><strong>A New Kind of Science</strong> (2002) — 1,200페이지 대작</li>
-          <li><strong>An Elementary Introduction to the Wolfram Language</strong></li>
-          <li><strong>Idea Makers</strong> — 역사적 사상가들에 대한 에세이</li>
-          <li><strong>Adventures of a Computational Explorer</strong></li>
-          <li><strong>What Is ChatGPT Doing...and Why Does It Work?</strong> (2023)</li>
+          <li><strong>Tesla</strong> — 전기차, 자율주행 FSD, 에너지</li>
+          <li><strong>SpaceX</strong> — 로켓 재사용, Starship, 화성</li>
+          <li><strong>xAI</strong> — Grok LLM, AI 연구</li>
+          <li><strong>Neuralink</strong> — 뇌 임플란트, BCI</li>
+          <li><strong>The Boring Company</strong> — 터널, Loop 교통</li>
         </ul>
       </div>
       <div class="profile-card">
         <h3>🎓 MBA 학습 관련성</h3>
         <ul>
-          <li><strong>AI + 수학</strong> — LLM의 수학적 원리 이해</li>
-          <li><strong>계산적 사고</strong> — 비즈니스 문제를 계산으로 해결</li>
-          <li><strong>Wolfram Alpha</strong> — 데이터 분석, 통계 도구</li>
-          <li><strong>기업가 정신</strong> — 40년간 독립 연구소 운영</li>
-          <li><strong>AI 철학</strong> — AI의 본질과 한계에 대한 깊은 통찰</li>
+          <li><strong>수직 통합</strong> — Tesla 배터리~딜러십 전체 내재화</li>
+          <li><strong>First Principles</strong> — 근본 원리 기반 혁신 사고</li>
+          <li><strong>다중 산업 경영</strong> — 동시 5개+ 기업 운영</li>
+          <li><strong>미션 드리븐</strong> — 인류 생존을 위한 장기 비전</li>
+          <li><strong>리스크 테이킹</strong> — 개인 자산 올인 투자 전략</li>
         </ul>
       </div>
     </div>
@@ -333,53 +324,68 @@ a:hover{color:#c7d2fe}
     <div class="timeline">
       <div class="tl-item">
         <div class="tl-dot"></div>
-        <div class="tl-year">2023~현재</div>
-        <div class="tl-text">ChatGPT + Wolfram Alpha 플러그인 통합. "What Is ChatGPT Doing?" 출간. LLM과 계산 엔진의 융합을 주도.</div>
+        <div class="tl-year">2024~현재</div>
+        <div class="tl-text">xAI Grok-2 출시 및 오픈소스 공개. Starship 궤도 비행 성공. Neuralink 첫 인간 임플란트. Tesla Optimus 로봇 시연. DOGE(정부효율부) 참여.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2023</div>
+        <div class="tl-text">xAI 설립 — Grok AI 모델 공개. Twitter를 'X'로 리브랜딩. Tesla Cybertruck 양산 시작.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2022</div>
+        <div class="tl-text">Twitter $44B 인수 완료. Tesla AI Day — Optimus 로봇 프로토타입 공개. Starlink 40개국 서비스.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2021</div>
+        <div class="tl-text">세계 최고 부자 등극. Tesla 시총 $1T 돌파. SpaceX Inspiration4 — 최초 전원 민간인 궤도 비행.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
         <div class="tl-year">2020</div>
-        <div class="tl-text">Wolfram Physics Project 공개 — 하이퍼그래프 기반 우주 근본 이론 탐구 시작.</div>
+        <div class="tl-text">SpaceX Crew Dragon — 민간 최초 유인 우주선 ISS 도킹. Tesla S&P 500 편입. Neuralink 라이브 데모.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
-        <div class="tl-year">2014</div>
-        <div class="tl-text">Wolfram Language 공식 출시. 프로그래밍 언어를 넘어 "계산 지식 언어"로 포지셔닝.</div>
+        <div class="tl-year">2018</div>
+        <div class="tl-text">Falcon Heavy 첫 발사 성공 — 테슬라 로드스터 우주 발사. The Boring Company 터널 공개.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
-        <div class="tl-year">2009</div>
-        <div class="tl-text">Wolfram Alpha 출시 — 자연어로 질문하면 계산해서 답하는 "계산 지식 엔진".</div>
+        <div class="tl-year">2016</div>
+        <div class="tl-text">Neuralink 설립. Tesla SolarCity 인수. SpaceX Falcon 9 해상 착륙 성공.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2012</div>
+        <div class="tl-text">Tesla Model S 출시 — 전기차 시장의 게임체인저. SpaceX Dragon ISS 최초 민간 도킹.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2008</div>
+        <div class="tl-text">SpaceX Falcon 1 궤도 진입 성공 (4번째 시도). Tesla Roadster 첫 양산. 두 회사 모두 파산 직전에서 생존.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2004</div>
+        <div class="tl-text">Tesla Motors 시리즈A 투자 → 이사회 의장. 전기차 혁명의 시작.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
         <div class="tl-year">2002</div>
-        <div class="tl-text">A New Kind of Science 출간 — 10년간 집필한 1,200페이지 대작. 셀룰러 오토마타로 자연 현상 설명.</div>
+        <div class="tl-text">SpaceX 설립 — "인류를 다행성 종으로" 미션. PayPal eBay에 $1.5B 매각.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
-        <div class="tl-year">1988</div>
-        <div class="tl-text">Mathematica 1.0 출시 — 수학/과학 계산의 혁명. 전 세계 연구자·엔지니어 필수 도구로 자리잡음.</div>
+        <div class="tl-year">1999</div>
+        <div class="tl-text">X.com (온라인 은행) 설립 → Confinity와 합병 → PayPal. 인터넷 금융의 선구자.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
-        <div class="tl-year">1987</div>
-        <div class="tl-text">Wolfram Research 설립. 일리노이주 샴페인에서 독립 연구 회사 창업.</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-year">1981</div>
-        <div class="tl-text">MacArthur Fellowship 수상 (천재상). 당시 역대 최연소 수상자 중 한 명 (21세).</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-year">1979</div>
-        <div class="tl-text">Caltech에서 이론물리학 PhD 취득. 20세에 박사학위.</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-year">1959</div>
-        <div class="tl-text">영국 런던 출생. 어린 시절부터 수학과 과학에 몰두.</div>
+        <div class="tl-year">1971</div>
+        <div class="tl-text">남아프리카 프리토리아 출생. 12세에 첫 게임 프로그램 판매. 17세에 캐나다로 이민.</div>
       </div>
     </div>
   </div>
@@ -387,39 +393,11 @@ a:hover{color:#c7d2fe}
 </div>
 
 <div class="footer">
-  Wolfram Tracker · Point & Line 🌈 · Built for AI MBA Study<br>
-  <span style="font-size:10px;margin-top:4px;display:inline-block">데이터 출처: RSS feeds from writings.stephenwolfram.com & blog.wolfram.com</span>
+  Musk Tracker · <a href="index.html">Titan Tracker</a> · Point & Line 🌈<br>
+  <span style="font-size:10px;margin-top:4px;display:inline-block">데이터 출처: Google News RSS, Tesla Blog, SpaceX News</span>
 </div>
 
 <script>
-// 테마 토글
-(function(){
-  const saved = localStorage.getItem('titan-theme');
-  if(saved) document.documentElement.setAttribute('data-theme', saved);
-  else if(window.matchMedia('(prefers-color-scheme: light)').matches) document.documentElement.setAttribute('data-theme','light');
-  window.addEventListener('DOMContentLoaded',()=>{
-    const btn=document.querySelector('.theme-toggle');
-    if(btn) btn.textContent=document.documentElement.getAttribute('data-theme')==='light'?'🌙':'☀️';
-  });
-})();
-function toggleTheme(){
-  const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-  document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('titan-theme', next);
-  document.querySelector('.theme-toggle').textContent = next === 'light' ? '🌙' : '☀️';
-}
-function escapeHtml(str) {
-  if (!str) return '';
-  const div = document.createElement('div');
-  div.appendChild(document.createTextNode(str));
-  return div.innerHTML;
-}
-function sanitizeUrl(url) {
-  try { const p = new URL(url); if (p.protocol === 'http:' || p.protocol === 'https:') return p.href; } catch(e) {}
-  return '#';
-}
-// 번역 API (Google Translate 비공식)
 const TRANSLATE_URL = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ko&dt=t&q=';
 async function translateText(text) {
   if (!text) return '';
@@ -430,40 +408,53 @@ async function translateText(text) {
   } catch (e) { return text; }
 }
 
-// RSS → JSON 프록시 (무료)
 const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
 const FEEDS = {
-  writings: {
-    url: 'https://writings.stephenwolfram.com/feed/',
-    container: 'writings-feed',
-    sourceClass: 'src-writings',
-    sourceLabel: 'Writings'
+  tesla: {
+    url: 'https://news.google.com/rss/search?q=Tesla+Elon+Musk&hl=en&gl=US',
+    container: 'tesla-feed',
+    sourceClass: 'src-tesla',
+    sourceLabel: 'Tesla',
+    fallbackUrls: [
+      'https://news.google.com/rss/search?q=Tesla+Inc&hl=en'
+    ]
   },
-  wolfram: {
-    url: 'https://blog.wolfram.com/feed/',
-    container: 'wolfram-feed',
-    sourceClass: 'src-blog',
-    sourceLabel: 'Wolfram Blog'
+  spacex: {
+    url: 'https://news.google.com/rss/search?q=SpaceX+Starship&hl=en&gl=US',
+    container: 'spacex-feed',
+    sourceClass: 'src-spacex',
+    sourceLabel: 'SpaceX',
+    fallbackUrls: [
+      'https://news.google.com/rss/search?q=SpaceX&hl=en'
+    ]
   },
-  youtube: {
-    url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCJekgf6k62CQHdENWf2NgAQ',
-    container: 'youtube-feed',
-    sourceClass: 'src-youtube',
-    sourceLabel: 'YouTube'
+  xai: {
+    url: 'https://news.google.com/rss/search?q=xAI+Grok+Elon+Musk&hl=en&gl=US',
+    container: 'xai-feed',
+    sourceClass: 'src-xai',
+    sourceLabel: 'xAI',
+    fallbackUrls: [
+      'https://news.google.com/rss/search?q=%22xAI%22+OR+%22Grok%22+AI&hl=en'
+    ]
+  },
+  news: {
+    url: 'https://news.google.com/rss/search?q=Elon+Musk&hl=ko&gl=KR',
+    container: 'news-feed',
+    sourceClass: 'src-news',
+    sourceLabel: 'News'
   },
   twitter: {
-    url: 'https://rsshub.app/twitter/user/stephen_wolfram',
+    url: 'https://rsshub.app/twitter/user/elonmusk',
     container: 'twitter-feed',
     sourceClass: 'src-twitter',
     sourceLabel: 'X (Twitter)',
     fallbackUrls: [
-      'https://nitter.privacydev.net/stephen_wolfram/rss',
-      'https://twiiit.com/stephen_wolfram/rss'
+      'https://nitter.privacydev.net/elonmusk/rss',
+      'https://twiiit.com/elonmusk/rss'
     ]
   }
 };
 
-// 날짜 포맷
 function formatDate(dateStr) {
   const d = new Date(dateStr);
   const now = new Date();
@@ -475,14 +466,12 @@ function formatDate(dateStr) {
   return d.getFullYear() + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + String(d.getDate()).padStart(2, '0');
 }
 
-// HTML 태그 제거
 function stripHtml(html) {
-  if (!html) return '';
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  return doc.body.textContent || '';
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
 }
 
-// 피드 렌더링 (한글 번역 포함)
 async function renderFeed(items, containerId, sourceClass, sourceLabel) {
   const container = document.getElementById(containerId);
   if (!items || items.length === 0) {
@@ -490,8 +479,6 @@ async function renderFeed(items, containerId, sourceClass, sourceLabel) {
     return;
   }
   const sliced = items.slice(0, 8);
-
-  // 제목 + 설명 동시 번역
   const translations = await Promise.all(sliced.map(async item => {
     const desc = stripHtml(item.description || item.content || '').substring(0, 200);
     const [titleKo, descKo] = await Promise.all([
@@ -500,26 +487,24 @@ async function renderFeed(items, containerId, sourceClass, sourceLabel) {
     ]);
     return { titleKo, descKo, title: item.title, desc };
   }));
-
   container.innerHTML = sliced.map((item, i) => {
-    const { titleKo, descKo, title, desc } = translations[i];
+    const { titleKo, descKo, title } = translations[i];
     return `
       <div class="feed-item">
-        <a href="${sanitizeUrl(item.link)}" target="_blank" rel="noopener">
-          <div class="feed-item-title">${escapeHtml(titleKo)}</div>
-          <div class="feed-item-title-orig">${escapeHtml(title)}</div>
+        <a href="${item.link}" target="_blank" rel="noopener">
+          <div class="feed-item-title">${titleKo}</div>
+          <div class="feed-item-title-orig">${title}</div>
           <div class="feed-item-meta">
             <span class="feed-source ${sourceClass}">${sourceLabel}</span>
             <span>${formatDate(item.pubDate)}</span>
-            ${item.author ? '<span>by ' + escapeHtml(item.author) + '</span>' : ''}
+            ${item.author ? '<span>by ' + item.author + '</span>' : ''}
           </div>
-          ${descKo ? '<div class="feed-item-desc">' + escapeHtml(descKo) + '</div>' : ''}
+          ${descKo ? '<div class="feed-item-desc">' + descKo + '</div>' : ''}
         </a>
       </div>`;
   }).join('');
 }
 
-// 단일 URL 시도
 async function tryFetchFeed(url) {
   const res = await fetch(RSS_PROXY + encodeURIComponent(url));
   const data = await res.json();
@@ -527,58 +512,42 @@ async function tryFetchFeed(url) {
   throw new Error('Feed empty or error');
 }
 
-// 피드 로드 (fallback URL 지원)
 async function loadFeed(feedKey) {
   const feed = FEEDS[feedKey];
   const container = document.getElementById(feed.container);
   container.innerHTML = '<div class="loading"><div class="spinner"></div>로딩 중...</div>';
-
-  // 시도할 URL 목록
   const urls = [feed.url, ...(feed.fallbackUrls || [])];
   let items = null;
-
   for (const url of urls) {
-    try {
-      items = await tryFetchFeed(url);
-      break;
-    } catch (e) { continue; }
+    try { items = await tryFetchFeed(url); break; } catch (e) { continue; }
   }
-
   if (items) {
     await renderFeed(items, feed.container, feed.sourceClass, feed.sourceLabel);
-    localStorage.setItem('wt_' + feedKey, JSON.stringify({ items, ts: Date.now() }));
+    localStorage.setItem('em_' + feedKey, JSON.stringify({ items, ts: Date.now() }));
   } else {
-    // 캐시에서 복구 시도
-    const cached = localStorage.getItem('wt_' + feedKey);
+    const cached = localStorage.getItem('em_' + feedKey);
     if (cached) {
       const { items: cachedItems } = JSON.parse(cached);
       await renderFeed(cachedItems, feed.container, feed.sourceClass, feed.sourceLabel);
     } else {
-      // 채널별 직접 방문 링크
-      const directLinks = {
-        youtube: 'https://www.youtube.com/@WolframResearch',
-        twitter: 'https://x.com/stephen_wolfram'
-      };
+      const directLinks = { twitter:'https://x.com/elonmusk', news:'https://news.google.com/search?q=Elon+Musk' };
       const link = directLinks[feedKey] || feed.url;
       container.innerHTML = `<div class="error-msg">피드 로딩 실패 — <a href="${link}" target="_blank">직접 방문하기 →</a></div>`;
     }
   }
 }
 
-// 모든 피드 로드
 async function loadAllFeeds() {
   await Promise.all(Object.keys(FEEDS).map(k => loadFeed(k)));
   const now = new Date().toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
   document.getElementById('last-updated').textContent = '마지막 업데이트: ' + now;
 }
 
-// 탭 전환
 function switchTab(tabId) {
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tabId));
   document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === 'tab-' + tabId));
 }
 
-// 초기 로드
 loadAllFeeds();
 </script>
 </body>

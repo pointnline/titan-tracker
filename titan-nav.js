@@ -77,10 +77,10 @@
     }
   }, 3000);
 
-  // === API Key 헬퍼 ===
+  // === API Key ===
+  const _GEMINI_KEY = 'AIzaSyCBMfHMEinauf_LuL9Q-O_HB8FelLCc4kY';
   window.getGeminiKey = function() {
-    if (typeof TITAN_CONFIG !== 'undefined' && TITAN_CONFIG.GEMINI_API_KEY) return TITAN_CONFIG.GEMINI_API_KEY;
-    return localStorage.getItem('titan-gemini-key') || '';
+    return _GEMINI_KEY;
   };
 
   // === Gemini API 호출 ===

@@ -4,13 +4,14 @@
 (function() {
   'use strict';
 
-  // === config.js 자동 로드 ===
-  if (typeof TITAN_CONFIG === 'undefined') {
-    const sc = document.createElement('script');
-    sc.src = 'config.js';
-    sc.async = false;
-    document.head.appendChild(sc);
-  }
+  // === config.js 자동 로드 (동기) ===
+  // config.js가 없으면 (배포 환경) localStorage fallback
+  try {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', 'config.js', false); // 동기 로드
+    xhr.send();
+    if (xhr.status === 200) { eval(xhr.responseText); }
+  } catch(e) { /* config.js 없음 — fallback */ }
 
   // === 네비게이션 바 ===
   const currentPage = location.pathname.split('/').pop() || 'index.html';
@@ -197,7 +198,12 @@
       <button class="hp-close" onclick="window._hermesToggle()">✕</button>
     </div>
     <div class="hp-msgs" id="hm-msgs">
-      <div class="hp-msg ai">안녕하세요! <strong>Hermes</strong> ⚡입니다.<br><br>13명 타이탄의 <strong>철학, 전략, 기술</strong>에 대해 무엇이든 물어보세요!<br><br>💡 예시:<br>• "머스크와 나델라의 리더십 차이"<br>• "AI 투자 전략 분석"<br>• "젠슨 황의 GPU 전략"</div>
+      <div class="hp-msg ai">안녕하세요! <strong>Hermes</strong> ⚡입니다.<br><br>13명 타이탄의 <strong>철학, 전략, 기술</strong>에 대해 무엇이든 물어보세요!</div>
+    </div>
+    <div id="hm-key-area" style="display:none;padding:8px 18px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;gap:6px;align-items:center">
+      <span id="hm-key-dot" style="width:6px;height:6px;border-radius:50%;background:#ef4444;flex-shrink:0"></span>
+      <input type="password" id="hm-api-key" placeholder="Gemini API Key" oninput="window._hermesSaveKey(this.value)"
+        style="flex:1;padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);color:#e8e8ed;font-size:10px;font-family:'JetBrains Mono',monospace;outline:none">
     </div>
     <div class="hp-input">
       <input type="text" id="hm-input" placeholder="거인에게 질문하세요..." onkeydown="if(event.key==='Enter')window._hermesSend()">
@@ -230,6 +236,25 @@
     c.appendChild(d); c.scrollTop = c.scrollHeight; return d;
   }
 
+  // API 키 UI 표시 여부
+  setTimeout(function() {
+    const key = window.getGeminiKey();
+    const area = document.getElementById('hm-key-area');
+    if (!key && area) { area.style.display = 'flex'; }
+    else if (area) { area.style.display = 'none'; }
+    const dot = document.getElementById('hm-key-dot');
+    if (dot) dot.style.background = key ? '#22c55e' : '#ef4444';
+    const saved = localStorage.getItem('titan-gemini-key');
+    const inp = document.getElementById('hm-api-key');
+    if (saved && inp) inp.value = saved;
+  }, 500);
+
+  window._hermesSaveKey = function(v) {
+    localStorage.setItem('titan-gemini-key', v.trim());
+    const dot = document.getElementById('hm-key-dot');
+    if (dot) dot.style.background = v.trim().length > 10 ? '#22c55e' : '#ef4444';
+  };
+
   window._hermesToggle = function() {
     hermesOpen = !hermesOpen;
     document.getElementById('hermes-panel').classList.toggle('open', hermesOpen);
@@ -242,7 +267,11 @@
     const text = input.value.trim();
     if (!text) return;
     const key = window.getGeminiKey();
-    if (!key) { addHmMsg('sys', '⚠️ config.js에 GEMINI_API_KEY를 설정해주세요'); return; }
+    if (!key) {
+      addHmMsg('sys', '⚠️ API 키를 입력해주세요 — <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#818cf8">Google AI Studio</a>에서 무료 발급');
+      document.getElementById('hm-key-area').style.display = 'flex';
+      return;
+    }
     addHmMsg('user', text); input.value = '';
     hmHistory.push({ role: 'user', parts: [{ text }] });
     const loading = addHmMsg('ai', '<span style="animation:spin 1s linear infinite;display:inline-block">⏳</span> 생각 중...');

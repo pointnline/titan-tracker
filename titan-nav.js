@@ -1,8 +1,16 @@
-// Titan Tracker — 공통 네비게이션 + 유틸리티 (v1.06)
-// 모든 페이지에서 <script src="titan-nav.js"></script> 로 로드
+// Titan Tracker — 공통 네비 + Hermes 챗봇 + AI 유틸 (v1.07)
+// 모든 페이지에서 <script src="titan-nav.js"></script> 하나로 전부 로드
 
 (function() {
   'use strict';
+
+  // === config.js 자동 로드 ===
+  if (typeof TITAN_CONFIG === 'undefined') {
+    const sc = document.createElement('script');
+    sc.src = 'config.js';
+    sc.async = false;
+    document.head.appendChild(sc);
+  }
 
   // === 네비게이션 바 ===
   const currentPage = location.pathname.split('/').pop() || 'index.html';
@@ -36,15 +44,14 @@
     nav.appendChild(a);
   });
 
-  // body 맨 앞에 삽입
   document.body.insertBefore(nav, document.body.firstChild);
-
-  // body padding-top 보장
   const cs = getComputedStyle(document.body);
-  const pt = parseInt(cs.paddingTop) || 0;
-  if (pt < 40) document.body.style.paddingTop = '44px';
+  if ((parseInt(cs.paddingTop) || 0) < 40) document.body.style.paddingTop = '44px';
 
-  // === 테마 토글 (모든 페이지 통일) ===
+  // === 테마 토글 ===
+  const savedTheme = localStorage.getItem('titan-theme');
+  if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+
   if (!document.querySelector('.theme-toggle')) {
     const btn = document.createElement('button');
     btn.className = 'theme-toggle';
@@ -52,8 +59,7 @@
     btn.style.cssText = 'position:fixed;top:48px;right:1rem;z-index:50;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,0.06);background:rgba(26,29,39,0.8);color:#e8e8ed;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .3s;box-shadow:0 2px 8px rgba(0,0,0,0.1);backdrop-filter:blur(8px)';
     btn.textContent = document.documentElement.getAttribute('data-theme') === 'light' ? '🌙' : '☀️';
     btn.onclick = function() {
-      const current = document.documentElement.getAttribute('data-theme');
-      const next = current === 'light' ? 'dark' : 'light';
+      const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', next);
       localStorage.setItem('titan-theme', next);
       btn.textContent = next === 'light' ? '🌙' : '☀️';
@@ -61,69 +67,48 @@
     document.body.appendChild(btn);
   }
 
-  // 테마 초기 로드
-  const savedTheme = localStorage.getItem('titan-theme');
-  if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
-
   // === 피드 자동 새로고침 (5분) ===
-  if (typeof window.loadAllFeeds === 'function') {
-    setInterval(() => {
-      window.loadAllFeeds();
-    }, 5 * 60 * 1000);
-  } else {
-    // loadAllFeeds가 나중에 정의될 수 있으므로 재시도
-    setTimeout(() => {
-      if (typeof window.loadAllFeeds === 'function') {
-        setInterval(() => window.loadAllFeeds(), 5 * 60 * 1000);
-      }
-    }, 3000);
-  }
+  setTimeout(() => {
+    if (typeof window.loadAllFeeds === 'function') {
+      setInterval(() => window.loadAllFeeds(), 5 * 60 * 1000);
+    }
+  }, 3000);
+
+  // === API Key 헬퍼 ===
+  window.getGeminiKey = function() {
+    if (typeof TITAN_CONFIG !== 'undefined' && TITAN_CONFIG.GEMINI_API_KEY) return TITAN_CONFIG.GEMINI_API_KEY;
+    return localStorage.getItem('titan-gemini-key') || '';
+  };
+
+  // === Gemini API 호출 ===
+  window.callGemini = async function(systemPrompt, userMessage, opts) {
+    const key = window.getGeminiKey();
+    if (!key) throw new Error('API 키 없음');
+    const o = opts || {};
+    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + key, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: systemPrompt }] },
+        contents: [{ role: 'user', parts: [{ text: userMessage }] }],
+        generationConfig: { temperature: o.temperature || 0.7, maxOutputTokens: o.maxTokens || 1024, topP: 0.9 }
+      })
+    });
+    if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.error?.message || 'API 오류 ' + res.status); }
+    const data = await res.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  };
 
   // === 공통 유틸리티 ===
   window.titanUtils = {
-    escapeHtml: function(str) {
-      if (!str) return '';
-      const d = document.createElement('div');
-      d.appendChild(document.createTextNode(str));
-      return d.innerHTML;
-    },
-    sanitizeUrl: function(url) {
-      try { const u = new URL(url); return ['http:', 'https:'].includes(u.protocol) ? url : '#'; }
-      catch { return '#'; }
-    },
-    formatDate: function(dateStr) {
-      const d = new Date(dateStr), now = new Date();
-      const diff = Math.floor((now - d) / (1000 * 60 * 60 * 24));
-      if (diff === 0) return '오늘';
-      if (diff === 1) return '어제';
-      if (diff < 7) return diff + '일 전';
-      if (diff < 30) return Math.floor(diff / 7) + '주 전';
-      return d.getFullYear() + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + String(d.getDate()).padStart(2, '0');
-    },
-    stripHtml: function(html) {
-      const tmp = document.createElement('div');
-      tmp.innerHTML = html;
-      return tmp.textContent || tmp.innerText || '';
-    },
-    translateText: async function(text) {
-      if (!text) return '';
-      try {
-        const res = await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ko&dt=t&q=' + encodeURIComponent(text.substring(0, 500)));
-        const data = await res.json();
-        return data[0].map(s => s[0]).join('');
-      } catch (e) { return text; }
-    },
+    escapeHtml: function(str) { if (!str) return ''; const d = document.createElement('div'); d.appendChild(document.createTextNode(str)); return d.innerHTML; },
+    sanitizeUrl: function(url) { try { const u = new URL(url); return ['http:', 'https:'].includes(u.protocol) ? url : '#'; } catch { return '#'; } },
+    formatDate: function(dateStr) { const d = new Date(dateStr), now = new Date(), diff = Math.floor((now - d) / 864e5); if (!diff) return '오늘'; if (diff === 1) return '어제'; if (diff < 7) return diff + '일 전'; if (diff < 30) return Math.floor(diff / 7) + '주 전'; return d.getFullYear() + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + String(d.getDate()).padStart(2, '0'); },
+    stripHtml: function(html) { const t = document.createElement('div'); t.innerHTML = html; return t.textContent || ''; },
+    translateText: async function(text) { if (!text) return ''; try { const r = await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ko&dt=t&q=' + encodeURIComponent(text.substring(0, 500))); const d = await r.json(); return d[0].map(s => s[0]).join(''); } catch { return text; } },
     RSS_PROXY: 'https://api.rss2json.com/v1/api.json?rss_url=',
-
-    // 키워드 하이라이트
-    highlightKeywords: function(text, keywords) {
-      if (!text || !keywords || keywords.length === 0) return text;
-      const escaped = keywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-      const regex = new RegExp('(' + escaped.join('|') + ')', 'gi');
-      return text.replace(regex, '<mark style="background:rgba(99,102,241,0.25);color:#c7d2fe;padding:1px 3px;border-radius:3px">$1</mark>');
-    },
-
-    // 전체 타이탄 목록
+    highlightKeywords: function(text, keywords) { if (!text || !keywords?.length) return text; const e = keywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')); return text.replace(new RegExp('(' + e.join('|') + ')', 'gi'), '<mark style="background:rgba(99,102,241,0.25);color:#c7d2fe;padding:1px 3px;border-radius:3px">$1</mark>'); },
+    formatAiText: function(text) { return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>').replace(/^- /gm, '• '); },
     ACTIVE_TITANS: {
       wolfram: { name: 'Stephen Wolfram', color: '#6366f1', page: 'wolfram.html' },
       gates: { name: 'Bill Gates', color: '#0ea5e9', page: 'gates.html' },
@@ -140,4 +125,147 @@
       pichai: { name: 'Sundar Pichai', color: '#4285f4', page: 'pichai.html' },
     }
   };
+
+  // ==========================================================
+  // ✨ Hermes 플로팅 챗봇 (모든 페이지에 자동 삽입)
+  // ==========================================================
+
+  // CSS 삽입
+  const style = document.createElement('style');
+  style.textContent = `
+.hermes-btn{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;width:56px;height:56px;border-radius:50%;border:none;
+  background:linear-gradient(135deg,#6366f1,#a855f7);color:white;cursor:pointer;font-size:24px;
+  box-shadow:0 4px 24px rgba(99,102,241,0.4),0 0 40px rgba(168,85,247,0.15);
+  transition:all .35s cubic-bezier(0.4,0,0.2,1);display:flex;align-items:center;justify-content:center;overflow:visible}
+.hermes-btn:hover{transform:scale(1.1) translateY(-2px);box-shadow:0 8px 32px rgba(99,102,241,0.5),0 0 60px rgba(168,85,247,0.25)}
+.hermes-btn.open{border-radius:14px;width:48px;height:48px;bottom:calc(480px + 1.5rem);font-size:18px}
+.hermes-btn .wing-l,.hermes-btn .wing-r{position:absolute;font-size:16px;top:-4px;opacity:0.9}
+.hermes-btn .wing-l{left:-10px;animation:wingFlapL 2s ease-in-out infinite}
+.hermes-btn .wing-r{right:-10px;animation:wingFlapR 2s ease-in-out infinite}
+.hermes-btn.open .wing-l,.hermes-btn.open .wing-r{display:none}
+@keyframes wingFlapR{0%,100%{transform:rotate(-8deg) translateY(0)}50%{transform:rotate(8deg) translateY(-3px)}}
+@keyframes wingFlapL{0%,100%{transform:scaleX(-1) rotate(-8deg) translateY(0)}50%{transform:scaleX(-1) rotate(8deg) translateY(-3px)}}
+.hermes-glow{position:absolute;inset:-6px;border-radius:50%;background:conic-gradient(from 0deg,#6366f1,#a855f7,#ec4899,#f59e0b,#22c55e,#6366f1);
+  opacity:0;animation:hermesPulse 3s ease-in-out infinite;filter:blur(8px);z-index:-1}
+.hermes-btn:hover .hermes-glow{opacity:0.5}
+@keyframes hermesPulse{0%,100%{opacity:0;transform:scale(0.95)}50%{opacity:0.4;transform:scale(1.05)}}
+.hermes-panel{position:fixed;bottom:1.5rem;right:1.5rem;z-index:190;width:380px;height:480px;
+  background:#1a1d27;border:1px solid rgba(255,255,255,0.08);border-radius:20px;
+  display:none;flex-direction:column;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(99,102,241,0.1);animation:panelIn .3s ease both}
+.hermes-panel.open{display:flex}
+@keyframes panelIn{from{opacity:0;transform:translateY(20px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+.hp-header{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.06);
+  background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(168,85,247,0.04));display:flex;align-items:center;gap:10px}
+.hp-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#a855f7);
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.hp-info{flex:1}.hp-name{font-size:13px;font-weight:700;color:#e8e8ed}
+.hp-status{font-size:10px;color:#5a5e72;display:flex;align-items:center;gap:4px}
+.hp-status .dot{width:5px;height:5px;border-radius:50%;background:#22c55e;animation:statusPulse 2s ease infinite}
+@keyframes statusPulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.hp-close{width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,0.06);background:transparent;
+  color:#5a5e72;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.hp-close:hover{border-color:rgba(255,255,255,0.12);color:#e8e8ed}
+.hp-msgs{flex:1;overflow-y:auto;padding:14px 18px;display:flex;flex-direction:column;gap:10px;
+  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.06) transparent}
+.hp-msgs::-webkit-scrollbar{width:4px}.hp-msgs::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:4px}
+.hp-msg{max-width:85%;padding:10px 14px;border-radius:14px;font-size:12px;line-height:1.7;word-break:break-word}
+.hp-msg.user{align-self:flex-end;background:linear-gradient(135deg,#6366f1,#a855f7);color:white;border-bottom-right-radius:4px}
+.hp-msg.ai{align-self:flex-start;background:rgba(255,255,255,0.04);color:#8b8fa3;border-bottom-left-radius:4px}
+.hp-msg.ai strong{color:#e8e8ed}
+.hp-msg.sys{align-self:center;font-size:10px;color:#5a5e72;background:transparent}
+.hp-input{display:flex;gap:8px;padding:12px 18px;border-top:1px solid rgba(255,255,255,0.06);background:rgba(0,0,0,0.15)}
+.hp-input input{flex:1;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);
+  color:#e8e8ed;font-size:12px;font-family:'Inter',sans-serif;outline:none}
+.hp-input input:focus{border-color:#6366f1}.hp-input input::placeholder{color:#5a5e72}
+.hp-input button{width:40px;height:40px;border-radius:12px;border:none;background:linear-gradient(135deg,#6366f1,#a855f7);
+  color:white;cursor:pointer;font-size:16px;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.hp-input button:hover{transform:scale(1.05)}.hp-input button:disabled{opacity:0.3;cursor:not-allowed;transform:none}
+@media(max-width:480px){.hermes-panel{width:calc(100vw - 2rem);right:1rem;left:1rem;height:calc(100vh - 6rem);bottom:5rem}
+  .hermes-btn.open{bottom:calc(100vh - 6rem + 1.5rem)}}
+`;
+  document.head.appendChild(style);
+
+  // HTML 삽입
+  const btnHtml = `<button class="hermes-btn" id="hermes-btn" onclick="window._hermesToggle()">
+    <span class="wing-l">🪽</span><span class="hermes-glow"></span>⚡<span class="wing-r">🪽</span>
+  </button>`;
+  const panelHtml = `<div class="hermes-panel" id="hermes-panel">
+    <div class="hp-header">
+      <div class="hp-avatar">🪽</div>
+      <div class="hp-info"><div class="hp-name">Hermes · Titan AI</div><div class="hp-status"><span class="dot"></span>거인들의 세계를 안내합니다</div></div>
+      <button class="hp-close" onclick="window._hermesToggle()">✕</button>
+    </div>
+    <div class="hp-msgs" id="hm-msgs">
+      <div class="hp-msg ai">안녕하세요! <strong>Hermes</strong> ⚡입니다.<br><br>13명 타이탄의 <strong>철학, 전략, 기술</strong>에 대해 무엇이든 물어보세요!<br><br>💡 예시:<br>• "머스크와 나델라의 리더십 차이"<br>• "AI 투자 전략 분석"<br>• "젠슨 황의 GPU 전략"</div>
+    </div>
+    <div class="hp-input">
+      <input type="text" id="hm-input" placeholder="거인에게 질문하세요..." onkeydown="if(event.key==='Enter')window._hermesSend()">
+      <button id="hm-send" onclick="window._hermesSend()">➤</button>
+    </div>
+  </div>`;
+
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = btnHtml + panelHtml;
+  while (wrapper.firstChild) document.body.appendChild(wrapper.firstChild);
+
+  // Hermes 로직
+  let hermesOpen = false;
+  let hmHistory = [];
+
+  const HERMES_SYSTEM = `당신은 "Hermes"(에르메스) — Titan Tracker의 AI 어시스턴트입니다. 한국어로 답변하세요.
+거인들(Titans)의 세계를 안내하는 메신저. 그리스 신화의 헤르메스처럼 지식을 전달합니다.
+
+알고 있는 13명: Stephen Wolfram(계산과학), Bill Gates(Microsoft/보건), Elon Musk(Tesla/SpaceX/xAI), Jeff Bezos(Amazon/Blue Origin), Dario Amodei(Anthropic/AI Safety), Ray Dalio(Bridgewater/투자원칙), Sam Altman(OpenAI/AGI), Jensen Huang(NVIDIA/GPU), Satya Nadella(Microsoft/Azure), Andrej Karpathy(AI교육/Tesla AI), Yann LeCun(Meta AI/CNN), Andrew Huberman(신경과학/건강), Sundar Pichai(Google/Gemini)
+
+답변 원칙: 1)타이탄들의 실제 철학/발언/전략 기반 2)비교분석, 투자인사이트, 기술트렌드에 강함 3)간결하되 통찰력 있게(3-4문단) 4)이모지 적절 사용 5)MBA/비즈니스 관점 포함 6)불확실한 정보는 솔직히 밝힘`;
+
+  function escapeHm(s) { if (!s) return ''; const d = document.createElement('div'); d.appendChild(document.createTextNode(s)); return d.innerHTML; }
+
+  function addHmMsg(role, text) {
+    const c = document.getElementById('hm-msgs');
+    const d = document.createElement('div');
+    d.className = 'hp-msg ' + role;
+    d.innerHTML = role === 'ai' ? text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>').replace(/^- /gm, '• ') : escapeHm(text);
+    c.appendChild(d); c.scrollTop = c.scrollHeight; return d;
+  }
+
+  window._hermesToggle = function() {
+    hermesOpen = !hermesOpen;
+    document.getElementById('hermes-panel').classList.toggle('open', hermesOpen);
+    document.getElementById('hermes-btn').classList.toggle('open', hermesOpen);
+    if (hermesOpen) document.getElementById('hm-input').focus();
+  };
+
+  window._hermesSend = async function() {
+    const input = document.getElementById('hm-input');
+    const text = input.value.trim();
+    if (!text) return;
+    const key = window.getGeminiKey();
+    if (!key) { addHmMsg('sys', '⚠️ config.js에 GEMINI_API_KEY를 설정해주세요'); return; }
+    addHmMsg('user', text); input.value = '';
+    hmHistory.push({ role: 'user', parts: [{ text }] });
+    const loading = addHmMsg('ai', '<span style="animation:spin 1s linear infinite;display:inline-block">⏳</span> 생각 중...');
+    document.getElementById('hm-send').disabled = true;
+    try {
+      const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + key, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: HERMES_SYSTEM }] },
+          contents: hmHistory.slice(-10),
+          generationConfig: { temperature: 0.7, maxOutputTokens: 1024, topP: 0.9 }
+        })
+      });
+      if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.error?.message || 'API 오류'); }
+      const data = await res.json();
+      const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || '응답 생성 불가';
+      loading.innerHTML = aiText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>').replace(/^- /gm, '• ');
+      hmHistory.push({ role: 'model', parts: [{ text: aiText }] });
+    } catch (e) {
+      loading.innerHTML = '❌ ' + escapeHm(e.message);
+    }
+    document.getElementById('hm-send').disabled = false;
+    document.getElementById('hm-input').focus();
+  };
+
 })();

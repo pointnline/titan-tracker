@@ -51,6 +51,7 @@ a{color:var(--accent-light);text-decoration:none}
 <div class="header">
   <h1>📰 Titan Weekly Digest</h1>
   <p>13명 타이탄의 이번 주 핵심 뉴스를 한눈에</p>
+  <button onclick="aiWeeklySummary()" style="margin-top:10px;padding:8px 20px;border-radius:20px;border:none;background:linear-gradient(135deg,#6366f1,#a855f7);color:white;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">🧠 AI 위클리 요약</button>
   <div class="date-range" id="date-range"></div>
 </div>
 
@@ -162,6 +163,29 @@ async function loadDigest(){
 }
 
 loadDigest();
+
+async function aiWeeklySummary(){
+  let box=document.getElementById('ai-digest-box');
+  if(!box){
+    box=document.createElement('div');box.id='ai-digest-box';
+    box.style.cssText='max-width:900px;margin:0 auto 2rem;padding:0 1.5rem';
+    box.innerHTML='<div style="background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(168,85,247,0.04));border:1px solid rgba(99,102,241,0.15);border-radius:16px;padding:1.5rem"><div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem;font-size:14px;font-weight:700;color:#818cf8">🧠 AI Weekly Summary</div><div id="ai-digest-content" style="font-size:13px;color:#8b8fa3;line-height:1.8"></div></div>';
+    document.querySelector('.digest-wrap').insertBefore(box,document.getElementById('digest-content'));
+  }
+  const content=document.getElementById('ai-digest-content');
+  content.innerHTML='<span style="animation:spin 1s linear infinite;display:inline-block">⏳</span> AI 위클리 요약 생성 중...';
+  try{
+    const digestText=document.getElementById('digest-content')?.innerText?.substring(0,4000)||'';
+    const result=await window.callGemini(
+      '한국어로 답변. 당신은 테크/AI/비즈니스 뉴스레터 작성 전문가입니다.',
+      `다음은 13명 타이탄의 이번 주 뉴스 다이제스트입니다. 5줄 요약(가장 중요한 뉴스 3개 + 관전 포인트 + 다음 주 주시):
+
+${digestText}`,
+      {maxTokens:600}
+    );
+    content.innerHTML=titanUtils.formatAiText(result);
+  }catch(e){content.innerHTML='❌ '+titanUtils.escapeHtml(e.message)}
+}
 </script>
 </body>
 </html>

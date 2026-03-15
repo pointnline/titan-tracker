@@ -60,6 +60,7 @@ mark{background:rgba(99,102,241,0.25);color:#c7d2fe;padding:1px 3px;border-radiu
   <div class="search-box">
     <input class="search-input" id="search-input" type="text" placeholder="검색어 입력 (예: AI safety, GPU, 자율주행...)" onkeydown="if(event.key==='Enter')doSearch()">
     <button class="search-btn" onclick="doSearch()">검색</button>
+    <button class="search-btn" onclick="aiSearchAnswer()" style="background:linear-gradient(135deg,#6366f1,#a855f7)">🧠 AI 답변</button>
   </div>
 
   <div class="filters" id="titan-filters"></div>
@@ -179,6 +180,34 @@ async function doSearch(){
 }
 
 renderFilters();
+
+async function aiSearchAnswer(){
+  const query=document.getElementById('search-input').value.trim();
+  if(!query){return}
+  const container=document.getElementById('results');
+  const existing=document.getElementById('ai-search-answer');
+  if(existing)existing.remove();
+  const box=document.createElement('div');
+  box.id='ai-search-answer';
+  box.style.cssText='background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(168,85,247,0.04));border:1px solid rgba(99,102,241,0.15);border-radius:16px;padding:1.5rem;margin-bottom:1rem';
+  box.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:13px;font-weight:700;color:#818cf8">🧠 AI Answer</div><div id="ai-search-content" style="font-size:13px;color:#8b8fa3;line-height:1.8"><span style="animation:spin 1s linear infinite;display:inline-block">⏳</span> 검색 결과 기반 AI 답변 생성 중...</div>';
+  container.insertBefore(box,container.firstChild);
+  // 검색도 동시 실행
+  doSearch();
+  try{
+    // 검색 결과 수집 대기
+    await new Promise(r=>setTimeout(r,3000));
+    const resultsText=container.innerText.substring(0,3000);
+    const result=await window.callGemini(
+      '한국어로 답변. 13명 타이탄(Wolfram,Gates,Musk,Bezos,Amodei,Dalio,Altman,Huang,Nadella,Karpathy,LeCun,Huberman,Pichai)에 대한 전문가.',
+      `사용자 질문: "${query}"\n\n관련 검색 결과:\n${resultsText}\n\n위 검색 결과를 바탕으로 사용자 질문에 간결하고 통찰력 있게 답변해주세요.`,
+      {maxTokens:800}
+    );
+    document.getElementById('ai-search-content').innerHTML=titanUtils.formatAiText(result);
+  }catch(e){
+    document.getElementById('ai-search-content').innerHTML='❌ '+escapeHtml(e.message);
+  }
+}
 </script>
 </body>
 </html>

@@ -221,6 +221,7 @@ a{text-decoration:none;color:var(--accent-light)}
   <div class="filter-actions">
     <span class="filter-hint">최소 2명 선택 · 클릭으로 ON/OFF</span>
     <button class="btn-analyze" id="btn-analyze" onclick="reAnalyze()">🔄 분석 시작</button>
+    <button class="btn-analyze" id="btn-ai-summary" onclick="aiInsightSummary()" style="background:linear-gradient(135deg,#6366f1,#a855f7);border-color:#6366f1">🧠 AI 분석 요약</button>
   </div>
 </div>
 
@@ -229,6 +230,13 @@ a{text-decoration:none;color:var(--accent-light)}
     <div class="spinner"></div>
     <div>피드 수집 중...</div>
     <div class="step" id="loading-step">Step 1: RSS 피드 로딩</div>
+  </div>
+</div>
+
+<div id="ai-insight-box" style="display:none;max-width:900px;margin:0 auto 2rem;padding:0 1.5rem">
+  <div style="background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(168,85,247,0.04));border:1px solid rgba(99,102,241,0.15);border-radius:16px;padding:1.5rem">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem;font-size:14px;font-weight:700;color:#818cf8">🧠 AI Insight Summary</div>
+    <div id="ai-insight-content" style="font-size:13px;color:#8b8fa3;line-height:1.8"></div>
   </div>
 </div>
 
@@ -728,6 +736,28 @@ function renderResults(cross, titanOnlyTopics, titanTotals, titanKeys) {
       분석 시각: ${new Date().toLocaleString('ko-KR')} · ${titanKeys.map(k => TITAN_FEEDS[k].name.split(' ').pop() + ' ' + titanTotals[k] + '개').join(' + ')} 피드 기반
     </div>
   `;
+}
+
+// AI 분석 요약
+async function aiInsightSummary() {
+  const box = document.getElementById('ai-insight-box');
+  const content = document.getElementById('ai-insight-content');
+  box.style.display = 'block';
+  content.innerHTML = '<span style="animation:spin 1s linear infinite;display:inline-block">⏳</span> AI가 교차 분석 요약을 생성하고 있습니다...';
+  try {
+    // 현재 화면의 분석 결과 텍스트 수집
+    const mainEl = document.getElementById('main-content');
+    const textContent = mainEl ? mainEl.innerText.substring(0, 3000) : '';
+    const titanNames = [...selectedTitans].map(k => TITAN_FEEDS[k]?.name).filter(Boolean).join(', ');
+    const result = await window.callGemini(
+      '한국어로 답변하세요. 당신은 AI/테크/비즈니스 트렌드 분석 전문가입니다.',
+      `다음은 ${titanNames} 등 타이탄들의 최신 교차 분석 결과입니다. 3가지 핵심 인사이트와 투자/비즈니스 시사점을 요약해주세요:\n\n${textContent}`,
+      { maxTokens: 800 }
+    );
+    content.innerHTML = titanUtils.formatAiText(result);
+  } catch(e) {
+    content.innerHTML = '❌ ' + titanUtils.escapeHtml(e.message);
+  }
 }
 
 // 초기화

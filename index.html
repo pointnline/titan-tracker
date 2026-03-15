@@ -711,6 +711,75 @@ function filterCat(cat){
 }
 function searchTitans(q){searchQuery=q;renderTable();}
 renderTable();
+
+// === 활동 시그널 시스템 ===
+const LIVE_TITANS_SIGNAL = [
+  {name:'Elon Musk',q:'Elon+Musk',card:'musk',el:null},
+  {name:'Sam Altman',q:'Sam+Altman+OpenAI',card:'altman',el:null},
+  {name:'Jensen Huang',q:'Jensen+Huang+NVIDIA',card:'huang',el:null},
+  {name:'Satya Nadella',q:'Satya+Nadella+Microsoft',card:'nadella',el:null},
+  {name:'Sundar Pichai',q:'Sundar+Pichai+Google',card:'pichai',el:null},
+  {name:'Andrej Karpathy',q:'Andrej+Karpathy',card:'karpathy',el:null},
+  {name:'Yann LeCun',q:'Yann+LeCun',card:'lecun',el:null},
+  {name:'Dario Amodei',q:'Dario+Amodei+Anthropic',card:'amodei',el:null},
+  {name:'Jeff Bezos',q:'Jeff+Bezos',card:'bezos',el:null},
+  {name:'Bill Gates',q:'Bill+Gates',card:'gates',el:null},
+  {name:'Ray Dalio',q:'Ray+Dalio',card:'dalio',el:null},
+  {name:'Andrew Huberman',q:'Andrew+Huberman',card:'huberman',el:null},
+  {name:'Stephen Wolfram',q:'Stephen+Wolfram',card:'wolfram',el:null},
+];
+
+async function loadSignals(){
+  const grid=document.querySelector('.titans-grid');
+  if(!grid)return;
+  const cards=[...grid.querySelectorAll('.titan-card')];
+
+  // 각 카드에 시그널 배지 추가
+  cards.forEach(card=>{
+    if(!card.querySelector('.signal-badge')){
+      const badge=document.createElement('div');
+      badge.className='signal-badge';
+      badge.style.cssText='position:absolute;top:10px;right:10px;font-size:9px;padding:2px 7px;border-radius:8px;background:rgba(99,102,241,0.15);color:#818cf8;font-family:JetBrains Mono,monospace;display:none';
+      card.style.position='relative';
+      card.appendChild(badge);
+    }
+  });
+
+  // 병렬로 신호 수집 (캐시 15분)
+  const counts=[];
+  await Promise.all(LIVE_TITANS_SIGNAL.map(async (titan,i)=>{
+    try{
+      const items=await titanUtils.fetchTitanFeed(titan.name,10);
+      const now=Date.now();
+      const recent=items.filter(it=>now-new Date(it.pubDate).getTime()<48*3600*1000).length;
+      counts.push({idx:i,name:titan.name,card:titan.card,total:items.length,recent,latestDate:items[0]?new Date(items[0].pubDate):new Date(0)});
+    }catch{counts.push({idx:i,name:titan.name,card:titan.card,total:0,recent:0,latestDate:new Date(0)});}
+  }));
+
+  // 신호 기반 정렬 (최신 뉴스 많은 순)
+  counts.sort((a,b)=>b.recent-a.recent || b.latestDate-a.latestDate);
+
+  // 카드 재배치 + 시그널 표시
+  counts.forEach((c,newIdx)=>{
+    const card=cards.find(el=>el.href&&el.href.includes(c.card+'.html'));
+    if(!card)return;
+    const badge=card.querySelector('.signal-badge');
+    if(badge&&c.recent>0){
+      const heat=c.recent>=5?'🔥':c.recent>=3?'⚡':'🟢';
+      badge.textContent=heat+' '+c.recent+'건/48h';
+      badge.style.display='block';
+      if(c.recent>=5)badge.style.cssText+='background:rgba(239,68,68,0.15);color:#fca5a5';
+      else if(c.recent>=3)badge.style.cssText+='background:rgba(245,158,11,0.15);color:#fcd34d';
+    }
+    // 순서 변경: 활동 많은 카드를 앞으로
+    grid.appendChild(card);
+  });
+
+  console.log('[Titan Signal]',counts.map(c=>c.name+':'+c.recent).join(', '));
+}
+
+// 페이지 로드 3초 후 신호 수집 (초기 로드 속도 영향 없음)
+setTimeout(loadSignals,3000);
 </script>
 <script src="titan-nav.js"></script>
 </body>

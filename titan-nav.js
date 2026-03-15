@@ -186,6 +186,48 @@
     stripHtml: function(html) { const t = document.createElement('div'); t.innerHTML = html; return t.textContent || ''; },
     translateText: async function(text) { if (!text) return ''; try { const r = await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ko&dt=t&q=' + encodeURIComponent(text.substring(0, 500))); const d = await r.json(); return d[0].map(s => s[0]).join(''); } catch { return text; } },
     RSS_PROXY: 'https://api.rss2json.com/v1/api.json?rss_url=',
+
+    // 캐시 우선 피드 로드 (stale-while-revalidate)
+    cachedFetch: async function(cacheKey, url, ttlMs) {
+      const ttl = ttlMs || 10 * 60 * 1000; // 기본 10분
+      try {
+        const cached = localStorage.getItem('tf_' + cacheKey);
+        if (cached) {
+          const { items, ts } = JSON.parse(cached);
+          if (items && items.length) {
+            // 캐시 유효 → 바로 반환
+            if (Date.now() - ts < ttl) return { items, fromCache: true };
+            // 캐시 만료 → 캐시 반환 + 백그라운드 갱신
+            setTimeout(() => {
+              fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(url))
+                .then(r => r.json()).then(d => {
+                  if (d.status === 'ok' && d.items?.length) localStorage.setItem('tf_' + cacheKey, JSON.stringify({ items: d.items, ts: Date.now() }));
+                }).catch(() => {});
+            }, 100);
+            return { items, fromCache: true };
+          }
+        }
+      } catch(e) {}
+      // 캐시 없음 → 네트워크
+      const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(url));
+      const data = await res.json();
+      if (data.status === 'ok' && data.items?.length) {
+        localStorage.setItem('tf_' + cacheKey, JSON.stringify({ items: data.items, ts: Date.now() }));
+        return { items: data.items, fromCache: false };
+      }
+      throw new Error('Feed empty');
+    },
+
+    // 간단 피드 가져오기 (이름으로 Google News)
+    fetchTitanFeed: async function(name, maxItems) {
+      const q = encodeURIComponent(name);
+      const url = 'https://news.google.com/rss/search?q=' + q + '&hl=en&gl=US';
+      const key = name.replace(/\s+/g, '_').toLowerCase();
+      const result = await this.cachedFetch(key, url, 15 * 60 * 1000);
+      let items = result.items || [];
+      items.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+      return items.slice(0, maxItems || 5);
+    },
     highlightKeywords: function(text, keywords) { if (!text || !keywords?.length) return text; const e = keywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')); return text.replace(new RegExp('(' + e.join('|') + ')', 'gi'), '<mark style="background:rgba(99,102,241,0.25);color:#c7d2fe;padding:1px 3px;border-radius:3px">$1</mark>'); },
     formatAiText: function(text) { return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>').replace(/^- /gm, '• '); },
     ACTIVE_TITANS: {

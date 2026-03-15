@@ -47,7 +47,23 @@ thead th{
 }
 thead th:hover{color:var(--text-sub)}
 tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
+tbody tr{cursor:pointer}
 tbody tr:hover{background:var(--surface)}
+.feed-panel{display:none;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin:6px 0 12px;animation:feedSlide .3s ease}
+.feed-panel.open{display:block}
+@keyframes feedSlide{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.feed-panel-title{font-size:12px;font-weight:600;color:var(--accent-light);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.feed-panel-items{display:flex;flex-direction:column;gap:8px}
+.fp-item{background:var(--surface3);border-radius:8px;padding:10px 14px;transition:background .15s}
+.fp-item:hover{background:rgba(255,255,255,0.06)}
+.fp-item a{color:var(--text);text-decoration:none;display:block}
+.fp-item-title{font-size:13px;font-weight:500;line-height:1.5;margin-bottom:4px}
+.fp-item-meta{font-size:10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;display:flex;gap:10px}
+.fp-loading{text-align:center;padding:1.5rem;color:var(--text-muted);font-size:12px}
+.fp-loading .spinner{width:20px;height:20px;border:2px solid var(--surface3);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;margin:0 auto 8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.live-badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;padding:2px 7px;border-radius:10px;background:rgba(34,197,94,0.15);color:#4ade80;font-weight:600;margin-left:8px}
+.live-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:#4ade80}
 td{padding:12px;font-size:13px;vertical-align:middle}
 .t-num{color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:11px;width:36px}
 .t-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
@@ -261,21 +277,38 @@ function renderTable(){
   filtered.sort((a,b)=>b.impact-a.impact);
 
   document.getElementById('count-badge').textContent=filtered.length+'명';
-  document.getElementById('titans-body').innerHTML=filtered.map((t,i)=>`
-    <tr>
+  // LIVE 타이탄 페이지 맵
+  const LIVE_PAGES = {
+    'Stephen Wolfram':'wolfram.html','Bill Gates':'gates.html','Elon Musk':'musk.html',
+    'Jeff Bezos':'bezos.html','Dario Amodei':'amodei.html','Ray Dalio':'dalio.html',
+    'Sam Altman':'altman.html','Jensen Huang':'huang.html','Satya Nadella':'nadella.html',
+    'Andrej Karpathy':'karpathy.html','Yann LeCun':'lecun.html','Andrew Huberman':'huberman.html',
+    'Sundar Pichai':'pichai.html'
+  };
+
+  document.getElementById('titans-body').innerHTML=filtered.map((t,i)=>{
+    const rid='row-'+i;
+    const isLive=LIVE_PAGES[t.n];
+    const liveBadge=isLive?'<span class="live-badge">LIVE</span>':'';
+    const pageLink=isLive?` <a href="${isLive}" style="font-size:10px;color:var(--accent-light);margin-left:6px" onclick="event.stopPropagation()">→ 상세</a>`:'';
+    return `<tr onclick="toggleFeedPanel('${rid}','${t.n.replace(/'/g,"\\'")}')">
       <td class="t-num">${String(i+1).padStart(2,'0')}</td>
-      <td>
-        <div class="t-name-cell">
-          <div class="t-avatar" style="background:${t.color}">${getInitials(t.n)}</div>
-          <div><div class="t-name">${t.n}</div><div class="t-role">${t.r}</div></div>
-        </div>
-      </td>
+      <td><div class="t-name-cell">
+        <div class="t-avatar" style="background:${t.color}">${getInitials(t.n)}</div>
+        <div><div class="t-name">${t.n}${liveBadge}${pageLink}</div><div class="t-role">${t.r}</div></div>
+      </div></td>
       <td><span class="t-cat ${CAT_CLASS[t.c]}">${t.c}</span></td>
       <td class="t-impact" style="color:${t.impact>=95?'#22c55e':t.impact>=90?'#6366f1':t.impact>=85?'#f59e0b':'var(--text-sub)'}">${t.impact}</td>
       <td><div class="t-channels">${t.ch.map(c=>'<span class="t-ch">'+c+'</span>').join('')}</div></td>
       <td style="font-size:11px;color:var(--text-sub);max-width:200px">${t.k}</td>
     </tr>
-  `).join('');
+    <tr id="${rid}" style="display:none"><td colspan="6" style="padding:0">
+      <div class="feed-panel open" id="fp-${rid}">
+        <div class="feed-panel-title">📰 ${t.n} 최신 뉴스 <span style="font-size:10px;color:var(--text-muted);font-weight:400">Google News</span></div>
+        <div class="feed-panel-items" id="fpi-${rid}"><div class="fp-loading"><div class="spinner"></div>로딩 중...</div></div>
+      </div>
+    </td></tr>`;
+  }).join('');
 }
 
 function filterCat(cat){
@@ -289,6 +322,27 @@ function filterCat(cat){
   renderTable();
 }
 function searchTitans(q){searchQuery=q;renderTable();}
+
+const _openPanels=new Set();
+async function toggleFeedPanel(rid,name){
+  const row=document.getElementById(rid);
+  if(!row)return;
+  if(row.style.display!=='none'){row.style.display='none';_openPanels.delete(rid);return;}
+  row.style.display='table-row';
+  _openPanels.add(rid);
+  const container=document.getElementById('fpi-'+rid);
+  if(container.dataset.loaded)return;
+  container.dataset.loaded='1';
+  try{
+    const items=await titanUtils.fetchTitanFeed(name,5);
+    if(!items.length){container.innerHTML='<div class="fp-loading">뉴스를 찾을 수 없습니다</div>';return;}
+    container.innerHTML=items.map(it=>`<div class="fp-item"><a href="${titanUtils.sanitizeUrl(it.link)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+      <div class="fp-item-title">${titanUtils.escapeHtml(it.title)}</div>
+      <div class="fp-item-meta"><span>${titanUtils.formatDate(it.pubDate)}</span>${it.author?'<span>'+titanUtils.escapeHtml(it.author)+'</span>':''}</div>
+    </a></div>`).join('');
+  }catch(e){container.innerHTML='<div class="fp-loading">피드 로드 실패</div>';}
+}
+
 renderTable();
 </script>
 <script src="titan-nav.js"></script>

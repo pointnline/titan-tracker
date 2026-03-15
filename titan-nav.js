@@ -14,6 +14,8 @@
   } catch(e) { /* config.js 없음 — fallback */ }
 
   // === 네비게이션 바 ===
+  // 기존 인라인 nav 제거 (중복 방지)
+  document.querySelectorAll('.titan-nav').forEach(el => el.remove());
   const currentPage = location.pathname.split('/').pop() || 'index.html';
   const navLinks = [
     { href: 'index.html', label: '🔭 Titan Tracker', isBrand: true },

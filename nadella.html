@@ -234,5 +234,6 @@ async function loadAllFeeds(){await Promise.all(Object.keys(FEEDS).map(k=>loadFe
 function switchTab(tabId){document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tabId));document.querySelectorAll('.tab-content').forEach(c=>c.classList.toggle('active',c.id==='tab-'+tabId))}
 loadAllFeeds();
 </script>
+<script src="titan-nav.js"></script>
 </body>
 </html>

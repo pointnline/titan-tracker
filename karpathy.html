@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karpathy Tracker — Andrej Karpathy 추적 대시보드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#232736;--surface3:#2a2e3d;--border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.12);--text:#e8e8ed;--text-sub:#8b8fa3;--text-muted:#5a5e72;--accent:#22c55e;--accent-light:#4ade80;--accent-bg:rgba(34,197,94,0.1);--red:#ef4444;--orange:#f97316;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--radius:16px;--radius-sm:12px;--radius-xs:8px}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;padding-top:44px}
+a{color:var(--accent-light);text-decoration:none;transition:color .2s}a:hover{color:#bbf7d0}
+.header{background:linear-gradient(135deg,rgba(34,197,94,0.15),rgba(16,185,129,0.08));border-bottom:1px solid var(--border);padding:2rem 1.5rem}
+.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
+.avatar{width:80px;height:80px;border-radius:50%;border:3px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:32px;color:white;font-weight:700;background:linear-gradient(135deg,#22c55e,#16a34a);flex-shrink:0}
+.header-info h1{font-size:24px;font-weight:700;letter-spacing:-0.03em}
+.header-info .subtitle{font-size:13px;color:var(--text-sub);margin-top:4px;line-height:1.6}
+.header-info .subtitle span{color:var(--accent-light);font-weight:500}
+.header-badges{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.badge{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:500;border:1px solid var(--border)}
+.badge-dl{background:rgba(34,197,94,0.15);color:#86efac;border-color:rgba(34,197,94,0.3)}
+.badge-tesla{background:rgba(239,68,68,0.15);color:#fca5a5;border-color:rgba(239,68,68,0.3)}
+.badge-edu{background:rgba(59,130,246,0.15);color:#93c5fd;border-color:rgba(59,130,246,0.3)}
+.badge-yt{background:rgba(245,158,11,0.15);color:#fcd34d;border-color:rgba(245,158,11,0.3)}
+.tabs-wrap{max-width:1100px;margin:0 auto;padding:0 1.5rem}
+.tabs{display:flex;gap:4px;padding:1rem 0 0;border-bottom:1px solid var(--border);overflow-x:auto}
+.tab{padding:10px 18px;font-size:13px;font-weight:500;color:var(--text-sub);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;border-radius:var(--radius-xs) var(--radius-xs) 0 0}
+.tab:hover{color:var(--text);background:rgba(255,255,255,0.03)}
+.tab.active{color:var(--accent-light);border-bottom-color:var(--accent);background:rgba(34,197,94,0.06)}
+.main{max-width:1100px;margin:0 auto;padding:1.5rem}
+.tab-content{display:none}.tab-content.active{display:block}
+.channels-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:2rem}
+.channel-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;transition:all .25s;cursor:pointer;text-decoration:none;color:var(--text);display:flex;flex-direction:column;gap:10px}
+.channel-card:hover{border-color:var(--border-hover);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+.ch-icon{font-size:28px}.ch-name{font-size:14px;font-weight:600}.ch-desc{font-size:11px;color:var(--text-sub);line-height:1.5}.ch-tag{font-size:10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;margin-top:auto}
+.feed-section{margin-bottom:2rem}.feed-title{font-size:15px;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:8px}.feed-title .dot{width:8px;height:8px;border-radius:50%}
+.feed-list{display:flex;flex-direction:column;gap:10px}
+.feed-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;transition:all .2s}.feed-item:hover{border-color:var(--border-hover);background:var(--surface2)}.feed-item a{display:block}
+.feed-item-title{font-size:14px;font-weight:600;line-height:1.5;margin-bottom:6px}.feed-item-title-orig{font-size:11px;color:var(--text-muted);margin-bottom:6px;font-style:italic}
+.feed-item-meta{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;display:flex;gap:12px;align-items:center}
+.feed-item-desc{font-size:12px;color:var(--text-sub);line-height:1.6;margin-top:8px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.feed-source{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500}
+.src-dl{background:rgba(34,197,94,0.15);color:#86efac}.src-yt{background:rgba(239,68,68,0.15);color:#fca5a5}.src-edu{background:rgba(59,130,246,0.15);color:#93c5fd}.src-news{background:rgba(245,158,11,0.15);color:#fcd34d}
+.loading{text-align:center;padding:3rem;color:var(--text-muted)}.loading .spinner{width:32px;height:32px;border:3px solid var(--surface3);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-msg{text-align:center;padding:2rem;color:var(--red);font-size:13px;background:rgba(239,68,68,0.08);border-radius:var(--radius-sm)}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.profile-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem}
+.profile-card h3{font-size:13px;font-weight:600;margin-bottom:10px;color:var(--accent-light)}.profile-card li{font-size:12px;color:var(--text-sub);line-height:1.8}.profile-card ul{list-style:none;padding:0}.profile-card ul li::before{content:'→ ';color:var(--accent)}
+.timeline{position:relative;padding-left:24px}.timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--surface3)}
+.tl-item{position:relative;margin-bottom:1.5rem}.tl-dot{position:absolute;left:-20px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}.tl-year{font-size:13px;font-weight:700;color:var(--accent-light);margin-bottom:4px}.tl-text{font-size:12px;color:var(--text-sub);line-height:1.6}
+.refresh-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.refresh-btn{font-size:12px;padding:6px 14px;border-radius:var(--radius-xs);border:1px solid var(--border);background:var(--surface);color:var(--text-sub);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}.refresh-btn:hover{border-color:var(--accent);color:var(--accent-light)}
+.last-updated{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
+.footer{text-align:center;padding:2rem;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:2rem}
+@media(max-width:768px){.header-inner{flex-direction:column;text-align:center}.header-badges{justify-content:center}.channels-grid{grid-template-columns:1fr 1fr}.profile-grid{grid-template-columns:1fr}.tabs{gap:0}.tab{padding:10px 12px;font-size:12px}}
+@media(max-width:480px){.channels-grid{grid-template-columns:1fr}.main{padding:1rem}}
+</style>
+</head>
+<body>
+<script src="titan-nav.js"></script>
+
+<div class="header"><div class="header-inner">
+  <div class="avatar">AK</div>
+  <div class="header-info">
+    <h1>Andrej Karpathy Tracker</h1>
+    <div class="subtitle"><span>전 Tesla AI</span> 수장 · 전 <span>OpenAI</span> · AI 교육의 아이콘<br>딥러닝을 가장 잘 설명하는 사람, YouTube AI 교육의 선구자</div>
+    <div class="header-badges"><span class="badge badge-dl">Deep Learning</span><span class="badge badge-tesla">전 Tesla AI</span><span class="badge badge-edu">AI Education</span><span class="badge badge-yt">YouTube</span></div>
+  </div>
+</div></div>
+
+<div class="tabs-wrap"><div class="tabs">
+  <div class="tab active" data-tab="feed" onclick="switchTab('feed')">📡 피드</div>
+  <div class="tab" data-tab="channels" onclick="switchTab('channels')">🔗 채널</div>
+  <div class="tab" data-tab="profile" onclick="switchTab('profile')">👤 프로필</div>
+  <div class="tab" data-tab="timeline" onclick="switchTab('timeline')">📅 타임라인</div>
+</div></div>
+
+<div class="main">
+  <div class="tab-content active" id="tab-feed">
+    <div class="refresh-bar"><span class="last-updated" id="last-updated">마지막 업데이트: —</span><button class="refresh-btn" onclick="loadAllFeeds()">↻ 새로고침</button></div>
+    <div class="feed-section"><div class="feed-title"><div class="dot" style="background:var(--green)"></div>딥러닝 / AI 교육</div><div class="feed-list" id="dl-feed"><div class="loading"><div class="spinner"></div>로딩 중...</div></div></div>
+    <div class="feed-section"><div class="feed-title"><div class="dot" style="background:var(--red)"></div>Karpathy YouTube & 콘텐츠</div><div class="feed-list" id="yt-feed"><div class="loading"><div class="spinner"></div>로딩 중...</div></div></div>
+    <div class="feed-section"><div class="feed-title"><div class="dot" style="background:var(--blue)"></div>AI 교육 / 오픈소스</div><div class="feed-list" id="edu-feed"><div class="loading"><div class="spinner"></div>로딩 중...</div></div></div>
+    <div class="feed-section"><div class="feed-title"><div class="dot" style="background:var(--orange)"></div>Andrej Karpathy 뉴스</div><div class="feed-list" id="news-feed"><div class="loading"><div class="spinner"></div>로딩 중...</div></div></div>
+  </div>
+
+  <div class="tab-content" id="tab-channels"><div class="channels-grid">
+    <a class="channel-card" href="https://www.youtube.com/@AndrejKarpathy" target="_blank" rel="noopener"><div class="ch-icon">▶️</div><div class="ch-name">YouTube</div><div class="ch-desc">AI 강의 — Neural Networks: Zero to Hero, GPT from scratch</div><div class="ch-tag">@AndrejKarpathy</div></a>
+    <a class="channel-card" href="https://x.com/kaborapathy" target="_blank" rel="noopener"><div class="ch-icon">𝕏</div><div class="ch-name">X (Twitter)</div><div class="ch-desc">AI 인사이트, 논문 리뷰, 교육 콘텐츠</div><div class="ch-tag">@karpathy</div></a>
+    <a class="channel-card" href="https://github.com/karpathy" target="_blank" rel="noopener"><div class="ch-icon">💻</div><div class="ch-name">GitHub</div><div class="ch-desc">nanoGPT, minGPT, micrograd — 교육용 오픈소스</div><div class="ch-tag">karpathy</div></a>
+    <a class="channel-card" href="https://karpathy.ai" target="_blank" rel="noopener"><div class="ch-icon">📝</div><div class="ch-name">Blog</div><div class="ch-desc">딥러닝 연구, 교육, 기술 에세이</div><div class="ch-tag">karpathy.ai</div></a>
+  </div></div>
+
+  <div class="tab-content" id="tab-profile"><div class="profile-grid">
+    <div class="profile-card"><h3>📌 기본 정보</h3><ul>
+      <li>슬로바키아 브라티슬라바 출생 (1986년)</li><li>University of Toronto (CS), Stanford PhD (Fei-Fei Li 지도)</li>
+      <li>OpenAI 연구원 (2015-2017)</li><li>Tesla AI 수장 / Autopilot 디렉터 (2017-2022)</li>
+      <li>OpenAI 복귀 후 퇴사 (2023)</li><li>독립 AI 교육자 & 창업자 (현재)</li>
+    </ul></div>
+    <div class="profile-card"><h3>🧠 주요 관심 분야</h3><ul>
+      <li><strong>AI 교육</strong> — 복잡한 개념을 직관적으로 설명</li><li><strong>자율주행</strong> — Tesla FSD 비전 시스템 설계</li>
+      <li><strong>LLM</strong> — GPT 아키텍처, 토크나이저, 트레이닝</li><li><strong>오픈소스</strong> — nanoGPT, micrograd, minGPT</li>
+    </ul></div>
+    <div class="profile-card"><h3>🎯 대표 프로젝트</h3><ul>
+      <li><strong>nanoGPT</strong> — 가장 간단한 GPT 구현체</li><li><strong>Neural Nets: Zero to Hero</strong> — YouTube 시리즈</li>
+      <li><strong>Tesla Autopilot</strong> — 순수 비전 기반 FSD</li><li><strong>Eureka Labs</strong> — AI 네이티브 교육 스타트업</li>
+    </ul></div>
+    <div class="profile-card"><h3>🎓 MBA 학습 관련성</h3><ul>
+      <li><strong>지식 민주화</strong> — 최고급 AI 지식을 무료 공개</li><li><strong>빅테크→스타트업</strong> — Tesla→독립 창업 전환</li>
+      <li><strong>개인 브랜딩</strong> — YouTube로 AI 교육 시장 창출</li><li><strong>First Principles</strong> — 밑바닥부터 구현하는 교육 철학</li>
+    </ul></div>
+  </div></div>
+
+  <div class="tab-content" id="tab-timeline"><div class="timeline">
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2024~현재</div><div class="tl-text">Eureka Labs 설립 — AI 네이티브 교육 스타트업. YouTube "LLM OS" 등 고급 강의 지속. 독립 연구자/교육자로 활동.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2023</div><div class="tl-text">OpenAI 복귀 후 퇴사. "Neural Networks: Zero to Hero" YouTube 시리즈 폭발적 인기. nanoGPT 공개.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2017-2022</div><div class="tl-text">Tesla AI/Autopilot 수장. 순수 비전 기반 자율주행 FSD 설계. AI Day 발표. 카메라만으로 자율주행 가능 증명.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2015-2017</div><div class="tl-text">OpenAI 창립 멤버 및 연구원. 초기 GPT/RL 연구 참여.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2015</div><div class="tl-text">Stanford CS231n (CNN for Visual Recognition) 강의. 딥러닝 교육의 표준 커리큘럼 확립.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2011-2015</div><div class="tl-text">Stanford PhD (Fei-Fei Li 지도). ImageNet 대규모 이미지 캡셔닝 연구. char-rnn 공개.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1986</div><div class="tl-text">슬로바키아 브라티슬라바 출생. 15세에 캐나다 이민. University of Toronto CS 진학.</div></div>
+  </div></div>
+</div>
+
+<div class="footer">Karpathy Tracker · <a href="index.html">Titan Tracker</a> · Point & Line 🌈</div>
+
+<script>
+function escapeHtml(str){if(!str)return'';const d=document.createElement('div');d.appendChild(document.createTextNode(str));return d.innerHTML}
+function sanitizeUrl(url){try{const u=new URL(url);return['http:','https:'].includes(u.protocol)?url:'#'}catch{return'#'}}
+const TRANSLATE_URL='https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ko&dt=t&q=';
+async function translateText(t){if(!t)return'';try{const r=await fetch(TRANSLATE_URL+encodeURIComponent(t.substring(0,500)));const d=await r.json();return d[0].map(s=>s[0]).join('')}catch{return t}}
+const RSS_PROXY='https://api.rss2json.com/v1/api.json?rss_url=';
+const FEEDS={
+  dl:{url:'https://news.google.com/rss/search?q=deep+learning+neural+network+AI+education&hl=en&gl=US',container:'dl-feed',sourceClass:'src-dl',sourceLabel:'Deep Learning'},
+  yt:{url:'https://news.google.com/rss/search?q=Andrej+Karpathy+YouTube+AI&hl=en&gl=US',container:'yt-feed',sourceClass:'src-yt',sourceLabel:'Karpathy'},
+  edu:{url:'https://news.google.com/rss/search?q=AI+education+open+source+nanoGPT&hl=en&gl=US',container:'edu-feed',sourceClass:'src-edu',sourceLabel:'AI Education'},
+  news:{url:'https://news.google.com/rss/search?q=Andrej+Karpathy&hl=ko&gl=KR',container:'news-feed',sourceClass:'src-news',sourceLabel:'News'}
+};
+function formatDate(ds){const d=new Date(ds),now=new Date(),diff=Math.floor((now-d)/864e5);if(!diff)return'오늘';if(diff===1)return'어제';if(diff<7)return diff+'일 전';if(diff<30)return Math.floor(diff/7)+'주 전';return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0')}
+function stripHtml(h){const t=document.createElement('div');t.innerHTML=h;return t.textContent||''}
+async function renderFeed(items,cid,sc,sl){const c=document.getElementById(cid);if(!items||!items.length){c.innerHTML='<div class="error-msg">피드를 불러올 수 없습니다.</div>';return}items.sort((a,b)=>new Date(b.pubDate)-new Date(a.pubDate));const s=items.slice(0,8);const tr=await Promise.all(s.map(async it=>{const rd=stripHtml(it.description||it.content||'');const sn=rd.match(/[^.!?]+[.!?]+/g);const desc=sn?sn.slice(0,3).join(' ').substring(0,300):rd.substring(0,200);const[tk,dk]=await Promise.all([translateText(it.title),desc?translateText(desc):Promise.resolve('')]);return{tk,dk,t:it.title}}));c.innerHTML=s.map((it,i)=>{const{tk,dk,t}=tr[i];return`<div class="feed-item"><a href="${sanitizeUrl(it.link)}" target="_blank" rel="noopener"><div class="feed-item-title">${escapeHtml(tk)}</div><div class="feed-item-title-orig">${escapeHtml(t)}</div><div class="feed-item-meta"><span class="feed-source ${sc}">${sl}</span><span>${formatDate(it.pubDate)}</span>${it.author?'<span>by '+escapeHtml(it.author)+'</span>':''}</div>${dk?'<div class="feed-item-desc">'+escapeHtml(dk)+'</div>':''}</a></div>`}).join('')}
+async function tryFetch(url){const r=await fetch(RSS_PROXY+encodeURIComponent(url));const d=await r.json();if(d.status==='ok'&&d.items?.length)return d.items;throw new Error('empty')}
+async function loadFeed(k){const f=FEEDS[k],c=document.getElementById(f.container);c.innerHTML='<div class="loading"><div class="spinner"></div>로딩 중...</div>';const urls=[f.url,...(f.fallbackUrls||[])];let items=null;for(const u of urls){try{items=await tryFetch(u);break}catch{}}if(items){await renderFeed(items,f.container,f.sourceClass,f.sourceLabel);localStorage.setItem('ak_'+k,JSON.stringify({items,ts:Date.now()}))}else{const cached=localStorage.getItem('ak_'+k);if(cached){await renderFeed(JSON.parse(cached).items,f.container,f.sourceClass,f.sourceLabel)}else{c.innerHTML='<div class="error-msg">피드 로딩 실패</div>'}}}
+async function loadAllFeeds(){await Promise.all(Object.keys(FEEDS).map(k=>loadFeed(k)));document.getElementById('last-updated').textContent='마지막 업데이트: '+new Date().toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}
+function switchTab(id){document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===id));document.querySelectorAll('.tab-content').forEach(c=>c.classList.toggle('active',c.id==='tab-'+id))}
+loadAllFeeds();
+</script>
+</body>
+</html>

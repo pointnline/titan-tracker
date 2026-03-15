@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeCun Tracker — Yann LeCun 추적 대시보드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#232736;--surface3:#2a2e3d;--border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.12);--text:#e8e8ed;--text-sub:#8b8fa3;--text-muted:#5a5e72;--accent:#3b82f6;--accent-light:#60a5fa;--accent-bg:rgba(59,130,246,0.1);--red:#ef4444;--orange:#f97316;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--radius:16px;--radius-sm:12px;--radius-xs:8px}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;padding-top:44px}
+a{color:var(--accent-light);text-decoration:none;transition:color .2s}a:hover{color:#bfdbfe}
+.header{background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(99,102,241,0.08));border-bottom:1px solid var(--border);padding:2rem 1.5rem}
+.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
+.avatar{width:80px;height:80px;border-radius:50%;border:3px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:32px;color:white;font-weight:700;background:linear-gradient(135deg,#3b82f6,#2563eb);flex-shrink:0}
+.header-info h1{font-size:24px;font-weight:700;letter-spacing:-0.03em}.header-info .subtitle{font-size:13px;color:var(--text-sub);margin-top:4px;line-height:1.6}.header-info .subtitle span{color:var(--accent-light);font-weight:500}
+.header-badges{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.badge{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:500;border:1px solid var(--border)}
+.badge-cnn{background:rgba(59,130,246,0.15);color:#93c5fd;border-color:rgba(59,130,246,0.3)}.badge-turing{background:rgba(245,158,11,0.15);color:#fcd34d;border-color:rgba(245,158,11,0.3)}.badge-meta{background:rgba(24,119,242,0.15);color:#60a5fa;border-color:rgba(24,119,242,0.3)}.badge-ssl{background:rgba(168,85,247,0.15);color:#c084fc;border-color:rgba(168,85,247,0.3)}
+.tabs-wrap{max-width:1100px;margin:0 auto;padding:0 1.5rem}.tabs{display:flex;gap:4px;padding:1rem 0 0;border-bottom:1px solid var(--border);overflow-x:auto}
+.tab{padding:10px 18px;font-size:13px;font-weight:500;color:var(--text-sub);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;border-radius:var(--radius-xs) var(--radius-xs) 0 0}.tab:hover{color:var(--text);background:rgba(255,255,255,0.03)}.tab.active{color:var(--accent-light);border-bottom-color:var(--accent);background:rgba(59,130,246,0.06)}
+.main{max-width:1100px;margin:0 auto;padding:1.5rem}.tab-content{display:none}.tab-content.active{display:block}
+.channels-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:2rem}.channel-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;transition:all .25s;cursor:pointer;text-decoration:none;color:var(--text);display:flex;flex-direction:column;gap:10px}.channel-card:hover{border-color:var(--border-hover);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+.ch-icon{font-size:28px}.ch-name{font-size:14px;font-weight:600}.ch-desc{font-size:11px;color:var(--text-sub);line-height:1.5}.ch-tag{font-size:10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;margin-top:auto}
+.feed-section{margin-bottom:2rem}.feed-title{font-size:15px;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:8px}.feed-title .dot{width:8px;height:8px;border-radius:50%}.feed-list{display:flex;flex-direction:column;gap:10px}
+.feed-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;transition:all .2s}.feed-item:hover{border-color:var(--border-hover);background:var(--surface2)}.feed-item a{display:block}
+.feed-item-title{font-size:14px;font-weight:600;line-height:1.5;margin-bottom:6px}.feed-item-title-orig{font-size:11px;color:var(--text-muted);margin-bottom:6px;font-style:italic}.feed-item-meta{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;display:flex;gap:12px;align-items:center}.feed-item-desc{font-size:12px;color:var(--text-sub);line-height:1.6;margin-top:8px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.feed-source{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500}.src-meta{background:rgba(24,119,242,0.15);color:#60a5fa}.src-ai{background:rgba(168,85,247,0.15);color:#c084fc}.src-research{background:rgba(34,197,94,0.15);color:#86efac}.src-news{background:rgba(245,158,11,0.15);color:#fcd34d}
+.loading{text-align:center;padding:3rem;color:var(--text-muted)}.loading .spinner{width:32px;height:32px;border:3px solid var(--surface3);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}@keyframes spin{to{transform:rotate(360deg)}}
+.error-msg{text-align:center;padding:2rem;color:var(--red);font-size:13px;background:rgba(239,68,68,0.08);border-radius:var(--radius-sm)}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.profile-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem}.profile-card h3{font-size:13px;font-weight:600;margin-bottom:10px;color:var(--accent-light)}.profile-card li{font-size:12px;color:var(--text-sub);line-height:1.8}.profile-card ul{list-style:none;padding:0}.profile-card ul li::before{content:'→ ';color:var(--accent)}
+.timeline{position:relative;padding-left:24px}.timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--surface3)}.tl-item{position:relative;margin-bottom:1.5rem}.tl-dot{position:absolute;left:-20px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}.tl-year{font-size:13px;font-weight:700;color:var(--accent-light);margin-bottom:4px}.tl-text{font-size:12px;color:var(--text-sub);line-height:1.6}
+.refresh-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}.refresh-btn{font-size:12px;padding:6px 14px;border-radius:var(--radius-xs);border:1px solid var(--border);background:var(--surface);color:var(--text-sub);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}.refresh-btn:hover{border-color:var(--accent);color:var(--accent-light)}.last-updated{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
+.footer{text-align:center;padding:2rem;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:2rem}
+@media(max-width:768px){.header-inner{flex-direction:column;text-align:center}.header-badges{justify-content:center}.channels-grid{grid-template-columns:1fr 1fr}.profile-grid{grid-template-columns:1fr}}
+@media(max-width:480px){.channels-grid{grid-template-columns:1fr}.main{padding:1rem}}
+</style>
+</head>
+<body>
+<script src="titan-nav.js"></script>
+<div class="header"><div class="header-inner">
+  <div class="avatar">YL</div>
+  <div class="header-info">
+    <h1>Yann LeCun Tracker</h1>
+    <div class="subtitle"><span>Meta AI</span> 수석 과학자 · 딥러닝의 아버지 · <span>튜링상</span> 수상 (2018)<br>CNN을 발명하고 자기지도학습으로 AI의 미래를 설계하는 전설</div>
+    <div class="header-badges"><span class="badge badge-cnn">CNN 발명</span><span class="badge badge-turing">튜링상</span><span class="badge badge-meta">Meta AI</span><span class="badge badge-ssl">자기지도학습</span></div>
+  </div>
+</div></div>
+
+<div class="tabs-wrap"><div class="tabs">
+  <div class="tab active" data-tab="feed" onclick="switchTab('feed')">📡 피드</div>
+  <div class="tab" data-tab="channels" onclick="switchTab('channels')">🔗 채널</div>
+  <div class="tab" data-tab="profile" onclick="switchTab('profile')">👤 프로필</div>
+  <div class="tab" data-tab="timeline" onclick="switchTab('timeline')">📅 타임라인</div>
+</div></div>
+
+<div class="main">
+  <div class="tab-content active" id="tab-feed">
+    <div class="refresh-bar"><span class="last-updated" id="last-updated">마지막 업데이트: —</span><button class="refresh-btn" onclick="loadAllFeeds()">↻ 새로고침</button></div>
+    <div class="feed-section"><div class="feed-title"><div class="dot" style="background:#1877f2"></div>Meta AI / Llama</div><div class="feed-list" id="meta-feed"><div class="loading"><div class="spinner"></div>로딩 중...</div></div></div>
+    <div class="feed-section"><div class="feed-title"><div class="dot" style="background:var(--purple)"></div>AI 연구 / 논문</div><div class="feed-list" id="ai-feed"><div class="loading"><div class="spinner"></div>로딩 중...</div></div></div>
+    <div class="feed-section"><div class="feed-title"><div class="dot" style="background:var(--green)"></div>Self-Supervised Learning</div><div class="feed-list" id="research-feed"><div class="loading"><div class="spinner"></div>로딩 중...</div></div></div>
+    <div class="feed-section"><div class="feed-title"><div class="dot" style="background:var(--orange)"></div>Yann LeCun 뉴스</div><div class="feed-list" id="news-feed"><div class="loading"><div class="spinner"></div>로딩 중...</div></div></div>
+  </div>
+
+  <div class="tab-content" id="tab-channels"><div class="channels-grid">
+    <a class="channel-card" href="https://x.com/ylecun" target="_blank" rel="noopener"><div class="ch-icon">𝕏</div><div class="ch-name">X (Twitter)</div><div class="ch-desc">AI 논쟁, 연구, LLM vs World Models 토론</div><div class="ch-tag">@ylecun</div></a>
+    <a class="channel-card" href="https://ai.meta.com/blog/" target="_blank" rel="noopener"><div class="ch-icon">🟦</div><div class="ch-name">Meta AI Blog</div><div class="ch-desc">Llama, FAIR 연구, 오픈소스 AI 발표</div><div class="ch-tag">ai.meta.com</div></a>
+    <a class="channel-card" href="https://www.youtube.com/results?search_query=yann+lecun+lecture" target="_blank" rel="noopener"><div class="ch-icon">▶️</div><div class="ch-name">강연 & 인터뷰</div><div class="ch-desc">NYU 강의, 학회 키노트, 팟캐스트 출연</div><div class="ch-tag">Yann LeCun</div></a>
+    <a class="channel-card" href="http://yann.lecun.com" target="_blank" rel="noopener"><div class="ch-icon">📝</div><div class="ch-name">홈페이지</div><div class="ch-desc">논문, 강의, 연구 아카이브</div><div class="ch-tag">yann.lecun.com</div></a>
+  </div></div>
+
+  <div class="tab-content" id="tab-profile"><div class="profile-grid">
+    <div class="profile-card"><h3>📌 기본 정보</h3><ul>
+      <li>프랑스 파리 근교 출생 (1960년)</li><li>ESIEE Paris, Pierre et Marie Curie University (PhD)</li>
+      <li>AT&T Bell Labs 연구원 (1988-2003)</li><li>NYU Courant Institute 교수 (2003~현재)</li>
+      <li>Meta/Facebook AI Research(FAIR) 창립 (2013)</li><li>튜링상 수상 (2018, Hinton·Bengio와 공동)</li>
+    </ul></div>
+    <div class="profile-card"><h3>🧠 주요 관심 분야</h3><ul>
+      <li><strong>자기지도학습 (SSL)</strong> — LLM을 넘어선 AI의 미래</li><li><strong>World Models</strong> — AI가 세계를 이해하는 방식</li>
+      <li><strong>JEPA</strong> — Joint Embedding Predictive Architecture</li><li><strong>오픈소스 AI</strong> — Llama, 연구 민주화</li>
+    </ul></div>
+    <div class="profile-card"><h3>🏢 주요 기여</h3><ul>
+      <li><strong>CNN</strong> — 합성곱 신경망 발명 (LeNet, 1989)</li><li><strong>FAIR</strong> — Meta AI 연구소 설립 및 운영</li>
+      <li><strong>Llama</strong> — 오픈소스 LLM 시리즈 주도</li><li><strong>V-JEPA</strong> — 비전 자기지도학습 차세대 아키텍처</li>
+    </ul></div>
+    <div class="profile-card"><h3>🎓 MBA 학습 관련성</h3><ul>
+      <li><strong>학술→산업</strong> — 기초연구가 $조 시장을 만든 사례</li><li><strong>오픈소스 전략</strong> — Meta의 Llama 오픈소스 결정</li>
+      <li><strong>기술 논쟁</strong> — AGI 회의론 vs Scaling 신봉론</li><li><strong>장기 연구 투자</strong> — 30년간 CNN→딥러닝 혁명</li>
+    </ul></div>
+  </div></div>
+
+  <div class="tab-content" id="tab-timeline"><div class="timeline">
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2024~현재</div><div class="tl-text">Llama 3 시리즈 공개. V-JEPA (비전 자기지도학습) 발표. "LLMs are not the path to AGI" 주장 지속. World Models 연구 확대.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2023</div><div class="tl-text">Llama 2 오픈소스 공개 — Meta의 오픈소스 AI 전략 핵심. X(Twitter)에서 AI 미래 격렬 토론.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2018</div><div class="tl-text">튜링상 수상 (Geoffrey Hinton, Yoshua Bengio와 공동) — "딥러닝의 아버지들" 인정.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2013</div><div class="tl-text">Facebook AI Research (FAIR) 창립 디렉터. 학계 최고 인재 영입. 기초 AI 연구 문화 구축.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2003</div><div class="tl-text">NYU Courant Institute 교수 부임. CBLL (Computational and Biological Learning Lab) 설립.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1998</div><div class="tl-text">LeNet-5 논문 — 은행 수표 자동 인식에 CNN 상용화. 딥러닝의 첫 산업 적용.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1989</div><div class="tl-text">CNN (합성곱 신경망) 발명 — 백프로파게이션 + 합성곱 결합. 컴퓨터 비전 혁명의 시작.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1988</div><div class="tl-text">AT&T Bell Labs 연구원 합류. 신경망 연구의 "AI 겨울" 시기에도 연구 지속.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1960</div><div class="tl-text">프랑스 쉬렌(Soisy-sous-Montmorency) 출생. ESIEE Paris → Pierre et Marie Curie University PhD.</div></div>
+  </div></div>
+</div>
+
+<div class="footer">LeCun Tracker · <a href="index.html">Titan Tracker</a> · Point & Line 🌈</div>
+
+<script>
+function escapeHtml(s){if(!s)return'';const d=document.createElement('div');d.appendChild(document.createTextNode(s));return d.innerHTML}
+function sanitizeUrl(u){try{const x=new URL(u);return['http:','https:'].includes(x.protocol)?u:'#'}catch{return'#'}}
+const TRANSLATE_URL='https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ko&dt=t&q=';
+async function translateText(t){if(!t)return'';try{const r=await fetch(TRANSLATE_URL+encodeURIComponent(t.substring(0,500)));const d=await r.json();return d[0].map(s=>s[0]).join('')}catch{return t}}
+const RSS_PROXY='https://api.rss2json.com/v1/api.json?rss_url=';
+const FEEDS={
+  meta:{url:'https://news.google.com/rss/search?q=Meta+AI+Llama+FAIR&hl=en&gl=US',container:'meta-feed',sourceClass:'src-meta',sourceLabel:'Meta AI'},
+  ai:{url:'https://news.google.com/rss/search?q=deep+learning+research+neural+network&hl=en&gl=US',container:'ai-feed',sourceClass:'src-ai',sourceLabel:'AI Research'},
+  research:{url:'https://news.google.com/rss/search?q=self+supervised+learning+world+models+AI&hl=en&gl=US',container:'research-feed',sourceClass:'src-research',sourceLabel:'SSL/Research'},
+  news:{url:'https://news.google.com/rss/search?q=Yann+LeCun&hl=ko&gl=KR',container:'news-feed',sourceClass:'src-news',sourceLabel:'News'}
+};
+function formatDate(ds){const d=new Date(ds),now=new Date(),diff=Math.floor((now-d)/864e5);if(!diff)return'오늘';if(diff===1)return'어제';if(diff<7)return diff+'일 전';if(diff<30)return Math.floor(diff/7)+'주 전';return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0')}
+function stripHtml(h){const t=document.createElement('div');t.innerHTML=h;return t.textContent||''}
+async function renderFeed(items,cid,sc,sl){const c=document.getElementById(cid);if(!items?.length){c.innerHTML='<div class="error-msg">피드를 불러올 수 없습니다.</div>';return}items.sort((a,b)=>new Date(b.pubDate)-new Date(a.pubDate));const s=items.slice(0,8);const tr=await Promise.all(s.map(async it=>{const rd=stripHtml(it.description||it.content||'');const sn=rd.match(/[^.!?]+[.!?]+/g);const desc=sn?sn.slice(0,3).join(' ').substring(0,300):rd.substring(0,200);const[tk,dk]=await Promise.all([translateText(it.title),desc?translateText(desc):Promise.resolve('')]);return{tk,dk,t:it.title}}));c.innerHTML=s.map((it,i)=>{const{tk,dk,t}=tr[i];return`<div class="feed-item"><a href="${sanitizeUrl(it.link)}" target="_blank" rel="noopener"><div class="feed-item-title">${escapeHtml(tk)}</div><div class="feed-item-title-orig">${escapeHtml(t)}</div><div class="feed-item-meta"><span class="feed-source ${sc}">${sl}</span><span>${formatDate(it.pubDate)}</span>${it.author?'<span>by '+escapeHtml(it.author)+'</span>':''}</div>${dk?'<div class="feed-item-desc">'+escapeHtml(dk)+'</div>':''}</a></div>`}).join('')}
+async function tryFetch(url){const r=await fetch(RSS_PROXY+encodeURIComponent(url));const d=await r.json();if(d.status==='ok'&&d.items?.length)return d.items;throw new Error('empty')}
+async function loadFeed(k){const f=FEEDS[k],c=document.getElementById(f.container);c.innerHTML='<div class="loading"><div class="spinner"></div>로딩 중...</div>';try{const items=await tryFetch(f.url);await renderFeed(items,f.container,f.sourceClass,f.sourceLabel);localStorage.setItem('yl_'+k,JSON.stringify({items,ts:Date.now()}))}catch{const cached=localStorage.getItem('yl_'+k);if(cached)await renderFeed(JSON.parse(cached).items,f.container,f.sourceClass,f.sourceLabel);else c.innerHTML='<div class="error-msg">피드 로딩 실패</div>'}}
+async function loadAllFeeds(){await Promise.all(Object.keys(FEEDS).map(k=>loadFeed(k)));document.getElementById('last-updated').textContent='마지막 업데이트: '+new Date().toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}
+function switchTab(id){document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===id));document.querySelectorAll('.tab-content').forEach(c=>c.classList.toggle('active',c.id==='tab-'+id))}
+loadAllFeeds();
+</script>
+</body>
+</html>

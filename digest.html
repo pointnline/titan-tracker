@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Titan Digest — 위클리 다이제스트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#232736;--surface3:#2a2e3d;--border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.12);--text:#e8e8ed;--text-sub:#8b8fa3;--text-muted:#5a5e72;--accent:#f59e0b;--accent-light:#fbbf24;--radius:16px;--radius-sm:12px;--radius-xs:8px}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;padding-top:44px}
+a{color:var(--accent-light);text-decoration:none}
+.header{background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(239,68,68,0.06));border-bottom:1px solid var(--border);padding:2rem 1.5rem;text-align:center}
+.header h1{font-size:22px;font-weight:700;letter-spacing:-0.03em;margin-bottom:6px}
+.header p{font-size:13px;color:var(--text-sub)}
+.header .date-range{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;margin-top:8px}
+.digest-wrap{max-width:900px;margin:0 auto;padding:1.5rem}
+.refresh-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
+.last-updated{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
+.refresh-btn{font-size:12px;padding:6px 14px;border-radius:var(--radius-xs);border:1px solid var(--border);background:var(--surface);color:var(--text-sub);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.refresh-btn:hover{border-color:var(--accent);color:var(--accent-light)}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:2rem}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem;text-align:center}
+.stat-val{font-size:28px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.stat-label{font-size:11px;color:var(--text-muted);margin-top:4px}
+.titan-section{margin-bottom:2rem}
+.titan-header{display:flex;align-items:center;gap:10px;margin-bottom:1rem;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.titan-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.titan-name{font-size:15px;font-weight:600;flex:1}
+.titan-count{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
+.titan-link{font-size:11px;color:var(--accent-light);padding:4px 10px;border-radius:6px;border:1px solid var(--border);transition:all .2s}
+.titan-link:hover{border-color:var(--accent);background:rgba(245,158,11,0.08)}
+.digest-items{display:flex;flex-direction:column;gap:8px}
+.digest-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xs);padding:1rem;transition:all .2s;display:flex;gap:12px;align-items:flex-start}
+.digest-item:hover{border-color:var(--border-hover);background:var(--surface2)}
+.digest-item a{display:flex;gap:12px;align-items:flex-start;color:var(--text);width:100%}
+.digest-rank{font-size:16px;font-weight:700;color:var(--text-muted);font-family:'JetBrains Mono',monospace;min-width:24px;text-align:center;padding-top:2px}
+.digest-content{flex:1;min-width:0}
+.digest-title{font-size:13px;font-weight:600;line-height:1.5;margin-bottom:4px}
+.digest-meta{font-size:10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
+.loading{text-align:center;padding:3rem;color:var(--text-muted)}
+.loading .spinner{width:32px;height:32px;border:3px solid var(--surface3);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.footer{text-align:center;padding:2rem;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:2rem}
+@media(max-width:640px){.stats-row{grid-template-columns:repeat(2,1fr)}.stat-val{font-size:22px}}
+</style>
+</head>
+<body>
+<script src="titan-nav.js"></script>
+
+<div class="header">
+  <h1>📰 Titan Weekly Digest</h1>
+  <p>13명 타이탄의 이번 주 핵심 뉴스를 한눈에</p>
+  <div class="date-range" id="date-range"></div>
+</div>
+
+<div class="digest-wrap">
+  <div class="refresh-bar">
+    <span class="last-updated" id="last-updated">로딩 중...</span>
+    <button class="refresh-btn" onclick="loadDigest()">↻ 새로고침</button>
+  </div>
+
+  <div class="stats-row" id="stats-row">
+    <div class="stat-card"><div class="stat-val" id="s-titans">0</div><div class="stat-label">LIVE 타이탄</div></div>
+    <div class="stat-card"><div class="stat-val" id="s-articles">0</div><div class="stat-label">수집 기사</div></div>
+    <div class="stat-card"><div class="stat-val" id="s-sources">0</div><div class="stat-label">뉴스 소스</div></div>
+    <div class="stat-card"><div class="stat-val" id="s-fresh">0</div><div class="stat-label">최근 24h</div></div>
+  </div>
+
+  <div id="digest-content">
+    <div class="loading"><div class="spinner"></div>13명 타이탄 피드 수집 중...</div>
+  </div>
+</div>
+
+<div class="footer">Titan Digest · <a href="index.html">Titan Tracker</a> · Point & Line 🌈</div>
+
+<script>
+const TITANS = {
+  wolfram:{name:'Stephen Wolfram',color:'#6366f1',page:'wolfram.html',q:'Stephen+Wolfram+Mathematica+Wolfram+Alpha'},
+  gates:{name:'Bill Gates',color:'#0ea5e9',page:'gates.html',q:'Bill+Gates+foundation+GatesNotes'},
+  musk:{name:'Elon Musk',color:'#a855f7',page:'musk.html',q:'Elon+Musk+Tesla+SpaceX+xAI'},
+  bezos:{name:'Jeff Bezos',color:'#f59e0b',page:'bezos.html',q:'Jeff+Bezos+Amazon+Blue+Origin'},
+  amodei:{name:'Dario Amodei',color:'#ef4444',page:'amodei.html',q:'Dario+Amodei+Anthropic+Claude'},
+  dalio:{name:'Ray Dalio',color:'#eab308',page:'dalio.html',q:'Ray+Dalio+Bridgewater+principles'},
+  altman:{name:'Sam Altman',color:'#10b981',page:'altman.html',q:'Sam+Altman+OpenAI+ChatGPT'},
+  huang:{name:'Jensen Huang',color:'#84cc16',page:'huang.html',q:'Jensen+Huang+NVIDIA+GPU'},
+  nadella:{name:'Satya Nadella',color:'#0078d4',page:'nadella.html',q:'Satya+Nadella+Microsoft+Azure'},
+  karpathy:{name:'Andrej Karpathy',color:'#22c55e',page:'karpathy.html',q:'Andrej+Karpathy+AI+education'},
+  lecun:{name:'Yann LeCun',color:'#3b82f6',page:'lecun.html',q:'Yann+LeCun+Meta+AI+deep+learning'},
+  huberman:{name:'Andrew Huberman',color:'#ec4899',page:'huberman.html',q:'Andrew+Huberman+neuroscience+protocol'},
+  pichai:{name:'Sundar Pichai',color:'#4285f4',page:'pichai.html',q:'Sundar+Pichai+Google+Gemini'}
+};
+
+const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
+function escapeHtml(s){if(!s)return'';const d=document.createElement('div');d.appendChild(document.createTextNode(s));return d.innerHTML}
+function sanitizeUrl(u){try{const x=new URL(u);return['http:','https:'].includes(x.protocol)?u:'#'}catch{return'#'}}
+function formatDate(ds){const d=new Date(ds),now=new Date(),diff=Math.floor((now-d)/864e5);if(!diff)return'오늘';if(diff===1)return'어제';if(diff<7)return diff+'일 전';return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0')}
+
+async function loadDigest(){
+  const container = document.getElementById('digest-content');
+  container.innerHTML = '<div class="loading"><div class="spinner"></div>13명 타이탄 피드 수집 중...</div>';
+
+  const now = new Date();
+  const weekAgo = new Date(now - 7*24*60*60*1000);
+  document.getElementById('date-range').textContent =
+    weekAgo.toLocaleDateString('ko-KR',{month:'short',day:'numeric'}) + ' — ' +
+    now.toLocaleDateString('ko-KR',{month:'short',day:'numeric'}) + ' 위클리';
+
+  const titanResults = {};
+  let totalArticles = 0, sources = new Set(), freshCount = 0;
+
+  await Promise.all(Object.entries(TITANS).map(async ([key, titan]) => {
+    const url = `https://news.google.com/rss/search?q=${titan.q}&hl=en&gl=US&when=7d`;
+    try {
+      const res = await fetch(RSS_PROXY + encodeURIComponent(url));
+      const data = await res.json();
+      if(data.status === 'ok' && data.items) {
+        const items = data.items.slice(0, 5).map(item => {
+          if(item.author) sources.add(item.author);
+          const age = Math.floor((now - new Date(item.pubDate)) / 864e5);
+          if(age < 1) freshCount++;
+          return item;
+        });
+        titanResults[key] = items;
+        totalArticles += items.length;
+      }
+    } catch {}
+  }));
+
+  document.getElementById('s-titans').textContent = Object.keys(titanResults).length;
+  document.getElementById('s-articles').textContent = totalArticles;
+  document.getElementById('s-sources').textContent = sources.size;
+  document.getElementById('s-fresh').textContent = freshCount;
+  document.getElementById('last-updated').textContent = '업데이트: ' + now.toLocaleString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+
+  if(!totalArticles){
+    container.innerHTML = '<div class="loading">피드 수집 실패. 잠시 후 다시 시도해주세요.</div>';
+    return;
+  }
+
+  container.innerHTML = Object.entries(TITANS).map(([key, titan]) => {
+    const items = titanResults[key];
+    if(!items || !items.length) return '';
+    return `<div class="titan-section">
+      <div class="titan-header">
+        <div class="titan-dot" style="background:${titan.color}"></div>
+        <div class="titan-name">${titan.name}</div>
+        <div class="titan-count">${items.length}건</div>
+        <a class="titan-link" href="${titan.page}">상세 →</a>
+      </div>
+      <div class="digest-items">${items.map((item,i) =>
+        `<div class="digest-item"><a href="${sanitizeUrl(item.link)}" target="_blank" rel="noopener">
+          <div class="digest-rank">${i+1}</div>
+          <div class="digest-content">
+            <div class="digest-title">${escapeHtml(item.title)}</div>
+            <div class="digest-meta">${formatDate(item.pubDate)}${item.author?' · '+escapeHtml(item.author):''}</div>
+          </div>
+        </a></div>`
+      ).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+loadDigest();
+</script>
+</body>
+</html>

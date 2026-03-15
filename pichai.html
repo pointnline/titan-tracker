@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pichai Tracker — Sundar Pichai 추적 대시보드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#232736;--surface3:#2a2e3d;--border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.12);--text:#e8e8ed;--text-sub:#8b8fa3;--text-muted:#5a5e72;--accent:#4285f4;--accent-light:#6ea8fe;--accent-bg:rgba(66,133,244,0.1);--red:#ef4444;--orange:#f97316;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--radius:16px;--radius-sm:12px;--radius-xs:8px}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;padding-top:44px}
+a{color:var(--accent-light);text-decoration:none;transition:color .2s}a:hover{color:#bfdbfe}
+.header{background:linear-gradient(135deg,rgba(66,133,244,0.15),rgba(52,168,83,0.08));border-bottom:1px solid var(--border);padding:2rem 1.5rem}
+.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
+.avatar{width:80px;height:80px;border-radius:50%;border:3px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:32px;color:white;font-weight:700;background:linear-gradient(135deg,#4285f4,#1a73e8);flex-shrink:0}
+.header-info h1{font-size:24px;font-weight:700;letter-spacing:-0.03em}.header-info .subtitle{font-size:13px;color:var(--text-sub);margin-top:4px;line-height:1.6}.header-info .subtitle span{color:var(--accent-light);font-weight:500}
+.header-badges{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.badge{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:500;border:1px solid var(--border)}
+.badge-google{background:rgba(66,133,244,0.15);color:#93bbfd;border-color:rgba(66,133,244,0.3)}.badge-gemini{background:rgba(168,85,247,0.15);color:#c084fc;border-color:rgba(168,85,247,0.3)}.badge-cloud{background:rgba(34,197,94,0.15);color:#86efac;border-color:rgba(34,197,94,0.3)}.badge-yt2{background:rgba(239,68,68,0.15);color:#fca5a5;border-color:rgba(239,68,68,0.3)}
+.tabs-wrap{max-width:1100px;margin:0 auto;padding:0 1.5rem}.tabs{display:flex;gap:4px;padding:1rem 0 0;border-bottom:1px solid var(--border);overflow-x:auto}
+.tab{padding:10px 18px;font-size:13px;font-weight:500;color:var(--text-sub);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;border-radius:var(--radius-xs) var(--radius-xs) 0 0}.tab:hover{color:var(--text);background:rgba(255,255,255,0.03)}.tab.active{color:var(--accent-light);border-bottom-color:var(--accent);background:rgba(66,133,244,0.06)}
+.main{max-width:1100px;margin:0 auto;padding:1.5rem}.tab-content{display:none}.tab-content.active{display:block}
+.channels-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:2rem}.channel-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;transition:all .25s;cursor:pointer;text-decoration:none;color:var(--text);display:flex;flex-direction:column;gap:10px}.channel-card:hover{border-color:var(--border-hover);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+.ch-icon{font-size:28px}.ch-name{font-size:14px;font-weight:600}.ch-desc{font-size:11px;color:var(--text-sub);line-height:1.5}.ch-tag{font-size:10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;margin-top:auto}
+.feed-section{margin-bottom:2rem}.feed-title{font-size:15px;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:8px}.feed-title .dot{width:8px;height:8px;border-radius:50%}.feed-list{display:flex;flex-direction:column;gap:10px}
+.feed-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;transition:all .2s}.feed-item:hover{border-color:var(--border-hover);background:var(--surface2)}.feed-item a{display:block}
+.feed-item-title{font-size:14px;font-weight:600;line-height:1.5;margin-bottom:6px}.feed-item-title-orig{font-size:11px;color:var(--text-muted);margin-bottom:6px;font-style:italic}.feed-item-meta{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;display:flex;gap:12px;align-items:center}.feed-item-desc{font-size:12px;color:var(--text-sub);line-height:1.6;margin-top:8px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.feed-source{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500}.src-google{background:rgba(66,133,244,0.15);color:#93bbfd}.src-gemini{background:rgba(168,85,247,0.15);color:#c084fc}.src-cloud{background:rgba(34,197,94,0.15);color:#86efac}.src-news{background:rgba(245,158,11,0.15);color:#fcd34d}
+.loading{text-align:center;padding:3rem;color:var(--text-muted)}.loading .spinner{width:32px;height:32px;border:3px solid var(--surface3);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}@keyframes spin{to{transform:rotate(360deg)}}
+.error-msg{text-align:center;padding:2rem;color:var(--red);font-size:13px;background:rgba(239,68,68,0.08);border-radius:var(--radius-sm)}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.profile-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem}.profile-card h3{font-size:13px;font-weight:600;margin-bottom:10px;color:var(--accent-light)}.profile-card li{font-size:12px;color:var(--text-sub);line-height:1.8}.profile-card ul{list-style:none;padding:0}.profile-card ul li::before{content:'→ ';color:var(--accent)}
+.timeline{position:relative;padding-left:24px}.timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--surface3)}.tl-item{position:relative;margin-bottom:1.5rem}.tl-dot{position:absolute;left:-20px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}.tl-year{font-size:13px;font-weight:700;color:var(--accent-light);margin-bottom:4px}.tl-text{font-size:12px;color:var(--text-sub);line-height:1.6}
+.refresh-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}.refresh-btn{font-size:12px;padding:6px 14px;border-radius:var(--radius-xs);border:1px solid var(--border);background:var(--surface);color:var(--text-sub);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}.refresh-btn:hover{border-color:var(--accent);color:var(--accent-light)}.last-updated{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
+.footer{text-align:center;padding:2rem;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:2rem}
+@media(max-width:768px){.header-inner{flex-direction:column;text-align:center}.header-badges{justify-content:center}.channels-grid{grid-template-columns:1fr 1fr}.profile-grid{grid-template-columns:1fr}}
+@media(max-width:480px){.channels-grid{grid-template-columns:1fr}.main{padding:1rem}}
+</style>
+</head>
+<body>
+<script src="titan-nav.js"></script>
+<div class="header"><div class="header-inner">
+  <div class="avatar">SP</div>
+  <div class="header-info">
+    <h1>Sundar Pichai Tracker</h1>
+    <div class="subtitle"><span>Google / Alphabet</span> CEO · <span>Gemini</span> AI · <span>Cloud</span> · <span>YouTube</span><br>검색, AI, 클라우드, 모바일을 아우르는 세계 최대 테크 기업의 수장</div>
+    <div class="header-badges"><span class="badge badge-google">Google / Alphabet</span><span class="badge badge-gemini">Gemini AI</span><span class="badge badge-cloud">Google Cloud</span><span class="badge badge-yt2">YouTube</span></div>
+  </div>
+</div></div>
+
+<div class="tabs-wrap"><div class="tabs">
+  <div class="tab active" data-tab="feed" onclick="switchTab('feed')">📡 피드</div>
+  <div class="tab" data-tab="channels" onclick="switchTab('channels')">🔗 채널</div>
+  <div class="tab" data-tab="profile" onclick="switchTab('profile')">👤 프로필</div>
+  <div class="tab" data-tab="timeline" onclick="switchTab('timeline')">📅 타임라인</div>
+</div></div>
+
+<div class="main">
+  <div class="tab-content active" id="tab-feed">
+    <div class="refresh-bar"><span class="last-updated" id="last-updated">마지막 업데이트: —</span><button class="refresh-btn" onclick="loadAllFeeds()">↻ 새로고침</button></div>
+    <div class="feed-section"><div class="feed-title"><div class="dot" style="background:#4285f4"></div>Google / Alphabet 뉴스</div><div class="feed-list" id="google-feed"><div class="loading"><div class="spinner"></div>로딩 중...</div></div></div>
+    <div class="feed-section"><div class="feed-title"><div class="dot" style="background:var(--purple)"></div>Gemini AI 뉴스</div><div class="feed-list" id="gemini-feed"><div class="loading"><div class="spinner"></div>로딩 중...</div></div></div>
+    <div class="feed-section"><div class="feed-title"><div class="dot" style="background:var(--green)"></div>Google Cloud 뉴스</div><div class="feed-list" id="cloud-feed"><div class="loading"><div class="spinner"></div>로딩 중...</div></div></div>
+    <div class="feed-section"><div class="feed-title"><div class="dot" style="background:var(--orange)"></div>Sundar Pichai 뉴스</div><div class="feed-list" id="news-feed"><div class="loading"><div class="spinner"></div>로딩 중...</div></div></div>
+  </div>
+
+  <div class="tab-content" id="tab-channels"><div class="channels-grid">
+    <a class="channel-card" href="https://blog.google" target="_blank" rel="noopener"><div class="ch-icon">🔵</div><div class="ch-name">The Keyword</div><div class="ch-desc">Google 공식 블로그 — 제품, 연구, 정책 발표</div><div class="ch-tag">blog.google</div></a>
+    <a class="channel-card" href="https://x.com/sundarpichai" target="_blank" rel="noopener"><div class="ch-icon">𝕏</div><div class="ch-name">X (Twitter)</div><div class="ch-desc">제품 발표, Google I/O, 비전 공유</div><div class="ch-tag">@sundarpichai</div></a>
+    <a class="channel-card" href="https://www.youtube.com/results?search_query=google+IO+keynote+sundar+pichai" target="_blank" rel="noopener"><div class="ch-icon">▶️</div><div class="ch-name">Google I/O</div><div class="ch-desc">연례 개발자 컨퍼런스 키노트</div><div class="ch-tag">Google I/O</div></a>
+    <a class="channel-card" href="https://ai.google" target="_blank" rel="noopener"><div class="ch-icon">🧠</div><div class="ch-name">Google AI</div><div class="ch-desc">Gemini, DeepMind, AI 연구 발표</div><div class="ch-tag">ai.google</div></a>
+  </div></div>
+
+  <div class="tab-content" id="tab-profile"><div class="profile-grid">
+    <div class="profile-card"><h3>📌 기본 정보</h3><ul>
+      <li>인도 첸나이(마두라이) 출생 (1972년)</li><li>IIT Kharagpur (야금공학), Stanford (MS), Wharton (MBA)</li>
+      <li>McKinsey 컨설턴트 → Google 입사 (2004)</li><li>Chrome, Android, Google Drive 총괄</li>
+      <li>Google CEO (2015) → Alphabet CEO (2019)</li><li>순자산 약 $1.3B</li>
+    </ul></div>
+    <div class="profile-card"><h3>🧠 주요 관심 분야</h3><ul>
+      <li><strong>AI / Gemini</strong> — Google DeepMind 통합, Gemini 시리즈</li><li><strong>검색의 미래</strong> — AI Overview, SGE</li>
+      <li><strong>Google Cloud</strong> — 엔터프라이즈 AI 플랫폼</li><li><strong>책임있는 AI</strong> — AI 안전, 편향 방지</li>
+    </ul></div>
+    <div class="profile-card"><h3>🏢 Alphabet 핵심 사업</h3><ul>
+      <li><strong>Google Search</strong> — 세계 1위 검색 엔진 (92% 점유)</li><li><strong>YouTube</strong> — 세계 1위 동영상 플랫폼</li>
+      <li><strong>Google Cloud</strong> — AWS, Azure 다음 #3 클라우드</li><li><strong>Android</strong> — 세계 1위 모바일 OS (75%+)</li>
+      <li><strong>Waymo</strong> — 자율주행 택시 서비스</li>
+    </ul></div>
+    <div class="profile-card"><h3>🎓 MBA 학습 관련성</h3><ul>
+      <li><strong>제품 리더십</strong> — Chrome→Android→CEO 경로</li><li><strong>AI 전환</strong> — "AI-first" 전략 선언 (2016)</li>
+      <li><strong>플랫폼 경쟁</strong> — OpenAI/Microsoft vs Google AI 경쟁</li><li><strong>조직 통합</strong> — DeepMind+Brain→Google DeepMind</li>
+    </ul></div>
+  </div></div>
+
+  <div class="tab-content" id="tab-timeline"><div class="timeline">
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2024~현재</div><div class="tl-text">Gemini 1.5 Pro (1M 토큰 컨텍스트). Google I/O 2024 — AI 전방위 통합. Alphabet 시총 $2T+. NotebookLM, AI Overview 출시.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2023</div><div class="tl-text">Gemini 발표 — GPT-4 대항마. Google DeepMind 설립 (Brain+DeepMind 통합). Bard → Gemini 리브랜딩.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2019</div><div class="tl-text">Alphabet CEO 취임. Larry Page, Sergey Brin으로부터 경영권 승계.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2016</div><div class="tl-text">"Mobile-first to AI-first" 전략 선언. Google Assistant, Google Home 출시. AlphaGo 이세돌 대국.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2015</div><div class="tl-text">Google CEO 취임 (Alphabet 지주회사 구조 전환). 제품 + 플랫폼 전체 총괄.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2013</div><div class="tl-text">Android 총괄 추가. Chrome + Android + Google Apps 전체 소비자 제품 담당.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2008</div><div class="tl-text">Google Chrome 출시 — 브라우저 시장 혁신. 이후 시장 점유율 65%+ 달성.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2004</div><div class="tl-text">Google 입사. Google Toolbar, Chrome 프로젝트 리드. 제품 관리 부사장으로 승진.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1972</div><div class="tl-text">인도 마두라이 출생. 2룸 아파트에서 성장. IIT Kharagpur → Stanford MS → Wharton MBA.</div></div>
+  </div></div>
+</div>
+
+<div class="footer">Pichai Tracker · <a href="index.html">Titan Tracker</a> · Point & Line 🌈</div>
+
+<script>
+function escapeHtml(s){if(!s)return'';const d=document.createElement('div');d.appendChild(document.createTextNode(s));return d.innerHTML}
+function sanitizeUrl(u){try{const x=new URL(u);return['http:','https:'].includes(x.protocol)?u:'#'}catch{return'#'}}
+const TRANSLATE_URL='https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ko&dt=t&q=';
+async function translateText(t){if(!t)return'';try{const r=await fetch(TRANSLATE_URL+encodeURIComponent(t.substring(0,500)));const d=await r.json();return d[0].map(s=>s[0]).join('')}catch{return t}}
+const RSS_PROXY='https://api.rss2json.com/v1/api.json?rss_url=';
+const FEEDS={
+  google:{url:'https://news.google.com/rss/search?q=Google+Alphabet+Sundar+Pichai&hl=en&gl=US',container:'google-feed',sourceClass:'src-google',sourceLabel:'Google'},
+  gemini:{url:'https://news.google.com/rss/search?q=Google+Gemini+AI+DeepMind&hl=en&gl=US',container:'gemini-feed',sourceClass:'src-gemini',sourceLabel:'Gemini AI'},
+  cloud:{url:'https://news.google.com/rss/search?q=Google+Cloud+AI+platform&hl=en&gl=US',container:'cloud-feed',sourceClass:'src-cloud',sourceLabel:'Google Cloud'},
+  news:{url:'https://news.google.com/rss/search?q=Sundar+Pichai&hl=ko&gl=KR',container:'news-feed',sourceClass:'src-news',sourceLabel:'News'}
+};
+function formatDate(ds){const d=new Date(ds),now=new Date(),diff=Math.floor((now-d)/864e5);if(!diff)return'오늘';if(diff===1)return'어제';if(diff<7)return diff+'일 전';if(diff<30)return Math.floor(diff/7)+'주 전';return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0')}
+function stripHtml(h){const t=document.createElement('div');t.innerHTML=h;return t.textContent||''}
+async function renderFeed(items,cid,sc,sl){const c=document.getElementById(cid);if(!items?.length){c.innerHTML='<div class="error-msg">피드를 불러올 수 없습니다.</div>';return}items.sort((a,b)=>new Date(b.pubDate)-new Date(a.pubDate));const s=items.slice(0,8);const tr=await Promise.all(s.map(async it=>{const rd=stripHtml(it.description||it.content||'');const sn=rd.match(/[^.!?]+[.!?]+/g);const desc=sn?sn.slice(0,3).join(' ').substring(0,300):rd.substring(0,200);const[tk,dk]=await Promise.all([translateText(it.title),desc?translateText(desc):Promise.resolve('')]);return{tk,dk,t:it.title}}));c.innerHTML=s.map((it,i)=>{const{tk,dk,t}=tr[i];return`<div class="feed-item"><a href="${sanitizeUrl(it.link)}" target="_blank" rel="noopener"><div class="feed-item-title">${escapeHtml(tk)}</div><div class="feed-item-title-orig">${escapeHtml(t)}</div><div class="feed-item-meta"><span class="feed-source ${sc}">${sl}</span><span>${formatDate(it.pubDate)}</span>${it.author?'<span>by '+escapeHtml(it.author)+'</span>':''}</div>${dk?'<div class="feed-item-desc">'+escapeHtml(dk)+'</div>':''}</a></div>`}).join('')}
+async function tryFetch(url){const r=await fetch(RSS_PROXY+encodeURIComponent(url));const d=await r.json();if(d.status==='ok'&&d.items?.length)return d.items;throw new Error('empty')}
+async function loadFeed(k){const f=FEEDS[k],c=document.getElementById(f.container);c.innerHTML='<div class="loading"><div class="spinner"></div>로딩 중...</div>';try{const items=await tryFetch(f.url);await renderFeed(items,f.container,f.sourceClass,f.sourceLabel);localStorage.setItem('sp_'+k,JSON.stringify({items,ts:Date.now()}))}catch{const cached=localStorage.getItem('sp_'+k);if(cached)await renderFeed(JSON.parse(cached).items,f.container,f.sourceClass,f.sourceLabel);else c.innerHTML='<div class="error-msg">피드 로딩 실패</div>'}}
+async function loadAllFeeds(){await Promise.all(Object.keys(FEEDS).map(k=>loadFeed(k)));document.getElementById('last-updated').textContent='마지막 업데이트: '+new Date().toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}
+function switchTab(id){document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===id));document.querySelectorAll('.tab-content').forEach(c=>c.classList.toggle('active',c.id==='tab-'+id))}
+loadAllFeeds();
+</script>
+</body>
+</html>

@@ -714,6 +714,7 @@ renderTable();
 </script>
 
 <!-- ✨ Hermes Chatbot -->
+<script src="config.js"></script>
 <style>
 .hermes-btn{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;width:56px;height:56px;border-radius:50%;border:none;
   background:linear-gradient(135deg,#6366f1,#a855f7);color:white;cursor:pointer;font-size:24px;
@@ -796,10 +797,7 @@ renderTable();
     </div>
     <button class="hp-close" onclick="toggleHermes()">✕</button>
   </div>
-  <div class="hp-key">
-    <span class="key-dot" id="hm-key-dot" style="background:#ef4444"></span>
-    <input type="password" id="hm-api-key" placeholder="Gemini API Key (aistudio.google.com)" oninput="saveHmKey(this.value)">
-  </div>
+
   <div class="hp-msgs" id="hm-msgs">
     <div class="hp-msg ai">안녕하세요! 저는 <strong>Hermes</strong> ⚡ — 타이탄들의 세계를 안내하는 메신저입니다.<br><br>13명 거인의 <strong>철학, 전략, 기술 비전</strong>에 대해 무엇이든 물어보세요!<br><br>💡 예시:<br>• "머스크와 나델라의 리더십 차이는?"<br>• "AI 투자 전략을 세우고 싶어"<br>• "젠슨 황의 GPU 전략 분석해줘"</div>
   </div>
@@ -821,14 +819,10 @@ function toggleHermes(){
   if(hermesOpen) document.getElementById('hm-input').focus();
 }
 
-// API Key
-(function(){
-  const saved = localStorage.getItem('titan-gemini-key');
-  if(saved){document.getElementById('hm-api-key').value=saved;document.getElementById('hm-key-dot').style.background='#22c55e'}
-})();
-function saveHmKey(v){
-  localStorage.setItem('titan-gemini-key',v.trim());
-  document.getElementById('hm-key-dot').style.background=v.trim().length>10?'#22c55e':'#ef4444';
+// API Key (config.js 자동 로드)
+function getApiKey(){
+  if(typeof TITAN_CONFIG!=='undefined' && TITAN_CONFIG.GEMINI_API_KEY) return TITAN_CONFIG.GEMINI_API_KEY;
+  return localStorage.getItem('titan-gemini-key')||'';
 }
 
 function addHmMsg(role,text){
@@ -870,10 +864,10 @@ const HERMES_SYSTEM = `당신은 "Hermes"(에르메스) — Titan Tracker의 AI 
 
 async function sendHm(){
   const input=document.getElementById('hm-input');
-  const key=document.getElementById('hm-api-key').value.trim();
+  const key=getApiKey();
   const text=input.value.trim();
   if(!text)return;
-  if(!key||key.length<10){addHmMsg('sys','⚠️ Gemini API 키를 입력해주세요');return}
+  if(!key||key.length<10){addHmMsg('sys','⚠️ config.js에 GEMINI_API_KEY를 설정해주세요');return}
   addHmMsg('user',text);input.value='';
   hmHistory.push({role:'user',parts:[{text}]});
   const loading=addHmMsg('ai','<span style="animation:spin 1s linear infinite;display:inline-block">⏳</span> 생각 중...');

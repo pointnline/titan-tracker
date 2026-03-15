@@ -153,6 +153,7 @@ a{text-decoration:none;color:var(--accent-light)}
 </style>
 </head>
 <body>
+<script src="config.js"></script>
 <button class="theme-toggle" onclick="toggleTheme()" title="라이트/다크 모드 전환">🌙</button>
 
 <div class="bg-glow"></div>
@@ -174,12 +175,12 @@ a{text-decoration:none;color:var(--accent-light)}
     <div class="chat-header">
       <h3><span class="icon">🤖</span> AI Study Assistant</h3>
       <div class="api-key-area">
-        <input type="password" class="api-key-input" id="api-key" placeholder="Gemini API Key 입력..." title="Google AI Studio에서 무료 발급">
-        <span class="api-key-status disconnected" id="api-status">미연결</span>
+        <input type="password" class="api-key-input" id="api-key" placeholder="API Key (자동 로드됨)" title="config.js에서 자동 로드" style="display:none">
+        <span class="api-key-status connected" id="api-status">연결됨</span>
       </div>
     </div>
     <div class="chat-messages" id="chat-messages">
-      <div class="chat-msg system">🔑 <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a>에서 무료 API 키를 발급받으세요 (15 RPM, 일 100만 토큰 무료)</div>
+      <div class="chat-msg system">✅ Gemini API 연결됨 — 바로 질문하세요!</div>
       <div class="chat-msg ai">안녕하세요! 선택된 타이탄에 대해 무엇이든 물어보세요. 철학, 원칙, 투자 전략, 기술 비전 등 심층 학습을 도와드립니다. 🎓</div>
     </div>
     <div class="quick-questions" id="quick-questions"></div>
@@ -575,26 +576,17 @@ function askQuick(q) {
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 let chatHistory = [];
 
-// API 키 관리
-(function() {
-  const saved = localStorage.getItem('titan-gemini-key');
-  if (saved) {
-    document.getElementById('api-key').value = saved;
+// API 키 관리 (config.js 자동 로드)
+function getStudyApiKey(){
+  if(typeof TITAN_CONFIG!=='undefined' && TITAN_CONFIG.GEMINI_API_KEY) return TITAN_CONFIG.GEMINI_API_KEY;
+  return localStorage.getItem('titan-gemini-key')||'';
+}
+(function(){
+  const key = getStudyApiKey();
+  if(key){
     document.getElementById('api-status').textContent = '연결됨';
     document.getElementById('api-status').className = 'api-key-status connected';
   }
-  document.getElementById('api-key').addEventListener('input', function() {
-    const key = this.value.trim();
-    localStorage.setItem('titan-gemini-key', key);
-    const status = document.getElementById('api-status');
-    if (key.length > 10) {
-      status.textContent = '연결됨';
-      status.className = 'api-key-status connected';
-    } else {
-      status.textContent = '미연결';
-      status.className = 'api-key-status disconnected';
-    }
-  });
 })();
 
 function addChatMsg(role, text) {
@@ -636,12 +628,12 @@ function buildSystemPrompt() {
 
 async function sendMessage() {
   const input = document.getElementById('chat-input');
-  const apiKey = document.getElementById('api-key').value.trim();
+  const apiKey = getStudyApiKey();
   const text = input.value.trim();
   if (!text) return;
 
   if (!apiKey || apiKey.length < 10) {
-    addChatMsg('system', '⚠️ Gemini API 키를 입력해주세요. Google AI Studio에서 무료 발급 가능합니다.');
+    addChatMsg('system', '⚠️ config.js에 GEMINI_API_KEY를 설정해주세요');
     return;
   }
 

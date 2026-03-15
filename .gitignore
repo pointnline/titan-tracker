@@ -1,0 +1,10 @@
+# API Keys
+config.js
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# OMC State
+.omc/

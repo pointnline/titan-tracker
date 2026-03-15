@@ -444,9 +444,9 @@ async function renderFeed(items, containerId, sourceClass, sourceLabel) {
     container.innerHTML = '<div class="error-msg">피드를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.</div>';
     return;
   }
-  const sliced = items.slice(0, 8);
+  items.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));  const sliced = items.slice(0, 8);
   const translations = await Promise.all(sliced.map(async item => {
-    const desc = stripHtml(item.description || item.content || '').substring(0, 200);
+    const rawDesc = stripHtml(item.description || item.content || '');    const sentences = rawDesc.match(/[^.!?]+[.!?]+/g);    const desc = sentences ? sentences.slice(0, 3).join(' ').substring(0, 300) : rawDesc.substring(0, 200);
     const [titleKo, descKo] = await Promise.all([
       translateText(item.title),
       desc ? translateText(desc) : Promise.resolve('')

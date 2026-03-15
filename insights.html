@@ -49,6 +49,16 @@ a{text-decoration:none;color:var(--accent-light)}
   transition:border-color .2s}
 .titan-badge:hover{border-color:var(--border-hover)}
 .titan-badge .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.titan-badge{cursor:pointer;user-select:none;transition:all .25s}
+.titan-badge.active{border-color:var(--accent);background:rgba(99,102,241,0.1)}
+.titan-badge.inactive{opacity:0.35;border-color:transparent}
+.titan-badge .check{font-size:9px;margin-left:2px;opacity:.7}
+.filter-actions{margin-top:14px;display:flex;justify-content:center;gap:12px;align-items:center}
+.btn-analyze{padding:8px 24px;border-radius:20px;border:1px solid var(--accent);background:var(--accent);
+  color:white;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.btn-analyze:hover{background:var(--accent-light);transform:translateY(-1px);box-shadow:0 4px 16px rgba(99,102,241,.3)}
+.btn-analyze:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none}
+.filter-hint{font-size:10px;color:var(--text-muted)}
 
 /* 메인 컨테이너 */
 .main{max-width:960px;margin:0 auto;padding:0 1.5rem 2rem;position:relative;z-index:1}
@@ -207,13 +217,10 @@ a{text-decoration:none;color:var(--accent-light)}
 <div class="header">
   <h1>🔗 Cross-Titan Insights</h1>
   <p>거인들의 최신 활동을 교차 분석하여 숨겨진 트렌드를 발견합니다</p>
-  <div class="active-titans">
-    <div class="titan-badge"><div class="dot" style="background:#6366f1"></div>Stephen Wolfram</div>
-    <div class="titan-badge"><div class="dot" style="background:#0ea5e9"></div>Bill Gates</div>
-    <div class="titan-badge"><div class="dot" style="background:#a855f7"></div>Elon Musk</div>
-    <div class="titan-badge"><div class="dot" style="background:#f59e0b"></div>Jeff Bezos</div>
-    <div class="titan-badge"><div class="dot" style="background:#ef4444"></div>Dario Amodei</div>
-    <div class="titan-badge"><div class="dot" style="background:#eab308"></div>Ray Dalio</div>
+  <div class="active-titans" id="titan-selector"></div>
+  <div class="filter-actions">
+    <span class="filter-hint">최소 2명 선택 · 클릭으로 ON/OFF</span>
+    <button class="btn-analyze" id="btn-analyze" onclick="reAnalyze()">🔄 분석 시작</button>
   </div>
 </div>
 
@@ -312,6 +319,55 @@ const TITAN_FEEDS = {
     ]
   }
 };
+
+// === 타이탄 선택 필터 ===
+let selectedTitans = new Set(Object.keys(TITAN_FEEDS));
+
+// URL 파라미터로 선택 상태 복원
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const t = params.get('t');
+  if (t) {
+    const keys = t.split(',').filter(k => TITAN_FEEDS[k]);
+    if (keys.length >= 2) selectedTitans = new Set(keys);
+  }
+})();
+
+function renderSelector() {
+  const container = document.getElementById('titan-selector');
+  container.innerHTML = Object.entries(TITAN_FEEDS).map(([key, info]) => {
+    const active = selectedTitans.has(key);
+    return '<div class="titan-badge ' + (active ? 'active' : 'inactive') + '" onclick="toggleTitan(\'' + key + '\')">'+
+      '<div class="dot" style="background:' + info.color + '"></div>' + info.name +
+      (active ? ' <span class="check">✓</span>' : '') + '</div>';
+  }).join('');
+  const btn = document.getElementById('btn-analyze');
+  if (btn) btn.disabled = selectedTitans.size < 2;
+}
+
+function toggleTitan(key) {
+  if (selectedTitans.has(key)) {
+    if (selectedTitans.size <= 2) return;
+    selectedTitans.delete(key);
+  } else {
+    selectedTitans.add(key);
+  }
+  renderSelector();
+  const url = new URL(window.location);
+  url.searchParams.set('t', [...selectedTitans].join(','));
+  history.replaceState(null, '', url);
+}
+
+function reAnalyze() {
+  document.getElementById('main-content').innerHTML =
+    '<div class="loading-full" id="loading">' +
+    '<div class="spinner"></div>' +
+    '<div>피드 수집 중...</div>' +
+    '<div class="step" id="loading-step">Step 1: RSS 피드 로딩</div>' +
+    '</div>';
+  analyze();
+}
+
 
 // AI/기술/과학 핵심 키워드 사전 (가중치 포함)
 const KEYWORD_MAP = {
@@ -430,7 +486,7 @@ async function loadFeeds(urls) {
 // 메인 분석 — 동적 N명 타이탄
 async function analyze() {
   const step = document.getElementById('loading-step');
-  const titanKeys = Object.keys(TITAN_FEEDS);
+  const titanKeys = [...selectedTitans];
   const titanItems = {};
   const titanKeywords = {};
 
@@ -618,7 +674,8 @@ function renderResults(cross, titanOnlyTopics, titanTotals, titanKeys) {
   `;
 }
 
-// 실행
+// 초기화
+renderSelector();
 analyze();
 </script>
 </body>

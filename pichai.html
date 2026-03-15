@@ -124,7 +124,7 @@ async function tryFetch(url){const r=await fetch(RSS_PROXY+encodeURIComponent(ur
 async function loadFeed(k){const f=FEEDS[k],c=document.getElementById(f.container);c.innerHTML='<div class="loading"><div class="spinner"></div>로딩 중...</div>';try{const items=await tryFetch(f.url);await renderFeed(items,f.container,f.sourceClass,f.sourceLabel);localStorage.setItem('sp_'+k,JSON.stringify({items,ts:Date.now()}))}catch{const cached=localStorage.getItem('sp_'+k);if(cached)await renderFeed(JSON.parse(cached).items,f.container,f.sourceClass,f.sourceLabel);else c.innerHTML='<div class="error-msg">피드 로딩 실패</div>'}}
 async function loadAllFeeds(){await Promise.all(Object.keys(FEEDS).map(k=>loadFeed(k)));document.getElementById('last-updated').textContent='마지막 업데이트: '+new Date().toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}
 function switchTab(id){document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===id));document.querySelectorAll('.tab-content').forEach(c=>c.classList.toggle('active',c.id==='tab-'+id))}
-loadAllFeeds();
+// loadAllFeeds(); — titan-nav.js 아코디언이 온디맨드 로드 처리;
 </script>
 </body>
 </html>

@@ -232,7 +232,7 @@ async function loadFeed(feedKey){
 
 async function loadAllFeeds(){await Promise.all(Object.keys(FEEDS).map(k=>loadFeed(k)));const now=new Date().toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});document.getElementById('last-updated').textContent='마지막 업데이트: '+now}
 function switchTab(tabId){document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tabId));document.querySelectorAll('.tab-content').forEach(c=>c.classList.toggle('active',c.id==='tab-'+tabId))}
-loadAllFeeds();
+// loadAllFeeds(); — titan-nav.js 아코디언이 온디맨드 로드 처리;
 </script>
 <script src="titan-nav.js"></script>
 </body>

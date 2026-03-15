@@ -17,7 +17,7 @@
   --gold:#f59e0b;--green:#22c55e;--red:#ef4444;--blue:#0ea5e9;--purple:#a855f7;--pink:#ec4899;
   --radius:16px;--radius-sm:12px;--radius-xs:8px;
 }
-body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;padding-top:44px}
 a{text-decoration:none;color:var(--accent-light)}
 .back-link{position:fixed;top:1rem;left:1rem;font-size:12px;color:var(--text-muted);z-index:10;
   padding:6px 12px;border-radius:20px;background:var(--surface);border:1px solid var(--border);transition:all .2s}
@@ -122,7 +122,7 @@ canvas{max-height:250px}
   <div class="loading-step" id="load-step">피드 수집 중...</div>
 </div>
 
-<a href="index.html" class="back-link">← Titan Tracker</a>
+<nav class="titan-nav" style="position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;gap:0;padding:0 1rem;height:40px;background:rgba(10,11,16,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.06);font-size:11px"><a href="index.html" style="color:#8b8fa3;font-weight:600;margin-right:auto;text-decoration:none">🔭 Titan Tracker</a><a href="insights.html" style="color:#5a5e72;padding:4px 10px;text-decoration:none" onmouseover="this.style.color='#818cf8'" onmouseout="this.style.color='#5a5e72'">📝 Insights</a><a href="dashboard.html" style="color:#818cf8;padding:4px 10px;text-decoration:none">📊 Dashboard</a><a href="study.html" style="color:#5a5e72;padding:4px 10px;text-decoration:none" onmouseover="this.style.color='#818cf8'" onmouseout="this.style.color='#5a5e72'">🧠 Study</a></nav>
 
 <div class="header">
   <h1>⚡ Insight Dashboard</h1>
@@ -232,6 +232,21 @@ const TITANS = {
     name: 'Dalio', color: '#eab308', colorLight: 'rgba(234,179,8,0.6)',
     feeds: ['https://news.google.com/rss/search?q=%22Ray+Dalio%22+Bridgewater+economy&hl=en',
             'https://news.google.com/rss/search?q=%22Ray+Dalio%22+principles+debt&hl=en']
+  },
+  altman: {
+    name: 'Altman', color: '#10b981', colorLight: 'rgba(16,185,129,0.6)',
+    feeds: ['https://news.google.com/rss/search?q=Sam+Altman+OpenAI&hl=en&gl=US',
+            'https://news.google.com/rss/search?q=OpenAI+GPT+ChatGPT&hl=en&gl=US']
+  },
+  huang: {
+    name: 'Huang', color: '#84cc16', colorLight: 'rgba(132,204,22,0.6)',
+    feeds: ['https://news.google.com/rss/search?q=Jensen+Huang+NVIDIA&hl=en&gl=US',
+            'https://news.google.com/rss/search?q=NVIDIA+GPU+AI+infrastructure&hl=en&gl=US']
+  },
+  nadella: {
+    name: 'Nadella', color: '#0078d4', colorLight: 'rgba(0,120,212,0.6)',
+    feeds: ['https://news.google.com/rss/search?q=Satya+Nadella+Microsoft&hl=en&gl=US',
+            'https://news.google.com/rss/search?q=Microsoft+AI+Copilot+Azure&hl=en&gl=US']
   }
 };
 

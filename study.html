@@ -19,7 +19,7 @@
   --radius:20px;--radius-sm:14px;--radius-xs:8px;
 }
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);
-  min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;padding-top:44px}
 a{text-decoration:none;color:var(--accent-light)}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
@@ -158,7 +158,7 @@ a{text-decoration:none;color:var(--accent-light)}
 <div class="bg-glow"></div>
 <div class="bg-glow2"></div>
 
-<a href="index.html" class="back-link">← Titan Tracker</a>
+<nav class="titan-nav" style="position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;gap:0;padding:0 1rem;height:40px;background:rgba(10,11,16,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.06);font-size:11px"><a href="index.html" style="color:#8b8fa3;font-weight:600;margin-right:auto;text-decoration:none">🔭 Titan Tracker</a><a href="insights.html" style="color:#5a5e72;padding:4px 10px;text-decoration:none" onmouseover="this.style.color='#818cf8'" onmouseout="this.style.color='#5a5e72'">📝 Insights</a><a href="dashboard.html" style="color:#5a5e72;padding:4px 10px;text-decoration:none" onmouseover="this.style.color='#818cf8'" onmouseout="this.style.color='#5a5e72'">📊 Dashboard</a><a href="study.html" style="color:#818cf8;padding:4px 10px;text-decoration:none">🧠 Study</a></nav>
 
 <div class="header">
   <h1>🧠 Titan Study Hub</h1>
@@ -391,6 +391,84 @@ const TITAN_STUDY = {
       '"Principles are ways of successfully dealing with reality to get what you want out of life."'
     ],
     quickQs: ['Big Debt Crises의 핵심 패턴은?', 'Idea Meritocracy를 우리 팀에 적용하는 법?', '현재 경제 사이클은 어디에 위치해?', 'Dalio의 All Weather Portfolio 전략은?']
+  },
+  altman: {
+    name: 'Sam Altman',
+    color: '#10b981',
+    philosophy: 'AGI(범용인공지능)는 인류 역사상 가장 중요한 발명이 될 것이다. 올바른 방향으로 개발하면 풍요의 시대를 열 수 있다.',
+    principles: [
+      'AGI를 향한 점진적 접근 — 작은 모델에서 시작해 점진적으로 스케일업',
+      'Safety + Capability 균형 — 능력과 안전을 동시에 발전시키는 전략',
+      'Iterative Deployment — 완벽을 기다리지 않고 배포하며 학습',
+      'Startup Thinking — 빠르게 실험하고 피봇하는 문화'
+    ],
+    books: [
+      { title: '추천: Zero to One (Peter Thiel)', year: '2014', desc: 'Altman이 자주 인용하는 스타트업 바이블' },
+      { title: 'Startup Playbook (에세이)', year: '2015', desc: 'YC 시절 작성한 스타트업 운영 가이드' },
+      { title: '추천: The Structure of Scientific Revolutions', year: '1962', desc: '패러다임 전환에 대한 통찰' }
+    ],
+    talks: [
+      { title: 'How to Start a Startup (Stanford)', desc: 'YC 시절 스탠포드 강연 시리즈', url: 'https://www.youtube.com/results?search_query=sam+altman+how+to+start+a+startup' },
+      { title: 'OpenAI DevDay 키노트', desc: 'GPT-4, API, ChatGPT Enterprise 발표', url: 'https://www.youtube.com/results?search_query=openai+devday+keynote' }
+    ],
+    quotes: [
+      '"The most important quality for a startup founder is determination."',
+      '"AI will be the most transformative technology humanity has ever created."',
+      '"If you push through the pain, you usually end up in a good place."'
+    ],
+    quickQs: ['AGI 달성까지의 로드맵은?', 'OpenAI의 사업 모델 전략은?', 'Sam의 스타트업 조언 핵심은?', 'Board 위기에서 배운 교훈은?']
+  },
+  huang: {
+    name: 'Jensen Huang',
+    color: '#84cc16',
+    philosophy: 'Accelerated Computing은 범용 컴퓨팅의 한계를 극복하는 유일한 길이다. GPU 병렬처리가 AI, 과학, 시뮬레이션의 근간.',
+    principles: [
+      'Accelerated Computing — CPU의 한계를 GPU 병렬처리로 극복',
+      'Full Stack Innovation — 칩부터 소프트웨어 생태계까지 수직 통합',
+      'CUDA 생태계 — 개발자 생태계가 핵심 해자(moat)',
+      '30년 한 우물 — NVIDIA를 30년간 경영하며 여러 번 피봇'
+    ],
+    books: [
+      { title: '추천: The Innovator\'s Dilemma', year: '1997', desc: 'Huang이 자주 참조하는 혁신 전략' },
+      { title: 'NVIDIA Way (Tae Kim)', year: '2024', desc: 'NVIDIA 30년 역사와 Jensen의 리더십' },
+      { title: '추천: Only the Paranoid Survive', year: '1996', desc: 'Intel CEO의 전략적 변곡점' }
+    ],
+    talks: [
+      { title: 'GTC 2024 Keynote', desc: 'Blackwell GPU + AI 공장 비전', url: 'https://www.youtube.com/results?search_query=jensen+huang+gtc+2024+keynote' },
+      { title: 'Stanford 연설', desc: '창업 여정과 실패에서 배운 교훈', url: 'https://www.youtube.com/results?search_query=jensen+huang+stanford' }
+    ],
+    quotes: [
+      '"The more you buy, the more you save."',
+      '"Our company is always 30 days from going out of business."',
+      '"Software is eating the world, but AI is going to eat software."'
+    ],
+    quickQs: ['CUDA가 NVIDIA의 해자인 이유는?', 'Accelerated Computing vs CPU의 미래는?', 'NVIDIA의 AI 데이터센터 전략은?', 'Jensen의 리더십 스타일 특징은?']
+  },
+  nadella: {
+    name: 'Satya Nadella',
+    color: '#0078d4',
+    philosophy: 'Growth Mindset — 고정된 능력이 아닌 성장 가능성에 초점. 공감(Empathy)이 혁신의 출발점이며, 기술은 모든 사람과 조직이 더 많은 것을 성취하도록 돕는 도구.',
+    principles: [
+      'Growth Mindset — "Know-it-all"에서 "Learn-it-all" 문화로 전환',
+      'Empathy First — 공감이 혁신의 출발점',
+      'Cloud First → AI First — 전략적 피봇의 대가',
+      'One Microsoft — 사일로 해체, 협업 문화로 관료주의 극복'
+    ],
+    books: [
+      { title: 'Hit Refresh', year: '2017', desc: 'Nadella 본인 저서 — Microsoft 문화 변혁과 리더십 철학' },
+      { title: '추천: Mindset (Carol Dweck)', year: '2006', desc: 'Growth Mindset의 원전' },
+      { title: '추천: Nonviolent Communication', year: '1999', desc: '공감 커뮤니케이션 — 리더십에 적용' }
+    ],
+    talks: [
+      { title: 'Microsoft Build 키노트', desc: 'Copilot + AI 플랫폼 전략', url: 'https://www.youtube.com/results?search_query=satya+nadella+build+keynote' },
+      { title: 'Wharton 강연', desc: '리더십과 문화 변혁', url: 'https://www.youtube.com/results?search_query=satya+nadella+wharton+leadership' }
+    ],
+    quotes: [
+      '"Don\'t be a know-it-all; be a learn-it-all."',
+      '"Empathy makes you a better innovator."',
+      '"Our industry respects innovation, not tradition."'
+    ],
+    quickQs: ['Growth Mindset를 조직에 적용하는 법?', 'Microsoft의 AI 전략 핵심은?', 'OpenAI 파트너십의 전략적 의미는?', 'Nadella의 공감 리더십 사례는?']
   }
 };
 

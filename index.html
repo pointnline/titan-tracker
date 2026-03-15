@@ -20,7 +20,7 @@
   --gold:#f59e0b;--gold-glow:rgba(245,158,11,0.2);
   --radius:20px;--radius-sm:14px;--radius-xs:8px;
 }
-body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;padding-top:44px}
 a{text-decoration:none;color:inherit}
 
 /* 배경 효과 */
@@ -184,6 +184,7 @@ td{padding:10px;font-size:12px;vertical-align:middle}
 </style>
 </head>
 <body>
+<nav class="titan-nav" style="position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;gap:0;padding:0 1rem;height:40px;background:rgba(10,11,16,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.06);font-size:11px"><a href="index.html" style="color:#818cf8;font-weight:600;margin-right:auto;text-decoration:none">🔭 Titan Tracker</a><a href="insights.html" style="color:#5a5e72;padding:4px 10px;text-decoration:none" onmouseover="this.style.color='#818cf8'" onmouseout="this.style.color='#5a5e72'">📝 Insights</a><a href="dashboard.html" style="color:#5a5e72;padding:4px 10px;text-decoration:none" onmouseover="this.style.color='#818cf8'" onmouseout="this.style.color='#5a5e72'">📊 Dashboard</a><a href="study.html" style="color:#5a5e72;padding:4px 10px;text-decoration:none" onmouseover="this.style.color='#818cf8'" onmouseout="this.style.color='#5a5e72'">🧠 Study</a></nav>
 <button class="theme-toggle" onclick="toggleTheme()" title="라이트/다크 모드 전환">🌙</button>
 
 <div class="bg-glow"></div>
@@ -220,7 +221,7 @@ td{padding:10px;font-size:12px;vertical-align:middle}
 <div class="titans-section">
   <div class="section-header">
     <div class="section-title">🏛️ Titans</div>
-    <div class="section-count">6 active · 94 coming soon</div>
+    <div class="section-count">9 active · 91 coming soon</div>
   </div>
 
   <div class="titans-grid">
@@ -383,6 +384,60 @@ td{padding:10px;font-size:12px;vertical-align:middle}
       </div>
     </a>
 
+    <!-- Sam Altman — LIVE -->
+    <a href="altman.html" class="titan-card" style="--card-accent:#10b981">
+      <div class="titan-status"><div class="status-dot status-live"></div>LIVE</div>
+      <div class="titan-top">
+        <img class="titan-avatar" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Sam_Altman_CropEdit.jpg/440px-Sam_Altman_CropEdit.jpg" alt="Sam Altman" onerror="this.onerror=null;var d=document.createElement('div');d.className='titan-avatar';d.style.cssText='background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;font-size:20px;color:white;font-weight:700';d.textContent='SA';this.replaceWith(d)">
+        <div>
+          <div class="titan-name">Sam Altman</div>
+          <div class="titan-role">OpenAI CEO · 전 Y Combinator 사장 · AGI 추구자</div>
+        </div>
+      </div>
+      <div class="titan-tags">
+        <span class="titan-tag">OpenAI</span><span class="titan-tag">GPT</span><span class="titan-tag">AGI</span><span class="titan-tag">Worldcoin</span>
+      </div>
+      <div class="titan-channels">
+        <span class="titan-ch">Blog</span><span class="titan-ch">X</span><span class="titan-ch">인터뷰</span>
+      </div>
+    </a>
+
+    <!-- Jensen Huang — LIVE -->
+    <a href="huang.html" class="titan-card" style="--card-accent:#84cc16">
+      <div class="titan-status"><div class="status-dot status-live"></div>LIVE</div>
+      <div class="titan-top">
+        <img class="titan-avatar" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Jensen_Huang_20230531_%28cropped%29.jpg/440px-Jensen_Huang_20230531_%28cropped%29.jpg" alt="Jensen Huang" onerror="this.onerror=null;var d=document.createElement('div');d.className='titan-avatar';d.style.cssText='background:linear-gradient(135deg,#84cc16,#65a30d);display:flex;align-items:center;justify-content:center;font-size:20px;color:white;font-weight:700';d.textContent='JH';this.replaceWith(d)">
+        <div>
+          <div class="titan-name">Jensen Huang</div>
+          <div class="titan-role">NVIDIA CEO · 공동창립자 · AI 인프라의 제왕</div>
+        </div>
+      </div>
+      <div class="titan-tags">
+        <span class="titan-tag">GPU</span><span class="titan-tag">CUDA</span><span class="titan-tag">AI Infra</span><span class="titan-tag">Data Center</span>
+      </div>
+      <div class="titan-channels">
+        <span class="titan-ch">NVIDIA</span><span class="titan-ch">GTC</span><span class="titan-ch">인터뷰</span>
+      </div>
+    </a>
+
+    <!-- Satya Nadella — LIVE -->
+    <a href="nadella.html" class="titan-card" style="--card-accent:#0078d4">
+      <div class="titan-status"><div class="status-dot status-live"></div>LIVE</div>
+      <div class="titan-top">
+        <img class="titan-avatar" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/MS-Exec-Nadella-Satya-2017-08-31-22_%28cropped%29.jpg/440px-MS-Exec-Nadella-Satya-2017-08-31-22_%28cropped%29.jpg" alt="Satya Nadella" onerror="this.onerror=null;var d=document.createElement('div');d.className='titan-avatar';d.style.cssText='background:linear-gradient(135deg,#0078d4,#005a9e);display:flex;align-items:center;justify-content:center;font-size:20px;color:white;font-weight:700';d.textContent='SN';this.replaceWith(d)">
+        <div>
+          <div class="titan-name">Satya Nadella</div>
+          <div class="titan-role">Microsoft CEO · 회장 · 클라우드+AI 전환의 설계자</div>
+        </div>
+      </div>
+      <div class="titan-tags">
+        <span class="titan-tag">Azure</span><span class="titan-tag">AI Platform</span><span class="titan-tag">Copilot</span>
+      </div>
+      <div class="titan-channels">
+        <span class="titan-ch">MS Blog</span><span class="titan-ch">LinkedIn</span><span class="titan-ch">X</span>
+      </div>
+    </a>
+
     <!-- Ray Dalio — LIVE -->
     <a href="dalio.html" class="titan-card" style="--card-accent:#eab308">
       <div class="titan-status"><div class="status-dot status-live"></div>LIVE</div>
@@ -422,6 +477,12 @@ td{padding:10px;font-size:12px;vertical-align:middle}
     font-size:14px;font-weight:700;text-decoration:none;transition:all .3s;
     box-shadow:0 4px 20px rgba(99,102,241,0.3)">
     📝 Detailed Report
+  </a>
+  <a href="study.html" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;
+    border-radius:30px;background:linear-gradient(135deg,#22c55e,#10b981);color:white;
+    font-size:14px;font-weight:700;text-decoration:none;transition:all .3s;
+    box-shadow:0 4px 20px rgba(34,197,94,0.3)">
+    🧠 Study Hub
   </a>
 </div>
 

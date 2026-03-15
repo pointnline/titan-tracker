@@ -19,13 +19,11 @@
   --red:#ef4444;--orange:#f97316;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;
   --radius:16px;--radius-sm:12px;--radius-xs:8px;
 }
-body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;padding-top:44px}
 a{color:var(--accent-light);text-decoration:none;transition:color .2s}
 a:hover{color:#fef3c7}
 
-.back-link{position:fixed;top:1rem;left:1rem;font-size:12px;color:var(--text-muted);z-index:10;
-  padding:6px 12px;border-radius:20px;background:var(--surface);border:1px solid var(--border);transition:all .2s}
-.back-link:hover{border-color:var(--accent);color:var(--accent-light)}
+
 
 .header{
   background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(234,179,8,0.08));
@@ -139,7 +137,7 @@ a:hover{color:#fef3c7}
 </head>
 <body>
 
-<a href="index.html" class="back-link">← Titan Tracker</a>
+<nav class="titan-nav" style="position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;gap:0;padding:0 1rem;height:40px;background:rgba(10,11,16,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.06);font-size:11px"><a href="index.html" style="color:#8b8fa3;font-weight:600;margin-right:auto;text-decoration:none">🔭 Titan Tracker</a><a href="insights.html" style="color:#5a5e72;padding:4px 10px;text-decoration:none" onmouseover="this.style.color='#818cf8'" onmouseout="this.style.color='#5a5e72'">📝 Insights</a><a href="dashboard.html" style="color:#5a5e72;padding:4px 10px;text-decoration:none" onmouseover="this.style.color='#818cf8'" onmouseout="this.style.color='#5a5e72'">📊 Dashboard</a><a href="study.html" style="color:#5a5e72;padding:4px 10px;text-decoration:none" onmouseover="this.style.color='#818cf8'" onmouseout="this.style.color='#5a5e72'">🧠 Study</a></nav>
 
 <!-- 헤더 -->
 <div class="header">
@@ -395,6 +393,9 @@ async function translateText(text) {
   } catch (e) { return text; }
 }
 
+function escapeHtml(str){if(!str)return'';const d=document.createElement('div');d.appendChild(document.createTextNode(str));return d.innerHTML}
+function sanitizeUrl(url){try{const u=new URL(url);return['http:','https:'].includes(u.protocol)?url:'#'}catch{return'#'}}
+
 const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
 const FEEDS = {
   principles: {
@@ -468,15 +469,15 @@ async function renderFeed(items, containerId, sourceClass, sourceLabel) {
     const { titleKo, descKo, title } = translations[i];
     return `
       <div class="feed-item">
-        <a href="${item.link}" target="_blank" rel="noopener">
-          <div class="feed-item-title">${titleKo}</div>
-          <div class="feed-item-title-orig">${title}</div>
+        <a href="${sanitizeUrl(item.link)}" target="_blank" rel="noopener">
+          <div class="feed-item-title">${escapeHtml(titleKo)}</div>
+          <div class="feed-item-title-orig">${escapeHtml(title)}</div>
           <div class="feed-item-meta">
             <span class="feed-source ${sourceClass}">${sourceLabel}</span>
             <span>${formatDate(item.pubDate)}</span>
-            ${item.author ? '<span>by ' + item.author + '</span>' : ''}
+            ${item.author ? '<span>by ' + escapeHtml(item.author) + '</span>' : ''}
           </div>
-          ${descKo ? '<div class="feed-item-desc">' + descKo + '</div>' : ''}
+          ${descKo ? '<div class="feed-item-desc">' + escapeHtml(descKo) + '</div>' : ''}
         </a>
       </div>`;
   }).join('');

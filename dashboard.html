@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Titan Tracker — Insight Dashboard</title>
+<title>EagleEye — Insight Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" crossorigin="anonymous"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -17,6 +17,12 @@
   --gold:#f59e0b;--green:#22c55e;--red:#ef4444;--blue:#0ea5e9;--purple:#a855f7;--pink:#ec4899;
   --radius:16px;--radius-sm:12px;--radius-xs:8px;
 }
+[data-theme="light"]{
+  --bg:#f5f5f7;--surface:#ffffff;--surface2:#f0f0f3;--surface3:#e8e8ec;
+  --border:rgba(0,0,0,0.08);--border-hover:rgba(0,0,0,0.15);
+  --text:#1a1a2e;--text-sub:#4a4a6a;--text-muted:#8888a0;
+}
+[data-theme="light"] .loading-overlay{background:var(--bg)}
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
 a{text-decoration:none;color:var(--accent-light)}
 .back-link{position:fixed;top:1rem;left:1rem;font-size:12px;color:var(--text-muted);z-index:10;
@@ -88,6 +94,11 @@ canvas{max-height:250px}
 .loading-step{font-size:11px;color:var(--text-muted);margin-top:6px;font-family:'JetBrains Mono',monospace}
 
 .footer{text-align:center;padding:1.5rem;font-size:10px;color:var(--text-muted);border-top:1px solid var(--border)}
+.theme-toggle{position:fixed;top:1rem;right:1rem;z-index:50;width:36px;height:36px;border-radius:50%;
+  border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .3s;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.theme-toggle:hover{border-color:var(--accent);transform:scale(1.1)}
 
 @media(max-width:768px){
   .dashboard{grid-template-columns:1fr}
@@ -102,6 +113,7 @@ canvas{max-height:250px}
 </style>
 </head>
 <body>
+<button class="theme-toggle" onclick="toggleTheme()" title="라이트/다크 모드 전환">🌙</button>
 
 <div class="loading-overlay" id="loader">
   <div class="loader"></div>
@@ -109,7 +121,7 @@ canvas{max-height:250px}
   <div class="loading-step" id="load-step">피드 수집 중...</div>
 </div>
 
-<a href="index.html" class="back-link">← Titan Tracker</a>
+<a href="index.html" class="back-link">← EagleEye</a>
 
 <div class="header">
   <h1>⚡ Insight Dashboard</h1>
@@ -158,10 +170,29 @@ canvas{max-height:250px}
 </div>
 
 <div class="footer">
-  Insight Dashboard · <a href="index.html">Titan Tracker</a> · <a href="insights.html">상세 리포트 →</a> · Point & Line 🌈
+  Insight Dashboard · <a href="index.html">EagleEye</a> · <a href="insights.html">상세 리포트 →</a> · Point & Line 🌈
 </div>
 
 <script>
+// 테마 토글
+(function(){
+  const saved = localStorage.getItem('titan-theme');
+  if(saved) document.documentElement.setAttribute('data-theme', saved);
+  else if(window.matchMedia('(prefers-color-scheme: light)').matches) document.documentElement.setAttribute('data-theme','light');
+  window.addEventListener('DOMContentLoaded',()=>{
+    const btn=document.querySelector('.theme-toggle');
+    if(btn) btn.textContent=document.documentElement.getAttribute('data-theme')==='light'?'🌙':'☀️';
+  });
+})();
+function toggleTheme(){
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('titan-theme', next);
+  document.querySelector('.theme-toggle').textContent = next === 'light' ? '🌙' : '☀️';
+  if(typeof Chart!=='undefined'){Chart.defaults.color=next==='light'?'#4a4a6a':'#8b8fa3';Chart.defaults.borderColor=next==='light'?'rgba(0,0,0,0.06)':'rgba(255,255,255,0.06)';}
+}
+
 Chart.defaults.color = '#8b8fa3';
 Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
 Chart.defaults.font.family = "'Inter',sans-serif";
@@ -193,7 +224,9 @@ const TOPICS = {
   'Future / 미래':     { keys: ['future','prediction','forecast','trend','next decade','transform'], color:'#8b5cf6' },
 };
 
-function stripHtml(h){const d=document.createElement('div');d.innerHTML=h;return d.textContent||''}
+// 보안: HTML 이스케이프 + 안전한 stripHtml
+function escapeHtml(s){if(!s)return'';const d=document.createElement('div');d.appendChild(document.createTextNode(s));return d.innerHTML}
+function stripHtml(h){if(!h)return'';const doc=new DOMParser().parseFromString(h,'text/html');return doc.body.textContent||''}
 
 async function loadFeeds(urls){
   const items=[];

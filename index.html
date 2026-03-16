@@ -54,7 +54,7 @@ a{text-decoration:none;color:inherit}
 .section-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1.5rem}
 .section-title{font-size:16px;font-weight:700;letter-spacing:-0.02em}
 .section-count{font-size:12px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
-.titans-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.titans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 
 /* 타이탄 카드 */
 .titan-card{
@@ -231,12 +231,13 @@ td{padding:10px;font-size:12px;vertical-align:middle}
 <div class="titans-section">
   <div class="section-header">
     <div class="section-title">🏛️ Titans</div>
-    <div class="section-count">120 Titans</div>
+    <div class="section-count" id="titan-section-count">Titans</div>
   </div>
 
   <div class="titans-grid" id="titans-grid"></div>
+  <div id="titan-pagination" style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:1.25rem;flex-wrap:wrap"></div>
   <div style="text-align:center;margin-top:1rem">
-    <a href="titans-list.html" style="font-size:13px;color:var(--text-muted);text-decoration:none;padding:8px 20px;border:1px solid var(--border);border-radius:20px;transition:all .2s" onmouseover="this.style.borderColor='#818cf8';this.style.color='#818cf8'" onmouseout="this.style.borderColor='';this.style.color=''">120명 전체 보기 →</a>
+    <a href="titans-list.html" style="font-size:13px;color:var(--text-muted);text-decoration:none;padding:8px 20px;border:1px solid var(--border);border-radius:20px;transition:all .2s" onmouseover="this.style.borderColor='#818cf8';this.style.color='#818cf8'" onmouseout="this.style.borderColor='';this.style.color=''">전체 상세 보기 →</a>
   </div>
 </div>
 </div>
@@ -444,28 +445,61 @@ const DEDICATED = {
   'Sundar Pichai':'pichai.html'
 };
 
-function renderTitanCards() {
+const PAGE_SIZE = 9; // 3x3
+let currentPage = 1;
+
+function renderTitanCards(page) {
+  currentPage = page || 1;
   const grid = document.getElementById('titans-grid');
   if (!grid) return;
-  grid.innerHTML = TITANS.map(t => {
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageItems = TITANS.slice(start, start + PAGE_SIZE);
+  const totalPages = Math.ceil(TITANS.length / PAGE_SIZE);
+
+  grid.innerHTML = pageItems.map(t => {
     const initials = t.n.split(' ').map(w=>w[0]).join('').substring(0,2);
     const href = DEDICATED[t.n] || ('titan.html?name='+encodeURIComponent(t.n)+'&role='+encodeURIComponent(t.r)+'&k='+encodeURIComponent(t.k)+'&color='+encodeURIComponent(t.color)+'&ch='+encodeURIComponent(t.ch.join(',')));
     const tags = t.k.split(',').slice(0,3).map(k=>'<span class="titan-tag">'+k.trim()+'</span>').join('');
     const channels = t.ch.slice(0,3).map(c=>'<span class="titan-ch">'+c+'</span>').join('');
-    return `<a href="${href}" class="titan-card" style="--card-accent:${t.color}">
-      <div class="titan-top">
-        <div class="titan-avatar" style="background:linear-gradient(135deg,${t.color},${t.color}88);display:flex;align-items:center;justify-content:center;font-size:20px;color:white;font-weight:700">${initials}</div>
-        <div>
-          <div class="titan-name">${t.n}</div>
-          <div class="titan-role">${t.r}</div>
-        </div>
-      </div>
-      <div class="titan-tags">${tags}</div>
-      <div class="titan-channels">${channels}</div>
-    </a>`;
+    return '<a href="'+href+'" class="titan-card" style="--card-accent:'+t.color+'">'+
+      '<div class="titan-top">'+
+        '<div class="titan-avatar" style="background:linear-gradient(135deg,'+t.color+','+t.color+'88);display:flex;align-items:center;justify-content:center;font-size:20px;color:white;font-weight:700">'+initials+'</div>'+
+        '<div><div class="titan-name">'+t.n+'</div><div class="titan-role">'+t.r+'</div></div>'+
+      '</div>'+
+      '<div class="titan-tags">'+tags+'</div>'+
+      '<div class="titan-channels">'+channels+'</div>'+
+    '</a>';
   }).join('');
+
+  // 페이지네이션 렌더
+  const pag = document.getElementById('titan-pagination');
+  if (!pag) return;
+  let pagHtml = '';
+  const btnStyle = 'padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#8b8fa3;font-size:11px;cursor:pointer;font-family:\'Inter\',sans-serif;transition:all .2s';
+  const activeStyle = 'padding:6px 12px;border-radius:8px;border:1px solid #6366f1;background:#6366f1;color:white;font-size:11px;cursor:default;font-family:\'Inter\',sans-serif';
+
+  if (currentPage > 1) pagHtml += '<button style="'+btnStyle+'" onclick="renderTitanCards('+(currentPage-1)+')">← 이전</button>';
+
+  // 페이지 번호 (최대 7개 표시)
+  var startP = Math.max(1, currentPage - 3);
+  var endP = Math.min(totalPages, startP + 6);
+  if (endP - startP < 6) startP = Math.max(1, endP - 6);
+  for (var p = startP; p <= endP; p++) {
+    if (p === currentPage) {
+      pagHtml += '<button style="'+activeStyle+'">'+p+'</button>';
+    } else {
+      pagHtml += '<button style="'+btnStyle+'" onclick="renderTitanCards('+p+')">'+p+'</button>';
+    }
+  }
+
+  if (currentPage < totalPages) pagHtml += '<button style="'+btnStyle+'" onclick="renderTitanCards('+(currentPage+1)+')">다음 →</button>';
+  pagHtml += '<span style="font-size:10px;color:#4a4e62;margin-left:8px">'+currentPage+'/'+totalPages+' ('+TITANS.length+'명)</span>';
+  pag.innerHTML = pagHtml;
+
+  // 그리드 위로 스크롤
+  if (page && page !== 1) grid.scrollIntoView({behavior:'smooth',block:'start'});
 }
-renderTitanCards();
+renderTitanCards(1);
 
 let currentFilter='all',searchQuery='';
 

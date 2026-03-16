@@ -508,7 +508,7 @@ async function aiDashboardComment(){
     const dashText=document.querySelector('.dashboard')?.innerText?.substring(0,3000)||'';
     const result=await window.callGemini(
       '한국어로 답변. AI/테크/투자 트렌드 분석 전문가.',
-      `다음은 13명 타이탄(Wolfram,Gates,Musk,Bezos,Amodei,Dalio,Altman,Huang,Nadella,Karpathy,LeCun,Huberman,Pichai)의 실시간 대시보드 데이터입니다. 핵심 트렌드 3개, 투자 시사점, 주의할 신호를 분석해주세요:\n\n${dashText}`,
+      `다음은 주요 타이탄의 실시간 대시보드 데이터입니다. 핵심 트렌드 3개, 투자 시사점, 주의할 신호를 분석해주세요:\n\n${dashText}`,
       {maxTokens:800}
     );
     content.innerHTML=titanUtils.formatAiText(result);

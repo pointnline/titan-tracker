@@ -399,7 +399,6 @@ function renderTable(){
           </div>
           <div style="font-size:11px;color:var(--text-sub);margin-bottom:10px">${t.r} · Impact: <strong style="color:${t.impact>=95?'#22c55e':t.impact>=90?'#818cf8':'#f59e0b'}">${t.impact}</strong>/100</div>
           <div id="fpp-ai-${rid}"></div>
-          <button class="fp-gen-btn" id="fpb-${rid}" onclick="event.stopPropagation();genProfile('${rid}','${t.n.replace(/'/g,"\\'")}','${t.r.replace(/'/g,"\\'")}','${t.k.replace(/'/g,"\\'")}')">🧠 AI 프로필 생성</button>
         </div>
       </div>
     </td></tr>`;
@@ -433,6 +432,8 @@ async function toggleFeedPanel(rid,name){
   if(row.style.display!=='none'){row.style.display='none';_openPanels.delete(rid);return;}
   row.style.display='table-row';
   _openPanels.add(rid);
+  // 팩트 프로필 자동 로드
+  loadFactProfile(rid, name);
   const container=document.getElementById('fpi-'+rid);
   if(container.dataset.loaded)return;
   container.dataset.loaded='1';
@@ -446,41 +447,39 @@ async function toggleFeedPanel(rid,name){
   }catch(e){container.innerHTML='<div class="fp-loading">피드 로드 실패</div>';}
 }
 
-async function genProfile(rid,name,role,keywords){
+// 팩트 기반 프로필 로드 (titans-data.js의 TITAN_PROFILES 사용)
+function loadFactProfile(rid, name){
   const container=document.getElementById('fpp-ai-'+rid);
-  const btn=document.getElementById('fpb-'+rid);
-  if(container.dataset.loaded){return;}
+  if(!container || container.dataset.loaded) return;
+  const profiles = (typeof TITAN_PROFILES !== 'undefined') ? TITAN_PROFILES : {};
+  const p = profiles[name];
+  if(!p){container.innerHTML='<div style="font-size:11px;color:var(--text-muted)">프로필 데이터 없음</div>';return;}
   container.dataset.loaded='1';
-  btn.disabled=true;
-  btn.innerHTML='⏳ 생성 중...';
 
-  // 캐시 체크
-  const cacheKey='tp_'+name.replace(/\s+/g,'_').toLowerCase();
-  const cached=localStorage.getItem(cacheKey);
-  if(cached){try{const d=JSON.parse(cached);if(Date.now()-d.ts<24*3600*1000){renderProfile(container,d.data);btn.style.display='none';return;}}catch{}}
+  const esc = function(s){return titanUtils.escapeHtml(s||'');};
+  const principles = (p.principles||[]).map(function(t){return '<li>'+esc(t)+'</li>';}).join('');
+  const books = (p.books||[]).map(function(b){
+    return '<li>'+(b.url?'<a href="'+b.url+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#818cf8">'+esc(b.title)+'</a>':''+esc(b.title))+' <span style="color:var(--text-muted)">('+esc(b.year)+')</span></li>';
+  }).join('');
+  const timeline = (p.timeline||[]).map(function(t){
+    return '<li><strong style="color:var(--gold);font-family:\'JetBrains Mono\',monospace;font-size:10px">'+esc(t.y)+'</strong> '+esc(t.t)+'</li>';
+  }).join('');
+  const channels = (p.channels||[]).map(function(c){
+    return '<a href="'+c.url+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="font-size:10px;padding:3px 8px;border-radius:6px;background:rgba(99,102,241,0.1);color:#818cf8;text-decoration:none">'+esc(c.name)+'</a>';
+  }).join(' ');
 
-  try{
-    const result=await window.callGemini(
-      '한국어로 답변. 당신은 인물 분석 전문가입니다. JSON으로만 답변하세요.',
-      `다음 인물에 대해 투자자/비즈니스 관점으로 프로필을 JSON으로 작성해주세요.
-이름: ${name}
-역할: ${role}
-키워드: ${keywords}
-
-다음 JSON 형식으로만 답변 (설명 없이 JSON만):
-{"philosophy":"핵심 철학/비전 2-3줄","theories":["핵심 이론/방법론/프레임워크 3개"],"principles":["핵심 원칙/전략 3개"],"books":["대표 저서/강연/콘텐츠 3개"],"invest":"투자 관점: 이 인물의 활동이 어떤 산업/종목/트렌드에 영향을 주는지, 주시할 시그널은 무엇인지 3줄","signal":"현재 주시해야 할 핵심 키워드/이벤트 1줄"}`,
-      {maxTokens:600}
-    );
-    // JSON 파싱
-    let data;
-    try{
-      const jsonStr=result.replace(/```json\n?/g,'').replace(/```/g,'').trim();
-      data=JSON.parse(jsonStr);
-    }catch{
-      // JSON 파싱 실패 → 텍스트로 표시
-      container.innerHTML='<div class="fp-pcard"><p>'+titanUtils.formatAiText(result)+'</p></div>';
-      btn.style.display='none';return;
-    }
+  container.innerHTML=
+    '<div style="font-size:12px;color:var(--text-sub);line-height:1.7;margin-bottom:10px;padding:10px 14px;background:var(--surface3);border-radius:10px;border-left:3px solid var(--accent)">'+
+    '💭 '+esc(p.philosophy)+'</div>'+
+    '<div class="fp-profile-grid">'+
+      '<div class="fp-pcard"><h4>⚖️ 핵심 원칙</h4><ul>'+principles+'</ul></div>'+
+      '<div class="fp-pcard"><h4>📚 저서 & 레퍼런스</h4><ul>'+books+'</ul></div>'+
+      '<div class="fp-pcard"><h4>📅 타임라인</h4><ul style="font-size:11px;line-height:1.6">'+timeline+'</ul></div>'+
+      '<div class="fp-pcard"><h4>💰 투자 관점</h4><p>'+esc(p.invest)+'</p></div>'+
+    '</div>'+
+    (channels?'<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">'+channels+'</div>':'')+
+    (p.signal?'<div style="margin-top:10px;padding:8px 14px;border-radius:8px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);font-size:11px;color:#fbbf24;display:flex;align-items:center;gap:6px">⚡ <strong>Signal:</strong> '+esc(p.signal)+'</div>':'');
+}
     localStorage.setItem(cacheKey,JSON.stringify({data,ts:Date.now()}));
     renderProfile(container,data);
     btn.style.display='none';
@@ -508,6 +507,7 @@ function renderProfile(container,d){
 
 renderTable();
 </script>
+<script src="titans-data.js"></script>
 <script src="titan-nav.js"></script>
 </body>
 </html>

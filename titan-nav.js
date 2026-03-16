@@ -399,7 +399,7 @@
       <button class="hp-close" onclick="window._hermesToggle()">✕</button>
     </div>
     <div class="hp-msgs" id="hm-msgs">
-      <div class="hp-msg ai">안녕하세요! <strong>Hermes</strong> ⚡입니다.<br><br>13명 타이탄의 <strong>철학, 전략, 기술</strong>에 대해 무엇이든 물어보세요!</div>
+      <div class="hp-msg ai" id="hm-welcome">안녕하세요! <strong>Hermes</strong> ⚡입니다.<br><br>타이탄의 <strong>철학, 전략, 기술</strong>에 대해 무엇이든 물어보세요!</div>
     </div>
     <div id="hm-key-area" style="display:none;padding:8px 18px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;gap:6px;align-items:center">
       <span id="hm-key-dot" style="width:6px;height:6px;border-radius:50%;background:#ef4444;flex-shrink:0"></span>
@@ -420,12 +420,50 @@
   let hermesOpen = false;
   let hmHistory = [];
 
-  const HERMES_SYSTEM = `당신은 "Hermes"(에르메스) — Titan Tracker의 AI 어시스턴트입니다. 한국어로 답변하세요.
-거인들(Titans)의 세계를 안내하는 메신저. 그리스 신화의 헤르메스처럼 지식을 전달합니다.
+  // 동적 시스템 프롬프트 — TITAN_PROFILES에서 현재 상태 반영
+  function buildHermesSystem() {
+    const profiles = (typeof TITAN_PROFILES !== 'undefined') ? TITAN_PROFILES : {};
+    const names = Object.keys(profiles);
+    const count = names.length;
 
-알고 있는 13명: Stephen Wolfram(계산과학), Bill Gates(Microsoft/보건), Elon Musk(Tesla/SpaceX/xAI), Jeff Bezos(Amazon/Blue Origin), Dario Amodei(Anthropic/AI Safety), Ray Dalio(Bridgewater/투자원칙), Sam Altman(OpenAI/AGI), Jensen Huang(NVIDIA/GPU), Satya Nadella(Microsoft/Azure), Andrej Karpathy(AI교육/Tesla AI), Yann LeCun(Meta AI/CNN), Andrew Huberman(신경과학/건강), Sundar Pichai(Google/Gemini)
+    // 섹터별 대표 타이탄 요약 (최대 3명씩)
+    const sectorMap = {
+      'AI/ML': ['Geoffrey Hinton','Sam Altman','Jensen Huang','Dario Amodei','Yann LeCun','Andrej Karpathy'],
+      'Science': ['Jennifer Doudna','Terence Tao','Roger Penrose'],
+      'Tech': ['Elon Musk','Mark Zuckerberg','Tim Cook','Linus Torvalds'],
+      'Business': ['Jeff Bezos','Bill Gates','Ray Dalio','Naval Ravikant'],
+      'Finance': ['Michael Burry','Stanley Druckenmiller','Cathie Wood'],
+      'Health': ['Andrew Huberman','Peter Attia','David Sinclair'],
+      'AI Tools': ['Demis Hassabis','Ilya Sutskever','Cursor (Michael Truell)','Perplexity (Aravind Srinivas)'],
+      'Philosophy': ['Yuval Noah Harari','Nassim Nicholas Taleb']
+    };
 
-답변 원칙: 1)타이탄들의 실제 철학/발언/전략 기반 2)비교분석, 투자인사이트, 기술트렌드에 강함 3)간결하되 통찰력 있게(3-4문단) 4)이모지 적절 사용 5)MBA/비즈니스 관점 포함 6)불확실한 정보는 솔직히 밝힘`;
+    // 각 타이탄의 philosophy 첫 문장으로 컨텍스트 생성
+    let titanContext = '';
+    names.slice(0, 30).forEach(function(name) {
+      const p = profiles[name];
+      if (p && p.philosophy) {
+        titanContext += name + ': ' + p.philosophy.split('.')[0] + '.\n';
+      }
+    });
+
+    return '당신은 "Hermes"(에르메스) — Titan Tracker의 AI 어시스턴트입니다. 한국어로 답변하세요.\n' +
+      '거인들(Titans)의 세계를 안내하는 메신저. 그리스 신화의 헤르메스처럼 지식을 전달합니다.\n\n' +
+      '현재 ' + count + '명의 타이탄을 추적하고 있습니다.\n' +
+      '섹터: ' + Object.entries(sectorMap).map(function(e){return e[0]+'('+e[1].slice(0,3).join(', ')+' 등)';}).join(', ') + '\n\n' +
+      '주요 타이탄 철학:\n' + titanContext + '\n' +
+      '답변 원칙: 1)타이탄들의 실제 철학/발언/전략 기반 — 위 데이터 활용 2)비교분석, 투자인사이트, 기술트렌드에 강함 3)간결하되 통찰력 있게(3-4문단) 4)이모지 적절 사용 5)MBA/비즈니스 관점 포함 6)불확실한 정보는 솔직히 밝힘';
+  }
+  const HERMES_SYSTEM = buildHermesSystem();
+
+  // 인사말에 실제 타이탄 수 반영
+  setTimeout(function() {
+    var wel = document.getElementById('hm-welcome');
+    if (wel) {
+      var cnt = (typeof TITAN_PROFILES !== 'undefined') ? Object.keys(TITAN_PROFILES).length : '?';
+      wel.innerHTML = '안녕하세요! <strong>Hermes</strong> ⚡입니다.<br><br><strong>' + cnt + '명</strong> 타이탄의 <strong>철학, 전략, 기술</strong>에 대해 무엇이든 물어보세요!';
+    }
+  }, 100);
 
   function escapeHm(s) { if (!s) return ''; const d = document.createElement('div'); d.appendChild(document.createTextNode(s)); return d.innerHTML; }
 

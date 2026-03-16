@@ -50,7 +50,7 @@ a{color:var(--accent-light);text-decoration:none}
 
 <div class="header">
   <h1>📰 Titan Weekly Digest</h1>
-  <p>13명 타이탄의 이번 주 핵심 뉴스를 한눈에</p>
+  <p>주요 타이탄의 이번 주 핵심 뉴스를 한눈에</p>
   <button onclick="aiWeeklySummary()" style="margin-top:10px;padding:8px 20px;border-radius:20px;border:none;background:linear-gradient(135deg,#6366f1,#a855f7);color:white;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">🧠 AI 위클리 요약</button>
   <div class="date-range" id="date-range"></div>
 </div>
@@ -69,7 +69,7 @@ a{color:var(--accent-light);text-decoration:none}
   </div>
 
   <div id="digest-content">
-    <div class="loading"><div class="spinner"></div>13명 타이탄 피드 수집 중...</div>
+    <div class="loading"><div class="spinner"></div>타이탄 피드 수집 중...</div>
   </div>
 </div>
 
@@ -99,7 +99,7 @@ function formatDate(ds){const d=new Date(ds),now=new Date(),diff=Math.floor((now
 
 async function loadDigest(){
   const container = document.getElementById('digest-content');
-  container.innerHTML = '<div class="loading"><div class="spinner"></div>13명 타이탄 피드 수집 중...</div>';
+  container.innerHTML = '<div class="loading"><div class="spinner"></div>타이탄 피드 수집 중...</div>';
 
   const now = new Date();
   const weekAgo = new Date(now - 7*24*60*60*1000);
@@ -189,7 +189,7 @@ async function aiWeeklySummary(){
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         system_instruction:{parts:[{text:'한국어로 답변. 당신은 AI/테크/투자 트렌드 뉴스레터 전문가입니다. 투자자 관점에서 인사이트를 제공합니다.'}]},
-        contents:[{role:'user',parts:[{text:`다음은 13명 타이탄의 이번 주 뉴스 다이제스트입니다.\n\n다음 형식으로 분석해주세요:\n\n## 🔥 이번 주 핵심 뉴스 TOP 3\n(가장 임팩트 큰 뉴스 3개 + 왜 중요한지)\n\n## 💰 투자 시그널\n(어떤 산업/종목/트렌드에 주목해야 하는지)\n\n## ⚡ 다음 주 주시 포인트\n(다음 주 예상되는 이벤트/발표)\n\n뉴스 데이터:\n${digestText}`}]}],
+        contents:[{role:'user',parts:[{text:`다음은 주요 타이탄의 이번 주 뉴스 다이제스트입니다.\n\n다음 형식으로 분석해주세요:\n\n## 🔥 이번 주 핵심 뉴스 TOP 3\n(가장 임팩트 큰 뉴스 3개 + 왜 중요한지)\n\n## 💰 투자 시그널\n(어떤 산업/종목/트렌드에 주목해야 하는지)\n\n## ⚡ 다음 주 주시 포인트\n(다음 주 예상되는 이벤트/발표)\n\n뉴스 데이터:\n${digestText}`}]}],
         generationConfig:{temperature:0.7,maxOutputTokens:800,topP:0.9}
       })
     });

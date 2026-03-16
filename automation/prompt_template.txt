@@ -1,0 +1,33 @@
+당신은 투자 분석 전문가입니다. 아래는 이번 주 AI/테크/과학/금융 분야 핵심 인물(타이탄)들의 최신 활동 데이터입니다.
+
+## 수집 데이터
+{feed_data}
+
+## 분석 요청
+위 데이터를 바탕으로 다음을 JSON 형식으로 제공해주세요:
+
+{{
+  "executive_summary": "3문단 요약 (이번 주 핵심 동향, 투자 시사점, 주요 리스크)",
+  "top_signals": [
+    {{
+      "title": "시그널 제목",
+      "titans": ["관련 타이탄1", "관련 타이탄2"],
+      "relevance": "high|medium|low",
+      "theme": "AI|Biotech|Fintech|Energy|Macro",
+      "description": "투자 시사점 2-3문장",
+      "action": "관심 종목/섹터"
+    }}
+  ],
+  "theme_analysis": [
+    {{
+      "theme": "테마명",
+      "temperature": "hot|warm|cool",
+      "summary": "테마별 1문단 분석",
+      "watchlist": ["관심 종목/ETF 리스트"]
+    }}
+  ],
+  "risk_alerts": ["주요 리스크 1", "주요 리스크 2"]
+}}
+
+투자 시그널은 최대 10개, 테마 분석은 5-6개로 제한해주세요.
+한국어로 작성해주세요.

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Titan Tracker — Investment Signal Radar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0b10;--surface:#12141d;--surface2:#1a1d2a;--surface3:#232738;--border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.14);--text:#e8e8ed;--text-sub:#8b8fa3;--text-muted:#4a4e62;--accent:#6366f1;--accent-light:#818cf8;--gold:#f59e0b;--green:#22c55e;--red:#ef4444;--blue:#0ea5e9;--purple:#a855f7;--pink:#ec4899;--radius:16px;--radius-sm:12px;--radius-xs:8px}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;padding-top:44px}
+a{color:var(--accent-light);text-decoration:none}
+.bg-glow{position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse,rgba(239,68,68,0.12) 0%,transparent 70%);pointer-events:none;z-index:0;opacity:.5}
+.header{position:relative;z-index:1;text-align:center;padding:3rem 1.5rem 2rem;background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(245,158,11,0.06));border-bottom:1px solid var(--border)}
+.header h1{font-size:clamp(24px,5vw,36px);font-weight:900;letter-spacing:-.04em;background:linear-gradient(135deg,#e8e8ed 20%,var(--red) 50%,var(--gold) 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header p{font-size:13px;color:var(--text-sub);margin-top:8px;max-width:500px;margin-left:auto;margin-right:auto}
+.header .update-time{font-size:10px;color:var(--text-muted);margin-top:8px;font-family:'JetBrains Mono',monospace}
+.main{max-width:1000px;margin:0 auto;padding:1.5rem;position:relative;z-index:1}
+
+/* 섹터 히트맵 */
+.sector-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:2rem}
+.sector-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem;cursor:pointer;transition:all .2s}
+.sector-card:hover{border-color:var(--border-hover);transform:translateY(-1px)}
+.sector-card.active{border-color:var(--accent)}
+.sector-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.sector-name{font-size:13px;font-weight:700}
+.sector-count{font-size:10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
+.sector-bar{height:4px;border-radius:2px;background:var(--surface3);overflow:hidden}
+.sector-bar-fill{height:100%;border-radius:2px;transition:width .6s ease}
+
+/* 투자 테마 */
+.section-title{font-size:16px;font-weight:800;margin:2rem 0 1rem;display:flex;align-items:center;gap:8px}
+.themes{display:flex;flex-direction:column;gap:12px;margin-bottom:2rem}
+.theme-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem}
+.theme-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.theme-icon{font-size:20px}
+.theme-name{font-size:14px;font-weight:700}
+.theme-temp{font-size:10px;padding:3px 8px;border-radius:10px;font-weight:600}
+.theme-signals{display:flex;flex-direction:column;gap:6px}
+.signal-row{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text-sub);line-height:1.5}
+.signal-titan{font-weight:600;color:var(--text);white-space:nowrap;min-width:100px}
+.signal-text{flex:1}
+
+/* 라이브 피드 */
+.feed-section{margin-bottom:2rem}
+.feed-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem}
+.feed-chip{font-size:10px;padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-sub);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.feed-chip:hover,.feed-chip.active{background:var(--accent);border-color:var(--accent);color:white}
+.feed-list{display:flex;flex-direction:column;gap:8px}
+.feed-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xs);padding:1rem;transition:all .2s}
+.feed-item:hover{border-color:var(--border-hover)}
+.feed-item-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.feed-item-titan{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
+.feed-item-rel{font-size:9px;padding:2px 6px;border-radius:8px;font-weight:700}
+.feed-item-title{font-size:13px;font-weight:600;line-height:1.5;margin-bottom:4px}
+.feed-item-title a{color:var(--text)}
+.feed-item-title a:hover{color:var(--accent-light)}
+.feed-item-date{font-size:10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
+.loading{text-align:center;padding:2rem;color:var(--text-muted);font-size:12px}
+.footer{text-align:center;padding:2rem;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:2rem}
+@media(max-width:640px){.sector-grid{grid-template-columns:1fr 1fr}.signal-titan{min-width:70px}}
+@media(max-width:480px){.sector-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<script src="titans-data.js"></script>
+<script src="titan-nav.js"></script>
+
+<div class="header">
+  <h1>🎯 Investment Signal Radar</h1>
+  <p>105명 타이탄의 투자 시그널을 섹터별로 추적합니다</p>
+  <div class="update-time" id="update-time"></div>
+</div>
+
+<div class="main">
+  <!-- 섹터 히트맵 -->
+  <div class="section-title">📊 섹터 활동 히트맵</div>
+  <div class="sector-grid" id="sector-grid"></div>
+
+  <!-- 투자 테마 -->
+  <div class="section-title">💡 투자 테마별 시그널</div>
+  <div class="themes" id="themes"></div>
+
+  <!-- 라이브 피드 -->
+  <div class="section-title">📡 실시간 피드</div>
+  <div class="feed-section">
+    <div class="feed-filters" id="feed-filters"></div>
+    <div class="feed-list" id="feed-list">
+      <div class="loading">피드 로딩 중...</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Investment Signal Radar · <a href="index.html">Titan Tracker</a> · Point & Line 🌈</div>
+
+<script>
+const SECTOR_MAP = {
+  'AI':['Geoffrey Hinton','Yoshua Bengio','Dario Amodei','Sam Altman','Jensen Huang','Yann LeCun','Andrej Karpathy','Andrew Huberman','Sundar Pichai','Satya Nadella','Elon Musk','Jeff Bezos','Stephen Wolfram','Bill Gates','Ray Dalio','Ian Goodfellow','Jim Fan','Lilian Weng','Jeremy Howard','Lex Fridman','Hugging Face (Clem Delangue)','Arthur Mensch','Noam Shazeer','Harrison Chase','Amjad Masad','Connor Leahy','Mustafa Suleyman','Jan Leike'],
+  'Science':['Ed Witten','Brian Cox','Sabine Hossenfelder','Neil deGrasse Tyson','Sean Carroll','Jennifer Doudna','Terence Tao','Roger Penrose','David Deutsch','Max Tegmark','Eric Lander','Carlo Rovelli','Katie Mack','David Eagleman','Michio Kaku'],
+  'Tech':['Tim Cook','Mark Zuckerberg','Linus Torvalds','Vitalik Buterin','Patrick Collison','George Hotz','Guillermo Rauch','DHH (David Heinemeier Hansson)','Pieter Levels','Chris Lattner','Daniel Gross','Nat Friedman','Dylan Field','Mitchell Hashimoto','Theo Browne','Fireship (Jeff Delaney)'],
+  'Business':['Charlie Munger','Naval Ravikant','Paul Graham','Marc Andreessen','Peter Thiel','Reed Hastings','Jamie Dimon','Cathie Wood','Reid Hoffman','Howard Marks','Masayoshi Son','Patrick Bet-David'],
+  'Philosophy':['Yuval Noah Harari','Nassim Nicholas Taleb','Nick Bostrom','Balaji Srinivasan','Jordan Peterson'],
+  'Health':['Peter Attia','David Sinclair','Matthew Walker','Atul Gawande'],
+  'Finance':['Michael Burry','Stanley Druckenmiller','Aswath Damodaran','Chamath Palihapitiya'],
+  'Design':['Jony Ive','Don Norman','John Maeda'],
+  'AI Tools':['Demis Hassabis','Ilya Sutskever','Mira Murati','Greg Brockman','Fei-Fei Li','Ivan Zhao','Perplexity (Aravind Srinivas)','Cursor (Michael Truell)','Windsurf (Varun Mohan)','Anthropic (Chris Olah)','Genspark (Eric Jing)','Obsidian (Shida Li)','Matt Shumer','Lenny Rachitsky','Ben Thompson','Packy McCormick','Matthew Berman','David Shapiro']
+};
+const SECTOR_COLORS = {AI:'#6366f1',Science:'#0ea5e9',Tech:'#22c55e',Business:'#f59e0b',Philosophy:'#a855f7',Health:'#ec4899',Finance:'#eab308',Design:'#f97316','AI Tools':'#14b8a6'};
+const THEMES = [
+  {icon:'🤖',name:'AI & Compute',color:'#6366f1',titans:['Jensen Huang','Sam Altman','Dario Amodei','Sundar Pichai','Satya Nadella','Demis Hassabis','Ilya Sutskever','Mark Zuckerberg']},
+  {icon:'🧬',name:'Biotech & Health',color:'#ec4899',titans:['Jennifer Doudna','David Sinclair','Peter Attia','Matthew Walker','Andrew Huberman','Eric Lander']},
+  {icon:'💰',name:'Fintech & Crypto',color:'#eab308',titans:['Vitalik Buterin','Patrick Collison','Michael Burry','Cathie Wood','Stanley Druckenmiller','Chamath Palihapitiya']},
+  {icon:'🌍',name:'Energy & Climate',color:'#22c55e',titans:['Bill Gates','Elon Musk','Jeff Bezos']},
+  {icon:'🎓',name:'Education & Tools',color:'#0ea5e9',titans:['Andrej Karpathy','Jeremy Howard','Cursor (Michael Truell)','Windsurf (Varun Mohan)','Ivan Zhao','Obsidian (Shida Li)']},
+  {icon:'📊',name:'Markets & Macro',color:'#f59e0b',titans:['Ray Dalio','Howard Marks','Jamie Dimon','Aswath Damodaran','Nassim Nicholas Taleb','Masayoshi Son']}
+];
+const nameToSector = {};
+Object.entries(SECTOR_MAP).forEach(([s,names])=>names.forEach(n=>{nameToSector[n]=s}));
+const P = typeof TITAN_PROFILES!=='undefined' ? TITAN_PROFILES : {};
+
+function escapeHtml(s){if(!s)return'';const d=document.createElement('div');d.appendChild(document.createTextNode(s));return d.innerHTML}
+
+// 업데이트 시간
+document.getElementById('update-time').textContent = '마지막 업데이트: '+new Date().toLocaleString('ko-KR');
+
+// === 섹터 히트맵 ===
+function renderSectors(){
+  const grid = document.getElementById('sector-grid');
+  const maxCount = Math.max(...Object.values(SECTOR_MAP).map(n=>n.length));
+  grid.innerHTML = Object.entries(SECTOR_MAP).map(([sector,names])=>{
+    const c = SECTOR_COLORS[sector]||'#6366f1';
+    const pct = Math.round(names.length/maxCount*100);
+    return `<div class="sector-card" onclick="filterFeedBySector('${sector}')">
+      <div class="sector-head"><span class="sector-name" style="color:${c}">${sector}</span><span class="sector-count">${names.length}명</span></div>
+      <div class="sector-bar"><div class="sector-bar-fill" style="width:${pct}%;background:${c}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// === 투자 테마 ===
+function renderThemes(){
+  const container = document.getElementById('themes');
+  container.innerHTML = THEMES.map(theme=>{
+    const signals = theme.titans.map(name=>{
+      const p = P[name];
+      if(!p) return null;
+      return {name, signal: p.signal||'', invest: p.invest||''};
+    }).filter(Boolean).filter(s=>s.signal||s.invest);
+
+    const rows = signals.slice(0,5).map(s=>`<div class="signal-row"><span class="signal-titan">${escapeHtml(s.name)}</span><span class="signal-text">📡 ${escapeHtml(s.signal||s.invest.substring(0,80))}</span></div>`).join('');
+
+    return `<div class="theme-card">
+      <div class="theme-head">
+        <span class="theme-icon">${theme.icon}</span>
+        <span class="theme-name">${theme.name}</span>
+        <span class="theme-temp" style="background:${theme.color}22;color:${theme.color}">${signals.length} signals</span>
+      </div>
+      <div class="theme-signals">${rows}</div>
+    </div>`;
+  }).join('');
+}
+
+// === 라이브 피드 ===
+const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
+const KEY_TITANS = [
+  {name:'Altman',q:'Sam+Altman+OpenAI',color:'#10b981'},
+  {name:'Huang',q:'Jensen+Huang+NVIDIA',color:'#84cc16'},
+  {name:'Musk',q:'Elon+Musk+Tesla+SpaceX+xAI',color:'#a855f7'},
+  {name:'Nadella',q:'Satya+Nadella+Microsoft+AI',color:'#0078d4'},
+  {name:'Pichai',q:'Sundar+Pichai+Google+Gemini',color:'#4285f4'},
+  {name:'Amodei',q:'Dario+Amodei+Anthropic+Claude',color:'#ef4444'},
+  {name:'Bezos',q:'Jeff+Bezos+Amazon',color:'#f59e0b'},
+  {name:'Gates',q:'Bill+Gates',color:'#0ea5e9'},
+  {name:'Zuckerberg',q:'Mark+Zuckerberg+Meta+AI',color:'#3b82f6'},
+  {name:'Hassabis',q:'Demis+Hassabis+DeepMind+Gemini',color:'#14b8a6'}
+];
+
+let allFeedItems = [];
+let feedSectorFilter = null;
+
+const INVEST_KEYWORDS = ['invest','stock','funding','IPO','acquisition','market','revenue','billion','valuation','merge','매출','투자','인수','상장','기업가치'];
+const AI_KEYWORDS = ['AI','GPT','model','launch','release','chip','GPU','compute','출시','모델'];
+
+function getRelevance(title){
+  const t = (title||'').toLowerCase();
+  if(INVEST_KEYWORDS.some(k=>t.includes(k.toLowerCase()))) return {level:'🔴',label:'투자',bg:'#ef444422',color:'#ef4444'};
+  if(AI_KEYWORDS.some(k=>t.includes(k.toLowerCase()))) return {level:'🟡',label:'기술',bg:'#f59e0b22',color:'#f59e0b'};
+  return {level:'🟢',label:'일반',bg:'#22c55e22',color:'#22c55e'};
+}
+
+function renderFeedFilters(){
+  const c = document.getElementById('feed-filters');
+  c.innerHTML = '<button class="feed-chip active" onclick="filterFeed(null,this)">전체</button>' +
+    '<button class="feed-chip" onclick="filterFeed(\'invest\',this)">🔴 투자</button>' +
+    '<button class="feed-chip" onclick="filterFeed(\'tech\',this)">🟡 기술</button>' +
+    '<button class="feed-chip" onclick="filterFeed(\'general\',this)">🟢 일반</button>';
+}
+
+let currentFeedFilter = null;
+function filterFeed(type, el){
+  currentFeedFilter = type;
+  document.querySelectorAll('.feed-chip').forEach(c=>c.classList.remove('active'));
+  if(el) el.classList.add('active');
+  renderFeedItems();
+}
+function filterFeedBySector(sector){
+  feedSectorFilter = feedSectorFilter===sector ? null : sector;
+  document.querySelectorAll('.sector-card').forEach(c=>c.classList.remove('active'));
+  if(feedSectorFilter) event.currentTarget.classList.add('active');
+  renderFeedItems();
+}
+
+function renderFeedItems(){
+  const list = document.getElementById('feed-list');
+  let items = [...allFeedItems];
+  if(currentFeedFilter==='invest') items = items.filter(i=>i.rel.label==='투자');
+  else if(currentFeedFilter==='tech') items = items.filter(i=>i.rel.label==='기술');
+  else if(currentFeedFilter==='general') items = items.filter(i=>i.rel.label==='일반');
+
+  if(!items.length){
+    list.innerHTML = '<div class="loading">표시할 피드가 없습니다</div>';
+    return;
+  }
+  list.innerHTML = items.slice(0,30).map(item=>`<div class="feed-item">
+    <div class="feed-item-head">
+      <span class="feed-item-titan" style="background:${item.color}22;color:${item.color}">${escapeHtml(item.titanName)}</span>
+      <span class="feed-item-rel" style="background:${item.rel.bg};color:${item.rel.color}">${item.rel.level} ${item.rel.label}</span>
+      <span class="feed-item-date">${item.dateStr}</span>
+    </div>
+    <div class="feed-item-title"><a href="${item.link}" target="_blank" rel="noopener">${escapeHtml(item.title)}</a></div>
+  </div>`).join('');
+}
+
+async function loadFeeds(){
+  const list = document.getElementById('feed-list');
+  list.innerHTML = '<div class="loading">🔄 10명 핵심 타이탄 피드 로딩 중...</div>';
+
+  const cached = sessionStorage.getItem('titan-signals-feed');
+  if(cached){
+    try{
+      const data = JSON.parse(cached);
+      if(Date.now()-data.ts < 300000){
+        allFeedItems = data.items;
+        renderFeedItems();
+        return;
+      }
+    }catch{}
+  }
+
+  await Promise.all(KEY_TITANS.map(async titan=>{
+    const url = 'https://news.google.com/rss/search?q='+titan.q+'&hl=en&gl=US';
+    try{
+      const res = await fetch(RSS_PROXY+encodeURIComponent(url),{signal:AbortSignal.timeout(10000)});
+      const data = await res.json();
+      if(data.status==='ok'&&data.items){
+        data.items.slice(0,5).forEach(item=>{
+          const d = new Date(item.pubDate);
+          const diff = Math.floor((Date.now()-d)/864e5);
+          const dateStr = diff===0?'오늘':diff===1?'어제':diff<7?diff+'일 전':d.toLocaleDateString('ko-KR');
+          allFeedItems.push({title:item.title,link:item.link,titanName:titan.name,color:titan.color,date:d,dateStr,rel:getRelevance(item.title)});
+        });
+      }
+    }catch{}
+  }));
+
+  allFeedItems.sort((a,b)=>b.date-a.date);
+  sessionStorage.setItem('titan-signals-feed',JSON.stringify({ts:Date.now(),items:allFeedItems}));
+  renderFeedItems();
+}
+
+// 초기화
+renderSectors();
+renderThemes();
+renderFeedFilters();
+loadFeeds();
+</script>
+</body>
+</html>

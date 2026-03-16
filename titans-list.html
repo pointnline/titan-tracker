@@ -114,22 +114,45 @@ td{padding:12px;font-size:13px;vertical-align:middle}
 <body>
 
 <div class="header">
-  <h1>🏛️ 100 Titans</h1>
-  <p>AI · 과학 · 기술 · 비즈니스 · 사상 — 추적할 가치가 있는 거인 100명</p>
+  <h1>🏛️ Titan Universe</h1>
+  <p>AI · 과학 · 기술 · 비즈니스 · 사상 — 추적할 가치가 있는 거인 120명</p>
 </div>
 
 <div class="filters">
-  <button class="filter-btn active" onclick="filterCat('all')">전체</button>
-  <button class="filter-btn" onclick="filterCat('AI')">🤖 AI</button>
-  <button class="filter-btn" onclick="filterCat('Science')">🔬 과학</button>
-  <button class="filter-btn" onclick="filterCat('Tech')">💻 테크</button>
-  <button class="filter-btn" onclick="filterCat('Business')">💼 비즈니스</button>
-  <button class="filter-btn" onclick="filterCat('Philosophy')">🧠 사상</button>
-  <button class="filter-btn" onclick="filterCat('Health')">🧬 헬스/바이오</button>
-  <button class="filter-btn" onclick="filterCat('Finance')">💰 금융</button>
-  <button class="filter-btn" onclick="filterCat('Design')">🎨 디자인</button>
-  <input class="search-box" type="text" placeholder="이름 또는 키워드 검색..." oninput="searchTitans(this.value)">
-  <span class="count-badge" id="count-badge">100명</span>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+    <span style="font-size:10px;color:var(--text-muted);padding:7px 0;font-family:'JetBrains Mono',monospace">CATEGORY</span>
+    <button class="filter-btn active" onclick="filterCat('all')">전체</button>
+    <button class="filter-btn" onclick="filterCat('AI')">🤖 AI</button>
+    <button class="filter-btn" onclick="filterCat('Science')">🔬 과학</button>
+    <button class="filter-btn" onclick="filterCat('Tech')">💻 테크</button>
+    <button class="filter-btn" onclick="filterCat('Business')">💼 비즈니스</button>
+    <button class="filter-btn" onclick="filterCat('Philosophy')">🧠 사상</button>
+    <button class="filter-btn" onclick="filterCat('Health')">🧬 헬스</button>
+    <button class="filter-btn" onclick="filterCat('Finance')">💰 금융</button>
+    <button class="filter-btn" onclick="filterCat('Design')">🎨 디자인</button>
+  </div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+    <span style="font-size:10px;color:var(--text-muted);padding:7px 0;font-family:'JetBrains Mono',monospace">COMPANY</span>
+    <button class="filter-btn" onclick="filterOrg('all')" style="font-size:11px">전체</button>
+    <button class="filter-btn" onclick="filterOrg('OpenAI')" style="font-size:11px">OpenAI</button>
+    <button class="filter-btn" onclick="filterOrg('Google')" style="font-size:11px">Google</button>
+    <button class="filter-btn" onclick="filterOrg('Meta')" style="font-size:11px">Meta</button>
+    <button class="filter-btn" onclick="filterOrg('Microsoft')" style="font-size:11px">Microsoft</button>
+    <button class="filter-btn" onclick="filterOrg('NVIDIA')" style="font-size:11px">NVIDIA</button>
+    <button class="filter-btn" onclick="filterOrg('Anthropic')" style="font-size:11px">Anthropic</button>
+    <button class="filter-btn" onclick="filterOrg('Apple')" style="font-size:11px">Apple</button>
+    <button class="filter-btn" onclick="filterOrg('Stanford')" style="font-size:11px">Stanford</button>
+    <button class="filter-btn" onclick="filterOrg('독립')" style="font-size:11px">독립/창업</button>
+  </div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+    <span style="font-size:10px;color:var(--text-muted);padding:7px 0;font-family:'JetBrains Mono',monospace">IMPACT</span>
+    <button class="filter-btn" onclick="filterImpact(0)" style="font-size:11px">전체</button>
+    <button class="filter-btn" onclick="filterImpact(95)" style="font-size:11px;color:#22c55e">🔥 95+</button>
+    <button class="filter-btn" onclick="filterImpact(90)" style="font-size:11px;color:#818cf8">⚡ 90+</button>
+    <button class="filter-btn" onclick="filterImpact(85)" style="font-size:11px;color:#f59e0b">📈 85+</button>
+    <input class="search-box" type="text" placeholder="이름/키워드/소속 검색..." oninput="searchTitans(this.value)" style="min-width:180px">
+    <span class="count-badge" id="count-badge">120명</span>
+  </div>
 </div>
 
 <div class="table-wrap">
@@ -299,13 +322,33 @@ const CAT_CLASS = {AI:'cat-ai',Science:'cat-science',Tech:'cat-tech',Business:'c
   Philosophy:'cat-philosophy',Health:'cat-health',Finance:'cat-finance',Design:'cat-design'};
 
 let currentFilter = 'all';
+let currentOrg = 'all';
+let currentImpact = 0;
 let searchQuery = '';
+
+// 소속기업 매핑
+const ORG_MAP = {
+  'OpenAI': ['Sam Altman','Greg Brockman','Mira Murati','Ilya Sutskever'],
+  'Google': ['Sundar Pichai','Demis Hassabis','Jeff Dean','Fei-Fei Li'],
+  'Meta': ['Mark Zuckerberg','Yann LeCun'],
+  'Microsoft': ['Satya Nadella','Mustafa Suleyman'],
+  'NVIDIA': ['Jensen Huang','Jim Fan'],
+  'Anthropic': ['Dario Amodei','Chris Olah','Jan Leike'],
+  'Apple': ['Tim Cook','Jony Ive'],
+  'Stanford': ['Andrew Huberman','Andrej Karpathy','Fei-Fei Li','David Eagleman'],
+  '독립': ['Elon Musk','Jeff Bezos','Ray Dalio','Stephen Wolfram','Bill Gates','Naval Ravikant','Paul Graham','Peter Thiel','Pieter Levels','George Hotz']
+};
 
 function getInitials(name){return name.split(' ').map(w=>w[0]).join('').substring(0,2)}
 
 function renderTable(){
   let filtered = TITANS;
   if(currentFilter!=='all') filtered = filtered.filter(t=>t.c===currentFilter);
+  if(currentOrg!=='all') {
+    const orgNames = ORG_MAP[currentOrg] || [];
+    filtered = filtered.filter(t => orgNames.includes(t.n) || t.r.includes(currentOrg));
+  }
+  if(currentImpact > 0) filtered = filtered.filter(t => t.impact >= currentImpact);
   if(searchQuery){
     const q=searchQuery.toLowerCase();
     filtered=filtered.filter(t=>t.n.toLowerCase().includes(q)||t.r.toLowerCase().includes(q)||t.k.toLowerCase().includes(q));
@@ -324,14 +367,21 @@ function renderTable(){
 
   document.getElementById('titans-body').innerHTML=filtered.map((t,i)=>{
     const rid='row-'+i;
-    const isLive=LIVE_PAGES[t.n];
-    const liveBadge=isLive?'<span class="live-badge">LIVE</span>':'';
-    const pageLink=isLive?` <a href="${isLive}" style="font-size:10px;color:var(--accent-light);margin-left:6px" onclick="event.stopPropagation()">→ 상세</a>`:'';
+    const DEDICATED_PAGES = {
+      'Stephen Wolfram':'wolfram.html','Bill Gates':'gates.html','Elon Musk':'musk.html',
+      'Jeff Bezos':'bezos.html','Dario Amodei':'amodei.html','Ray Dalio':'dalio.html',
+      'Sam Altman':'altman.html','Jensen Huang':'huang.html','Satya Nadella':'nadella.html',
+      'Andrej Karpathy':'karpathy.html','Yann LeCun':'lecun.html','Andrew Huberman':'huberman.html',
+      'Sundar Pichai':'pichai.html'
+    };
+    const dedicated=DEDICATED_PAGES[t.n];
+    const titanUrl='titan.html?name='+encodeURIComponent(t.n)+'&role='+encodeURIComponent(t.r)+'&k='+encodeURIComponent(t.k)+'&color='+encodeURIComponent(t.color)+'&ch='+encodeURIComponent(t.ch.join(','));
+    const pageLink=` <a href="${dedicated||titanUrl}" style="font-size:10px;color:#818cf8;margin-left:6px" onclick="event.stopPropagation()">→ 상세</a>`;
     return `<tr onclick="toggleFeedPanel('${rid}','${t.n.replace(/'/g,"\\'")}')">
       <td class="t-num">${String(i+1).padStart(2,'0')}</td>
       <td><div class="t-name-cell">
         <div class="t-avatar" style="background:${t.color}">${getInitials(t.n)}</div>
-        <div><div class="t-name">${t.n}${liveBadge}${pageLink}</div><div class="t-role">${t.r}</div></div>
+        <div><div class="t-name">${t.n}${pageLink}</div><div class="t-role">${t.r}</div></div>
       </div></td>
       <td><span class="t-cat ${CAT_CLASS[t.c]}">${t.c}</span></td>
       <td class="t-impact" style="color:${t.impact>=95?'#22c55e':t.impact>=90?'#6366f1':t.impact>=85?'#f59e0b':'var(--text-sub)'}">${t.impact}</td>
@@ -364,6 +414,14 @@ function filterCat(cat){
       '🧠 사상':'Philosophy','🧬 헬스/바이오':'Health','💰 금융':'Finance','🎨 디자인':'Design'};
     b.classList.toggle('active',catMap[label]===cat);
   });
+  renderTable();
+}
+function filterOrg(org){
+  currentOrg=org;
+  renderTable();
+}
+function filterImpact(min){
+  currentImpact=min;
   renderTable();
 }
 function searchTitans(q){searchQuery=q;renderTable();}

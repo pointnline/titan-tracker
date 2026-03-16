@@ -520,15 +520,22 @@ function renderStudyContent() {
         </ul>
       </div>
 
-      <!-- 필독서 -->
+      <!-- 필독서 (링크 연결) -->
       <div class="study-card" style="animation-delay:.15s">
         <h3><span class="icon">📚</span> 필독 자료</h3>
         <div class="resource-list">
-          ${t.books.map(b =>
-            '<div class="resource-item"><div><strong style="color:var(--text)">' + escapeHtml(b.title) + '</strong>' +
-            '<div style="font-size:11px;color:var(--text-muted);margin-top:3px">' + escapeHtml(b.desc) + '</div></div>' +
-            '<span class="year">' + b.year + '</span></div>'
-          ).join('')}
+          ${t.books.map(b => {
+            const searchUrl = b.url || 'https://www.google.com/search?q=' + encodeURIComponent(b.title + ' book');
+            const buyUrl = 'https://www.amazon.com/s?k=' + encodeURIComponent(b.title);
+            return '<div class="resource-item"><div>' +
+              '<a href="' + searchUrl + '" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none"><strong>' + escapeHtml(b.title) + '</strong></a>' +
+              '<div style="font-size:11px;color:var(--text-muted);margin-top:3px">' + escapeHtml(b.desc) + '</div>' +
+              '<div style="margin-top:5px;display:flex;gap:6px">' +
+              '<a href="' + searchUrl + '" target="_blank" rel="noopener" style="font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(99,102,241,0.1);color:#818cf8;text-decoration:none">🔍 검색</a>' +
+              '<a href="' + buyUrl + '" target="_blank" rel="noopener" style="font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(245,158,11,0.1);color:#fbbf24;text-decoration:none">📦 Amazon</a>' +
+              '</div>' +
+              '</div><span class="year">' + (b.year||'') + '</span></div>';
+          }).join('')}
         </div>
       </div>
 

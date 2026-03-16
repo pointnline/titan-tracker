@@ -217,15 +217,33 @@ a{text-decoration:none;color:var(--accent-light)}
 <div class="header">
   <h1>🔗 Cross-Titan Insights</h1>
   <p>거인들의 최신 활동을 교차 분석하여 숨겨진 트렌드를 발견합니다</p>
-  <div class="active-titans" id="titan-selector"></div>
-  <div class="filter-actions">
-    <span class="filter-hint">최소 2명 선택 · 클릭으로 ON/OFF</span>
-    <button class="btn-analyze" id="btn-analyze" onclick="reAnalyze()">🔄 분석 시작</button>
-    <button class="btn-analyze" id="btn-ai-summary" onclick="aiInsightSummary()" style="background:linear-gradient(135deg,#6366f1,#a855f7);border-color:#6366f1">🧠 AI 분석 요약</button>
+</div>
+
+<!-- Step 1: 타이탄 선택 화면 -->
+<div id="step-select" style="max-width:900px;margin:2rem auto;padding:0 1.5rem">
+  <div style="background:var(--surface,#1a1d27);border:1px solid var(--border);border-radius:20px;padding:2rem">
+    <div style="text-align:center;margin-bottom:1.5rem">
+      <div style="font-size:18px;font-weight:700;margin-bottom:6px">🎯 분석할 거장을 선택하세요</div>
+      <div style="font-size:12px;color:var(--text-muted,#5a5e72)">최소 2명 이상 선택 · 클릭으로 ON/OFF</div>
+    </div>
+    <div class="active-titans" id="titan-selector" style="justify-content:center"></div>
+    <div style="text-align:center;margin-top:1.5rem;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button onclick="selectAllTitans()" style="padding:8px 18px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text-sub,#8b8fa3);font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s" onmouseover="this.style.borderColor='#818cf8'" onmouseout="this.style.borderColor=''">
+        ✅ 전체 선택
+      </button>
+      <button id="btn-start-analyze" onclick="startAnalysis()" disabled style="padding:12px 32px;border-radius:12px;border:none;background:linear-gradient(135deg,#6366f1,#a855f7);color:white;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .3s;box-shadow:0 4px 20px rgba(99,102,241,0.3);opacity:0.5" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+        🔍 분석 시작 (<span id="selected-count">0</span>명 선택됨)
+      </button>
+    </div>
   </div>
 </div>
 
-<div class="main" id="main-content">
+<!-- Step 2: 분석 결과 (초기에는 숨김) -->
+<div class="main" id="main-content" style="display:none">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <button onclick="backToSelect()" style="font-size:12px;padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface,#1a1d27);color:var(--text-sub,#8b8fa3);cursor:pointer;font-family:'Inter',sans-serif">← 거장 다시 선택</button>
+    <button class="btn-analyze" id="btn-ai-summary" onclick="aiInsightSummary()" style="background:linear-gradient(135deg,#6366f1,#a855f7);border-color:#6366f1;padding:8px 16px;border-radius:10px;border:none;color:white;font-size:12px;font-weight:600;cursor:pointer">🧠 AI 분석 요약</button>
+  </div>
   <div class="loading-full" id="loading">
     <div class="spinner"></div>
     <div>피드 수집 중...</div>
@@ -405,8 +423,14 @@ function renderSelector() {
       '<div class="dot" style="background:' + info.color + '"></div>' + info.name +
       (active ? ' <span class="check">✓</span>' : '') + '</div>';
   }).join('');
-  const btn = document.getElementById('btn-analyze');
-  if (btn) btn.disabled = selectedTitans.size < 2;
+  // 선택 카운트 + 버튼 활성화
+  const cnt = document.getElementById('selected-count');
+  if (cnt) cnt.textContent = selectedTitans.size;
+  const startBtn = document.getElementById('btn-start-analyze');
+  if (startBtn) {
+    startBtn.disabled = selectedTitans.size < 2;
+    startBtn.style.opacity = selectedTitans.size >= 2 ? '1' : '0.5';
+  }
 }
 
 function toggleTitan(key) {
@@ -760,9 +784,25 @@ async function aiInsightSummary() {
   }
 }
 
-// 초기화
+// 초기화 — 선택 화면만 표시 (분석은 안 돌림)
 renderSelector();
-analyze();
+
+function selectAllTitans(){
+  selectedTitans = new Set(Object.keys(TITAN_FEEDS));
+  renderSelector();
+}
+
+function startAnalysis(){
+  if(selectedTitans.size < 2) return;
+  document.getElementById('step-select').style.display='none';
+  document.getElementById('main-content').style.display='block';
+  analyze();
+}
+
+function backToSelect(){
+  document.getElementById('step-select').style.display='block';
+  document.getElementById('main-content').style.display='none';
+}
 </script>
 <script src="titan-nav.js"></script>
 </body>

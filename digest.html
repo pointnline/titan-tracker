@@ -164,27 +164,42 @@ async function loadDigest(){
 
 loadDigest();
 
+// 피드 로드 완료 후 자동 AI 요약
 async function aiWeeklySummary(){
   let box=document.getElementById('ai-digest-box');
   if(!box){
     box=document.createElement('div');box.id='ai-digest-box';
     box.style.cssText='max-width:900px;margin:0 auto 2rem;padding:0 1.5rem';
-    box.innerHTML='<div style="background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(168,85,247,0.04));border:1px solid rgba(99,102,241,0.15);border-radius:16px;padding:1.5rem"><div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem;font-size:14px;font-weight:700;color:#818cf8">🧠 AI Weekly Summary</div><div id="ai-digest-content" style="font-size:13px;color:#8b8fa3;line-height:1.8"></div></div>';
+    box.innerHTML='<div style="background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(168,85,247,0.04));border:1px solid rgba(99,102,241,0.15);border-radius:16px;padding:1.5rem"><div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem;font-size:14px;font-weight:700;color:#818cf8">🧠 AI Weekly Insight</div><div id="ai-digest-content" style="font-size:13px;color:#8b8fa3;line-height:1.8"></div></div>';
     document.querySelector('.digest-wrap').insertBefore(box,document.getElementById('digest-content'));
   }
   const content=document.getElementById('ai-digest-content');
-  content.innerHTML='<span style="animation:spin 1s linear infinite;display:inline-block">⏳</span> AI 위클리 요약 생성 중...';
+  content.innerHTML='<span style="animation:spin 1s linear infinite;display:inline-block">⏳</span> AI 위클리 인사이트 생성 중...';
+  
+  // Gemini API 키 확인
+  const key=window.getGeminiKey ? window.getGeminiKey() : (typeof TITAN_CONFIG!=='undefined' ? TITAN_CONFIG.GEMINI_API_KEY : '');
+  if(!key){content.innerHTML='⚠️ config.js에 Gemini API 키를 설정해주세요';return;}
+  
   try{
+    // 다이제스트 텍스트 수집 (최대 4000자)
     const digestText=document.getElementById('digest-content')?.innerText?.substring(0,4000)||'';
-    const result=await window.callGemini(
-      '한국어로 답변. 당신은 테크/AI/비즈니스 뉴스레터 작성 전문가입니다.',
-      `다음은 13명 타이탄의 이번 주 뉴스 다이제스트입니다. 5줄 요약(가장 중요한 뉴스 3개 + 관전 포인트 + 다음 주 주시):
-
-${digestText}`,
-      {maxTokens:600}
-    );
-    content.innerHTML=titanUtils.formatAiText(result);
-  }catch(e){content.innerHTML='❌ '+titanUtils.escapeHtml(e.message)}
+    if(digestText.length<100){content.innerHTML='⏳ 뉴스 로딩 완료 후 다시 시도해주세요';return;}
+    
+    const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        system_instruction:{parts:[{text:'한국어로 답변. 당신은 AI/테크/투자 트렌드 뉴스레터 전문가입니다. 투자자 관점에서 인사이트를 제공합니다.'}]},
+        contents:[{role:'user',parts:[{text:`다음은 13명 타이탄의 이번 주 뉴스 다이제스트입니다.\n\n다음 형식으로 분석해주세요:\n\n## 🔥 이번 주 핵심 뉴스 TOP 3\n(가장 임팩트 큰 뉴스 3개 + 왜 중요한지)\n\n## 💰 투자 시그널\n(어떤 산업/종목/트렌드에 주목해야 하는지)\n\n## ⚡ 다음 주 주시 포인트\n(다음 주 예상되는 이벤트/발표)\n\n뉴스 데이터:\n${digestText}`}]}],
+        generationConfig:{temperature:0.7,maxOutputTokens:800,topP:0.9}
+      })
+    });
+    if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||'API 오류 '+res.status)}
+    const data=await res.json();
+    const aiText=data.candidates?.[0]?.content?.parts?.[0]?.text||'응답 생성 불가';
+    content.innerHTML=aiText.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/## (.*?)\n/g,'<div style="font-size:14px;font-weight:700;color:#e8e8ed;margin:16px 0 8px">$1</div>').replace(/\n/g,'<br>').replace(/^- /gm,'• ');
+  }catch(e){
+    content.innerHTML='❌ '+e.message+'<br><span style="font-size:10px;color:#5a5e72">Rate limit일 수 있습니다. 30초 후 다시 시도해주세요.</span>';
+  }
 }
 </script>
 </body>

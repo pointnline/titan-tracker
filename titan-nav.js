@@ -21,6 +21,7 @@
     { href: 'index.html', label: '🔭 Titan Tracker', isBrand: true },
     { href: 'insights.html', label: '📝 Insights' },
     { href: 'dashboard.html', label: '📊 Dashboard' },
+    { href: 'signals.html', label: '🎯 Signals' },
     { href: 'digest.html', label: '📰 Digest' },
     { href: 'study.html', label: '🧠 Study' },
     { href: 'search.html', label: '🔍 Search' },
@@ -30,22 +31,71 @@
   nav.className = 'titan-nav';
   nav.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;gap:0;padding:0 1rem;height:40px;background:rgba(10,11,16,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.06);font-size:11px';
 
-  navLinks.forEach(link => {
+  // 브랜드 링크 (항상 표시)
+  const brandLink = navLinks.find(l => l.isBrand);
+  const brandA = document.createElement('a');
+  brandA.href = brandLink.href;
+  brandA.textContent = brandLink.label;
+  const isBrandActive = currentPage === brandLink.href;
+  brandA.style.cssText = 'color:' + (isBrandActive ? '#818cf8' : '#8b8fa3') + ';font-weight:600;margin-right:auto;text-decoration:none;display:flex;align-items:center;gap:5px;flex-shrink:0';
+  nav.appendChild(brandA);
+
+  // 데스크탑 링크 컨테이너 (모바일에서 숨김)
+  const linksWrap = document.createElement('div');
+  linksWrap.className = 'nav-links-desktop';
+  linksWrap.style.cssText = 'display:flex;align-items:center;gap:0';
+
+  navLinks.filter(l => !l.isBrand).forEach(link => {
     const a = document.createElement('a');
     a.href = link.href;
     a.textContent = link.label;
     const isActive = currentPage === link.href;
-    if (link.isBrand) {
-      a.style.cssText = 'color:' + (isActive ? '#818cf8' : '#8b8fa3') + ';font-weight:600;margin-right:auto;text-decoration:none;display:flex;align-items:center;gap:5px';
-    } else {
-      a.style.cssText = 'color:' + (isActive ? '#818cf8' : '#5a5e72') + ';padding:4px 10px;text-decoration:none;border-radius:6px;transition:color .2s';
-      if (!isActive) {
-        a.onmouseover = function() { this.style.color = '#818cf8'; };
-        a.onmouseout = function() { this.style.color = '#5a5e72'; };
-      }
+    a.style.cssText = 'color:' + (isActive ? '#818cf8' : '#5a5e72') + ';padding:4px 10px;text-decoration:none;border-radius:6px;transition:color .2s;white-space:nowrap;font-size:11px';
+    if (!isActive) {
+      a.onmouseover = function() { this.style.color = '#818cf8'; };
+      a.onmouseout = function() { this.style.color = '#5a5e72'; };
     }
-    nav.appendChild(a);
+    linksWrap.appendChild(a);
   });
+  nav.appendChild(linksWrap);
+
+  // 모바일 햄버거 메뉴
+  const burger = document.createElement('button');
+  burger.className = 'nav-burger';
+  burger.innerHTML = '☰';
+  burger.style.cssText = 'display:none;background:none;border:1px solid rgba(255,255,255,0.1);color:#8b8fa3;font-size:16px;cursor:pointer;padding:4px 8px;border-radius:6px;line-height:1';
+  nav.appendChild(burger);
+
+  // 모바일 드롭다운 메뉴
+  const mobileMenu = document.createElement('div');
+  mobileMenu.className = 'nav-mobile-menu';
+  mobileMenu.style.cssText = 'display:none;position:fixed;top:40px;left:0;right:0;background:rgba(10,11,16,0.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.08);padding:8px 0;z-index:99;flex-direction:column';
+  navLinks.filter(l => !l.isBrand).forEach(link => {
+    const a = document.createElement('a');
+    a.href = link.href;
+    a.textContent = link.label;
+    const isActive = currentPage === link.href;
+    a.style.cssText = 'color:' + (isActive ? '#818cf8' : '#8b8fa3') + ';padding:10px 1.5rem;text-decoration:none;font-size:13px;border-left:3px solid ' + (isActive ? '#6366f1' : 'transparent') + ';transition:all .2s';
+    a.onmouseover = function() { this.style.background = 'rgba(99,102,241,0.08)'; };
+    a.onmouseout = function() { this.style.background = 'transparent'; };
+    mobileMenu.appendChild(a);
+  });
+  document.body.insertBefore(mobileMenu, document.body.firstChild);
+
+  let menuOpen = false;
+  burger.onclick = function() {
+    menuOpen = !menuOpen;
+    mobileMenu.style.display = menuOpen ? 'flex' : 'none';
+    burger.innerHTML = menuOpen ? '✕' : '☰';
+  };
+
+  // 반응형 CSS 주입
+  if (!document.getElementById('titan-nav-responsive')) {
+    const style = document.createElement('style');
+    style.id = 'titan-nav-responsive';
+    style.textContent = '@media(max-width:768px){.nav-links-desktop{display:none!important}.nav-burger{display:block!important}}@media(min-width:769px){.nav-mobile-menu{display:none!important}}';
+    document.head.appendChild(style);
+  }
 
   document.body.insertBefore(nav, document.body.firstChild);
   const cs = getComputedStyle(document.body);

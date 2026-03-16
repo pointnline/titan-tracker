@@ -7,13 +7,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#232736;--surface3:#2a2e3d;--border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.12);--text:#e8e8ed;--text-sub:#8b8fa3;--text-muted:#5a5e72;--accent:#6366f1;--accent-light:#818cf8;--radius:16px;--radius-sm:12px;--radius-xs:8px}
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#232736;--surface3:#2a2e3d;--border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.12);--text:#e8e8ed;--text-sub:#8b8fa3;--text-muted:#5a5e72;--accent:#6366f1;--accent-light:#818cf8;--gold:#f59e0b;--green:#22c55e;--red:#ef4444;--blue:#0ea5e9;--purple:#a855f7;--radius:16px;--radius-sm:12px;--radius-xs:8px}
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;padding-top:44px}
 a{color:var(--accent-light);text-decoration:none}
 .header{background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(168,85,247,0.06));border-bottom:1px solid var(--border);padding:2rem 1.5rem;text-align:center}
 .header h1{font-size:22px;font-weight:700;letter-spacing:-0.03em;margin-bottom:6px}
 .header p{font-size:13px;color:var(--text-sub)}
-.search-wrap{max-width:800px;margin:2rem auto;padding:0 1.5rem}
+
+/* 탭 */
+.tabs{display:flex;justify-content:center;gap:4px;margin:1.5rem auto 0;max-width:800px;padding:0 1.5rem}
+.tab-btn{flex:1;max-width:200px;padding:10px 16px;border:1px solid var(--border);border-radius:var(--radius-sm) var(--radius-sm) 0 0;background:var(--surface);color:var(--text-sub);font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;border-bottom:none}
+.tab-btn.active{background:var(--bg);color:var(--accent-light);border-color:var(--accent)}
+.tab-content{display:none;max-width:800px;margin:0 auto;padding:0 1.5rem}
+.tab-content.active{display:block}
+
+.search-wrap{padding:1.5rem 0}
 .search-box{display:flex;gap:8px;margin-bottom:1rem}
 .search-input{flex:1;padding:12px 18px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s}
 .search-input:focus{border-color:var(--accent)}
@@ -23,18 +31,25 @@ a{color:var(--accent-light);text-decoration:none}
 .filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem}
 .filter-chip{font-size:11px;padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-sub);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
 .filter-chip:hover,.filter-chip.active{background:var(--accent);border-color:var(--accent);color:white}
-.keywords-section{margin-bottom:1.5rem}
-.keywords-label{font-size:11px;color:var(--text-muted);margin-bottom:6px}
-.keywords-input{width:100%;padding:8px 14px;border-radius:var(--radius-xs);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-family:'JetBrains Mono',monospace;outline:none}
-.keywords-input:focus{border-color:var(--accent)}
 .results-info{font-size:12px;color:var(--text-muted);margin-bottom:1rem;font-family:'JetBrains Mono',monospace}
 .results{display:flex;flex-direction:column;gap:10px}
+
+/* 타이탄 카드 */
+.titan-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;transition:all .2s;cursor:pointer;text-decoration:none;color:inherit;display:block}
+.titan-card:hover{border-color:var(--accent);background:var(--surface2);transform:translateY(-1px)}
+.titan-card-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.titan-card-name{font-size:15px;font-weight:700;color:var(--text)}
+.sector-badge{font-size:9px;padding:2px 8px;border-radius:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.03em}
+.titan-card-phil{font-size:12px;color:var(--text-sub);line-height:1.6;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.titan-card-meta{display:flex;gap:8px;flex-wrap:wrap}
+.meta-tag{font-size:10px;padding:2px 8px;border-radius:6px;background:var(--surface2);color:var(--text-muted)}
+
+/* 뉴스 결과 */
 .result-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;transition:all .2s}
 .result-item:hover{border-color:var(--border-hover);background:var(--surface2)}
 .result-item a{display:block;color:var(--text)}
 .result-titan{display:inline-flex;align-items:center;gap:5px;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;margin-bottom:8px}
 .result-title{font-size:14px;font-weight:600;line-height:1.5;margin-bottom:4px}
-.result-orig{font-size:11px;color:var(--text-muted);font-style:italic;margin-bottom:6px}
 .result-meta{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;display:flex;gap:12px}
 .result-desc{font-size:12px;color:var(--text-sub);line-height:1.6;margin-top:8px}
 mark{background:rgba(99,102,241,0.25);color:#c7d2fe;padding:1px 3px;border-radius:3px}
@@ -45,36 +60,53 @@ mark{background:rgba(99,102,241,0.25);color:#c7d2fe;padding:1px 3px;border-radiu
 .empty-state .icon{font-size:48px;margin-bottom:1rem}
 .empty-state p{font-size:13px;line-height:1.8}
 .footer{text-align:center;padding:2rem;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:2rem;max-width:800px;margin-left:auto;margin-right:auto}
-@media(max-width:640px){.search-box{flex-direction:column}.search-btn{width:100%}}
+@media(max-width:640px){.search-box{flex-direction:column}.search-btn{width:100%}.titan-card-head{flex-wrap:wrap}}
 </style>
 </head>
 <body>
+<script src="titans-data.js"></script>
 <script src="titan-nav.js"></script>
 
 <div class="header">
   <h1>🔍 Titan Search</h1>
-  <p>13명 타이탄의 최신 피드를 통합 검색 · 키워드 하이라이트</p>
+  <p>105명 타이탄 프로필 검색 + 실시간 뉴스 통합 검색</p>
 </div>
 
-<div class="search-wrap">
-  <div class="search-box">
-    <input class="search-input" id="search-input" type="text" placeholder="검색어 입력 (예: AI safety, GPU, 자율주행...)" onkeydown="if(event.key==='Enter')doSearch()">
-    <button class="search-btn" onclick="doSearch()">검색</button>
-    <button class="search-btn" onclick="aiSearchAnswer()" style="background:linear-gradient(135deg,#6366f1,#a855f7)">🧠 AI 답변</button>
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('titan')">🧠 타이탄 검색</button>
+  <button class="tab-btn" onclick="switchTab('news')">📰 뉴스 검색</button>
+</div>
+
+<!-- TAB 1: 타이탄 프로필 검색 -->
+<div class="tab-content active" id="tab-titan">
+  <div class="search-wrap">
+    <div class="search-box">
+      <input class="search-input" id="titan-search-input" type="text" placeholder="타이탄 이름, 철학, 투자 키워드 검색..." oninput="searchTitans()">
+    </div>
+    <div class="filters" id="sector-filters"></div>
+    <div class="results-info" id="titan-results-info">105명 전체</div>
+    <div class="results" id="titan-results"></div>
   </div>
+</div>
 
-  <div class="filters" id="titan-filters"></div>
-
-  <div class="keywords-section">
-    <div class="keywords-label">🔑 키워드 하이라이트 (쉼표로 구분)</div>
-    <input class="keywords-input" id="keywords-input" type="text" placeholder="AGI, GPU, safety, 자율주행" value="AGI, GPU, safety, climate, quantum">
-  </div>
-
-  <div class="results-info" id="results-info"></div>
-  <div class="results" id="results">
-    <div class="empty-state">
-      <div class="icon">🔭</div>
-      <p>검색어를 입력하면 13명 타이탄의 최신 피드에서<br>관련 뉴스를 찾아 키워드를 하이라이트합니다.</p>
+<!-- TAB 2: 뉴스 RSS 검색 (기존 유지) -->
+<div class="tab-content" id="tab-news">
+  <div class="search-wrap">
+    <div class="search-box">
+      <input class="search-input" id="search-input" type="text" placeholder="검색어 입력 (예: AI safety, GPU, 자율주행...)" onkeydown="if(event.key==='Enter')doSearch()">
+      <button class="search-btn" onclick="doSearch()">검색</button>
+    </div>
+    <div class="filters" id="titan-filters"></div>
+    <div class="keywords-section" style="margin-bottom:1.5rem">
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">🔑 키워드 하이라이트 (쉼표로 구분)</div>
+      <input class="search-input" id="keywords-input" type="text" placeholder="AGI, GPU, safety" value="AGI, GPU, safety, climate, quantum" style="font-size:12px;font-family:'JetBrains Mono',monospace">
+    </div>
+    <div class="results-info" id="results-info"></div>
+    <div class="results" id="results">
+      <div class="empty-state">
+        <div class="icon">📰</div>
+        <p>검색어를 입력하면 13명 타이탄의 최신 뉴스에서<br>관련 기사를 찾아 키워드를 하이라이트합니다.</p>
+      </div>
     </div>
   </div>
 </div>
@@ -82,6 +114,92 @@ mark{background:rgba(99,102,241,0.25);color:#c7d2fe;padding:1px 3px;border-radiu
 <div class="footer">Titan Search · <a href="index.html">Titan Tracker</a> · Point & Line 🌈</div>
 
 <script>
+// === 섹터 매핑 ===
+const SECTOR_MAP = {
+  'AI':['Geoffrey Hinton','Yoshua Bengio','Dario Amodei','Sam Altman','Jensen Huang','Yann LeCun','Andrej Karpathy','Andrew Huberman','Sundar Pichai','Satya Nadella','Elon Musk','Jeff Bezos','Stephen Wolfram','Bill Gates','Ray Dalio','Ian Goodfellow','Jim Fan','Lilian Weng','Jeremy Howard','Lex Fridman','Hugging Face (Clem Delangue)','Arthur Mensch','Noam Shazeer','Harrison Chase','Amjad Masad','Connor Leahy','Mustafa Suleyman','Jan Leike'],
+  'Science':['Ed Witten','Brian Cox','Sabine Hossenfelder','Neil deGrasse Tyson','Sean Carroll','Jennifer Doudna','Terence Tao','Roger Penrose','David Deutsch','Max Tegmark','Eric Lander','Carlo Rovelli','Katie Mack','David Eagleman','Michio Kaku'],
+  'Tech':['Tim Cook','Mark Zuckerberg','Linus Torvalds','Vitalik Buterin','Patrick Collison','George Hotz','Guillermo Rauch','DHH (David Heinemeier Hansson)','Pieter Levels','Chris Lattner','Daniel Gross','Nat Friedman','Dylan Field','Mitchell Hashimoto','Theo Browne','Fireship (Jeff Delaney)'],
+  'Business':['Charlie Munger','Naval Ravikant','Paul Graham','Marc Andreessen','Peter Thiel','Reed Hastings','Jamie Dimon','Cathie Wood','Reid Hoffman','Howard Marks','Masayoshi Son','Patrick Bet-David'],
+  'Philosophy':['Yuval Noah Harari','Nassim Nicholas Taleb','Nick Bostrom','Balaji Srinivasan','Jordan Peterson'],
+  'Health':['Peter Attia','David Sinclair','Matthew Walker','Atul Gawande'],
+  'Finance':['Michael Burry','Stanley Druckenmiller','Aswath Damodaran','Chamath Palihapitiya'],
+  'Design':['Jony Ive','Don Norman','John Maeda'],
+  'AI Tools':['Demis Hassabis','Ilya Sutskever','Mira Murati','Greg Brockman','Fei-Fei Li','Ivan Zhao','Perplexity (Aravind Srinivas)','Cursor (Michael Truell)','Windsurf (Varun Mohan)','Anthropic (Chris Olah)','Genspark (Eric Jing)','Obsidian (Shida Li)','Matt Shumer','Lenny Rachitsky','Ben Thompson','Packy McCormick','Matthew Berman','David Shapiro']
+};
+const SECTOR_COLORS = {AI:'#6366f1',Science:'#0ea5e9',Tech:'#22c55e',Business:'#f59e0b',Philosophy:'#a855f7',Health:'#ec4899',Finance:'#eab308',Design:'#f97316','AI Tools':'#14b8a6'};
+const nameToSector = {};
+Object.entries(SECTOR_MAP).forEach(([s,names])=>names.forEach(n=>{nameToSector[n]=s}));
+
+let currentSector = null;
+
+// === 탭 전환 ===
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===(tab==='titan'?0:1)));
+  document.getElementById('tab-titan').classList.toggle('active',tab==='titan');
+  document.getElementById('tab-news').classList.toggle('active',tab==='news');
+}
+
+// === 섹터 필터 렌더 ===
+function renderSectorFilters(){
+  const c = document.getElementById('sector-filters');
+  const chips = ['<button class="filter-chip active" onclick="filterSector(null,this)">전체 ('+Object.keys(TITAN_PROFILES).length+')</button>'];
+  Object.entries(SECTOR_MAP).forEach(([s,names])=>{
+    chips.push('<button class="filter-chip" onclick="filterSector(\''+s+'\',this)" style="border-color:'+SECTOR_COLORS[s]+'33">'+s+' ('+names.length+')</button>');
+  });
+  c.innerHTML = chips.join('');
+}
+
+function filterSector(sector, el){
+  currentSector = sector;
+  document.querySelectorAll('#sector-filters .filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  searchTitans();
+}
+
+// === 타이탄 검색 ===
+function searchTitans(){
+  const q = (document.getElementById('titan-search-input').value||'').toLowerCase().trim();
+  const profiles = typeof TITAN_PROFILES !== 'undefined' ? TITAN_PROFILES : {};
+  const names = Object.keys(profiles);
+
+  const filtered = names.filter(name => {
+    const sector = nameToSector[name]||'';
+    if(currentSector && sector !== currentSector) return false;
+    if(!q) return true;
+    const p = profiles[name];
+    const searchable = [name, p.philosophy||'', (p.principles||[]).join(' '), (p.books||[]).map(b=>b.title).join(' '), p.invest||'', p.signal||''].join(' ').toLowerCase();
+    return searchable.includes(q);
+  });
+
+  const info = document.getElementById('titan-results-info');
+  info.textContent = q ? `${names.length}명 중 ${filtered.length}명 · "${q}"` : (currentSector ? `${currentSector} · ${filtered.length}명` : `${filtered.length}명 전체`);
+
+  const container = document.getElementById('titan-results');
+  if(!filtered.length){
+    container.innerHTML = '<div class="empty-state"><div class="icon">🔍</div><p>검색 결과가 없습니다.<br>다른 키워드로 시도해보세요.</p></div>';
+    return;
+  }
+
+  container.innerHTML = filtered.map(name => {
+    const p = profiles[name];
+    const sector = nameToSector[name]||'기타';
+    const color = SECTOR_COLORS[sector]||'#6366f1';
+    const phil = (p.philosophy||'').substring(0,120) + ((p.philosophy||'').length>120?'...':'');
+    const tags = [];
+    if(p.invest) tags.push(p.invest.substring(0,60)+'...');
+    if(p.signal) tags.push('📡 '+p.signal.substring(0,50));
+    return `<a class="titan-card" href="titan.html?name=${encodeURIComponent(name)}&color=${encodeURIComponent(color)}">
+      <div class="titan-card-head">
+        <span class="titan-card-name">${escapeHtml(name)}</span>
+        <span class="sector-badge" style="background:${color}22;color:${color}">${sector}</span>
+      </div>
+      <div class="titan-card-phil">${escapeHtml(phil)}</div>
+      <div class="titan-card-meta">${tags.map(t=>'<span class="meta-tag">'+escapeHtml(t)+'</span>').join('')}</div>
+    </a>`;
+  }).join('');
+}
+
+// === 뉴스 검색 (기존 코드 유지) ===
 const TITANS = {
   wolfram:{name:'Wolfram',color:'#6366f1',q:'Stephen+Wolfram+Mathematica'},
   gates:{name:'Gates',color:'#0ea5e9',q:'Bill+Gates+foundation'},
@@ -97,57 +215,50 @@ const TITANS = {
   huberman:{name:'Huberman',color:'#ec4899',q:'Andrew+Huberman'},
   pichai:{name:'Pichai',color:'#4285f4',q:'Sundar+Pichai+Google'}
 };
-
 let selectedTitans = new Set(Object.keys(TITANS));
 const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
 
 function escapeHtml(s){if(!s)return'';const d=document.createElement('div');d.appendChild(document.createTextNode(s));return d.innerHTML}
 function sanitizeUrl(u){try{const x=new URL(u);return['http:','https:'].includes(x.protocol)?u:'#'}catch{return'#'}}
-
 function renderFilters(){
   const container = document.getElementById('titan-filters');
   container.innerHTML = '<button class="filter-chip active" onclick="toggleAll(this)">전체</button>' +
-    Object.entries(TITANS).map(([k,v]) =>
-      `<button class="filter-chip active" data-titan="${k}" onclick="toggleTitan('${k}',this)" style="--tc:${v.color}">${v.name}</button>`
+    Object.entries(TITANS).map(([k,v])=>
+      '<button class="filter-chip active" data-titan="'+k+'" onclick="toggleTitan(\''+k+'\',this)">'+v.name+'</button>'
     ).join('');
 }
-
 function toggleTitan(key, el){
   if(selectedTitans.has(key)){selectedTitans.delete(key);el.classList.remove('active')}
   else{selectedTitans.add(key);el.classList.add('active')}
-  document.querySelector('.filter-chip:first-child').classList.toggle('active', selectedTitans.size === Object.keys(TITANS).length);
+  document.querySelector('#titan-filters .filter-chip:first-child').classList.toggle('active', selectedTitans.size === Object.keys(TITANS).length);
 }
 function toggleAll(el){
   const all = selectedTitans.size === Object.keys(TITANS).length;
-  if(all){selectedTitans.clear();document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'))}
-  else{selectedTitans = new Set(Object.keys(TITANS));document.querySelectorAll('.filter-chip').forEach(c=>c.classList.add('active'))}
+  if(all){selectedTitans.clear();document.querySelectorAll('#titan-filters .filter-chip').forEach(c=>c.classList.remove('active'))}
+  else{selectedTitans = new Set(Object.keys(TITANS));document.querySelectorAll('#titan-filters .filter-chip').forEach(c=>c.classList.add('active'))}
 }
-
 function highlightText(text, keywords){
   if(!text||!keywords.length) return escapeHtml(text);
   const escaped = escapeHtml(text);
   const regex = new RegExp('(' + keywords.map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|') + ')','gi');
   return escaped.replace(regex, '<mark>$1</mark>');
 }
-
 function formatDate(ds){const d=new Date(ds),now=new Date(),diff=Math.floor((now-d)/864e5);if(!diff)return'오늘';if(diff===1)return'어제';if(diff<7)return diff+'일 전';return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0')}
 
 async function doSearch(){
   const query = document.getElementById('search-input').value.trim();
-  if(!query){return}
+  if(!query) return;
   const keywords = document.getElementById('keywords-input').value.split(',').map(k=>k.trim()).filter(Boolean);
   const allKeywords = [...keywords, query];
   const container = document.getElementById('results');
   const info = document.getElementById('results-info');
-  container.innerHTML = '<div class="loading"><div class="spinner"></div>13명 타이탄 피드 검색 중...</div>';
+  container.innerHTML = '<div class="loading"><div class="spinner"></div>타이탄 피드 검색 중...</div>';
   info.textContent = '';
-
   const titanKeys = [...selectedTitans];
   const allResults = [];
-
   await Promise.all(titanKeys.map(async key => {
     const titan = TITANS[key];
-    const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}+${titan.q}&hl=en&gl=US`;
+    const url = 'https://news.google.com/rss/search?q='+encodeURIComponent(query)+'+'+titan.q+'&hl=en&gl=US';
     try{
       const res = await fetch(RSS_PROXY + encodeURIComponent(url));
       const data = await res.json();
@@ -158,56 +269,28 @@ async function doSearch(){
       }
     }catch{}
   }));
-
   allResults.sort((a,b) => new Date(b.pubDate) - new Date(a.pubDate));
-  info.textContent = `${allResults.length}건 · ${titanKeys.length}명 타이탄 · "${query}"`;
-
+  info.textContent = allResults.length+'건 · '+titanKeys.length+'명 타이탄 · "'+query+'"';
   if(!allResults.length){
-    container.innerHTML = '<div class="empty-state"><div class="icon">🔍</div><p>검색 결과가 없습니다.<br>다른 키워드로 시도해보세요.</p></div>';
+    container.innerHTML = '<div class="empty-state"><div class="icon">🔍</div><p>검색 결과가 없습니다.</p></div>';
     return;
   }
-
   container.innerHTML = allResults.map(item => {
     const title = highlightText(item.title, allKeywords);
     const desc = item.description ? highlightText(item.description.replace(/<[^>]*>/g,'').substring(0,200), allKeywords) : '';
-    return `<div class="result-item"><a href="${sanitizeUrl(item.link)}" target="_blank" rel="noopener">
-      <span class="result-titan" style="background:${item.titanColor}22;color:${item.titanColor}">${item.titanName}</span>
-      <div class="result-title">${title}</div>
-      <div class="result-meta"><span>${formatDate(item.pubDate)}</span>${item.author?'<span>'+escapeHtml(item.author)+'</span>':''}</div>
-      ${desc?'<div class="result-desc">'+desc+'</div>':''}
-    </a></div>`;
+    return '<div class="result-item"><a href="'+sanitizeUrl(item.link)+'" target="_blank" rel="noopener">'+
+      '<span class="result-titan" style="background:'+item.titanColor+'22;color:'+item.titanColor+'">'+item.titanName+'</span>'+
+      '<div class="result-title">'+title+'</div>'+
+      '<div class="result-meta"><span>'+formatDate(item.pubDate)+'</span></div>'+
+      (desc?'<div class="result-desc">'+desc+'</div>':'')+
+    '</a></div>';
   }).join('');
 }
 
+// 초기화
+renderSectorFilters();
 renderFilters();
-
-async function aiSearchAnswer(){
-  const query=document.getElementById('search-input').value.trim();
-  if(!query){return}
-  const container=document.getElementById('results');
-  const existing=document.getElementById('ai-search-answer');
-  if(existing)existing.remove();
-  const box=document.createElement('div');
-  box.id='ai-search-answer';
-  box.style.cssText='background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(168,85,247,0.04));border:1px solid rgba(99,102,241,0.15);border-radius:16px;padding:1.5rem;margin-bottom:1rem';
-  box.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:13px;font-weight:700;color:#818cf8">🧠 AI Answer</div><div id="ai-search-content" style="font-size:13px;color:#8b8fa3;line-height:1.8"><span style="animation:spin 1s linear infinite;display:inline-block">⏳</span> 검색 결과 기반 AI 답변 생성 중...</div>';
-  container.insertBefore(box,container.firstChild);
-  // 검색도 동시 실행
-  doSearch();
-  try{
-    // 검색 결과 수집 대기
-    await new Promise(r=>setTimeout(r,3000));
-    const resultsText=container.innerText.substring(0,3000);
-    const result=await window.callGemini(
-      '한국어로 답변. 13명 타이탄(Wolfram,Gates,Musk,Bezos,Amodei,Dalio,Altman,Huang,Nadella,Karpathy,LeCun,Huberman,Pichai)에 대한 전문가.',
-      `사용자 질문: "${query}"\n\n관련 검색 결과:\n${resultsText}\n\n위 검색 결과를 바탕으로 사용자 질문에 간결하고 통찰력 있게 답변해주세요.`,
-      {maxTokens:800}
-    );
-    document.getElementById('ai-search-content').innerHTML=titanUtils.formatAiText(result);
-  }catch(e){
-    document.getElementById('ai-search-content').innerHTML='❌ '+escapeHtml(e.message);
-  }
-}
+searchTitans();
 </script>
 </body>
 </html>

@@ -30,30 +30,125 @@ load_dotenv(Path(__file__).parent / ".env")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", Path(__file__).parent.parent))
 
-# 핵심 타이탄 RSS 검색어 (Google News RSS)
-KEY_TITANS = {
-    "Sam Altman": "Sam+Altman+OpenAI",
-    "Jensen Huang": "Jensen+Huang+NVIDIA",
-    "Elon Musk": "Elon+Musk+Tesla+SpaceX+xAI",
-    "Satya Nadella": "Satya+Nadella+Microsoft+AI",
-    "Sundar Pichai": "Sundar+Pichai+Google+Gemini",
-    "Dario Amodei": "Dario+Amodei+Anthropic+Claude",
-    "Jeff Bezos": "Jeff+Bezos+Amazon",
-    "Bill Gates": "Bill+Gates",
-    "Mark Zuckerberg": "Mark+Zuckerberg+Meta+AI",
-    "Demis Hassabis": "Demis+Hassabis+DeepMind+Gemini",
-    "Ray Dalio": "Ray+Dalio+Bridgewater",
-    "Cathie Wood": "Cathie+Wood+ARK+Invest",
-    "Vitalik Buterin": "Vitalik+Buterin+Ethereum",
-    "Andrej Karpathy": "Andrej+Karpathy",
-    "Andrew Huberman": "Andrew+Huberman",
+# 카테고리 매핑 (동적 필터링용)
+CATEGORY_MAP = {
+    "AI": [
+        "Geoffrey Hinton",
+        "Yoshua Bengio",
+        "Dario Amodei",
+        "Sam Altman",
+        "Yann LeCun",
+        "Andrej Karpathy",
+        "Demis Hassabis",
+        "Ilya Sutskever",
+        "Fei-Fei Li",
+        "Andrew Ng",
+        "Ian Goodfellow",
+        "Jim Fan",
+        "Lilian Weng",
+        "Jeremy Howard",
+        "Lex Fridman",
+        "Arthur Mensch",
+        "Noam Shazeer",
+        "Harrison Chase",
+        "Mustafa Suleyman",
+        "Mira Murati",
+        "Greg Brockman",
+        "Matt Shumer",
+        "Matthew Berman",
+        "David Shapiro",
+    ],
+    "Science": [
+        "Ed Witten",
+        "Brian Cox",
+        "Sabine Hossenfelder",
+        "Neil deGrasse Tyson",
+        "Sean Carroll",
+        "Jennifer Doudna",
+        "Terence Tao",
+        "Roger Penrose",
+        "Max Tegmark",
+    ],
+    "Tech": [
+        "Elon Musk",
+        "Jensen Huang",
+        "Satya Nadella",
+        "Sundar Pichai",
+        "Tim Cook",
+        "Mark Zuckerberg",
+        "Linus Torvalds",
+        "Vitalik Buterin",
+        "Patrick Collison",
+        "George Hotz",
+        "Chris Lattner",
+    ],
+    "Business": [
+        "Ray Dalio",
+        "Charlie Munger",
+        "Naval Ravikant",
+        "Paul Graham",
+        "Marc Andreessen",
+        "Peter Thiel",
+        "Jeff Bezos",
+        "Cathie Wood",
+        "Ben Thompson",
+        "Lenny Rachitsky",
+    ],
+    "Philosophy": [
+        "Yuval Noah Harari",
+        "Daniel Kahneman",
+        "Nassim Nicholas Taleb",
+        "Nick Bostrom",
+        "Balaji Srinivasan",
+    ],
+    "Health": ["Andrew Huberman", "Peter Attia", "David Sinclair", "Eric Topol"],
+    "Finance": [
+        "Michael Burry",
+        "Stanley Druckenmiller",
+        "Aswath Damodaran",
+        "Chamath Palihapitiya",
+    ],
 }
 
 
-def fetch_feeds(max_items_per_titan=5, timeout=10):
+def load_titans_dynamic():
+    """titans-data.js에서 타이탄 이름을 동적으로 로드"""
+    data_path = Path(__file__).parent.parent / "titans-data.js"
+    if not data_path.exists():
+        logger.warning("titans-data.js not found, using CATEGORY_MAP fallback")
+        names = []
+        for cat_names in CATEGORY_MAP.values():
+            names.extend(cat_names)
+        return {name: name.replace(" ", "+") for name in names}
+
+    content = data_path.read_text(encoding="utf-8")
+    # TITAN_PROFILES 키에서 이름 추출 (형태: "Full Name": {)
+    names = re.findall(r'^"([^"]+)":\s*\{', content, re.MULTILINE)
+    logger.info(f"  titans-data.js에서 {len(names)}명 로드됨")
+    return {name: name.replace(" ", "+") for name in names}
+
+
+def get_titans(category=None, limit=20):
+    """카테고리 필터 + 제한 적용한 타이탄 딕셔너리 반환"""
+    all_titans = load_titans_dynamic()
+
+    if category:
+        cat_upper = category.upper()
+        for cat, names in CATEGORY_MAP.items():
+            if cat.upper() == cat_upper:
+                filtered = {n: q for n, q in all_titans.items() if n in names}
+                logger.info(f"  카테고리 '{category}' 필터: {len(filtered)}명")
+                return dict(list(filtered.items())[:limit])
+        logger.warning(f"  카테고리 '{category}'를 찾을 수 없음. 전체 사용")
+
+    return dict(list(all_titans.items())[:limit])
+
+
+def fetch_feeds(max_items_per_titan=5, timeout=10, category=None, limit=20):
     """Google News RSS로 타이탄별 최신 뉴스 수집"""
+    titans = get_titans(category=category, limit=limit)
     all_items = {}
-    for name, query in KEY_TITANS.items():
+    for name, query in titans.items():
         url = f"https://news.google.com/rss/search?q={query}&hl=en&gl=US"
         logger.info(f"Fetching: {name}...")
         try:
@@ -273,13 +368,28 @@ def main():
     parser.add_argument(
         "--dry-run", action="store_true", help="API 호출 없이 샘플 데이터로 테스트"
     )
+    parser.add_argument(
+        "--category",
+        type=str,
+        default=None,
+        help="카테고리 필터 (AI, Science, Tech, Business, Philosophy, Health, Finance)",
+    )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=20,
+        help="처리할 타이탄 수 제한 (기본: 20, 과부하 방지)",
+    )
     args = parser.parse_args()
 
     logger.info("=== Titan Tracker Weekly Digest ===")
+    if args.category:
+        logger.info(f"  카테고리 필터: {args.category}")
+    logger.info(f"  타이탄 제한: {args.limit}명")
 
     # Step 1: RSS 수집
     logger.info("Step 1: RSS 피드 수집")
-    feed_data = fetch_feeds()
+    feed_data = fetch_feeds(category=args.category, limit=args.limit)
     total_items = sum(len(items) for items in feed_data.values())
     logger.info(f"  수집 완료: {total_items} items from {len(feed_data)} titans")
 

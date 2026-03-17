@@ -1,0 +1,21 @@
+{
+  "name": "Titan Tracker",
+  "short_name": "Titans",
+  "description": "117명 거장의 시그널을 AI가 교차분석하는 인텔리전스 플랫폼",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a0b10",
+  "theme_color": "#6366f1",
+  "orientation": "any",
+  "categories": ["finance", "news", "education"],
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>🔭</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

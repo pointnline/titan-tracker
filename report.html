@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Titan Tracker — Analysis Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0b10;--surface:#12141d;--surface2:#1a1d2a;--surface3:#232738;--border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.14);--text:#e8e8ed;--text-sub:#8b8fa3;--text-muted:#4a4e62;--accent:#6366f1;--accent-light:#818cf8;--gold:#f59e0b;--green:#22c55e;--red:#ef4444;--blue:#0ea5e9;--purple:#a855f7;--radius:20px;--radius-sm:14px;--radius-xs:8px}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;padding-top:44px}
+a{color:var(--accent-light);text-decoration:none}
+.bg-glow{position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse,rgba(99,102,241,0.1) 0%,transparent 70%);pointer-events:none;z-index:0;opacity:.5}
+.header{position:relative;z-index:1;text-align:center;padding:2.5rem 1.5rem 2rem;background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(168,85,247,0.04));border-bottom:1px solid var(--border)}
+.header h1{font-size:clamp(22px,4vw,32px);font-weight:900;letter-spacing:-.04em;background:linear-gradient(135deg,#e8e8ed 20%,var(--accent-light) 50%,var(--gold) 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header p{font-size:13px;color:var(--text-sub);margin-top:6px}
+.main{max-width:1000px;margin:0 auto;padding:1.5rem;position:relative;z-index:1}
+
+/* 스텝 카드 */
+.step-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1rem;transition:border-color .2s}
+.step-card:hover{border-color:var(--border-hover)}
+.step-label{font-size:10px;font-weight:700;color:var(--accent-light);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.step-label .num{width:20px;height:20px;border-radius:50%;background:var(--accent);color:white;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800}
+
+/* 섹터 필터 */
+.sector-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.sector-btn{font-size:11px;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-sub);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;display:flex;align-items:center;gap:5px}
+.sector-btn:hover{border-color:var(--accent-light)}
+.sector-btn.active{background:var(--accent);border-color:var(--accent);color:white}
+.sector-btn .cnt{font-size:9px;opacity:.7;font-family:'JetBrains Mono',monospace}
+.sector-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* 타이탄 그리드 */
+.titan-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.t-chip{font-size:11px;padding:5px 12px;border-radius:16px;border:1px solid var(--border);background:transparent;color:var(--text-sub);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;display:flex;align-items:center;gap:5px}
+.t-chip:hover{border-color:var(--accent-light)}
+.t-chip.selected{background:rgba(99,102,241,0.15);border-color:var(--accent);color:var(--text)}
+.t-chip .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* 기간/옵션 */
+.period-btns{display:flex;gap:6px;flex-wrap:wrap}
+.period-btn{font-size:11px;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-sub);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
+.period-btn:hover{border-color:var(--accent-light)}
+.period-btn.active{background:var(--gold);border-color:var(--gold);color:#1a1a2e}
+
+.type-btns{display:flex;gap:8px;flex-wrap:wrap}
+.type-btn{flex:1;min-width:200px;padding:14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text-sub);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;text-align:left}
+.type-btn:hover{border-color:var(--accent-light);transform:translateY(-1px)}
+.type-btn.active{border-color:var(--accent);background:rgba(99,102,241,0.08)}
+.type-btn h4{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.type-btn p{font-size:11px;line-height:1.5}
+
+/* 검색 */
+.search-input{width:100%;padding:10px 14px;border-radius:var(--radius-xs);border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:12px;font-family:'Inter',sans-serif;outline:none;margin-bottom:8px}
+.search-input:focus{border-color:var(--accent)}
+.search-input::placeholder{color:var(--text-muted)}
+
+/* 생성 버튼 */
+.generate-btn{width:100%;padding:14px;border-radius:var(--radius-sm);border:none;background:linear-gradient(135deg,#6366f1,#a855f7);color:white;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .3s;box-shadow:0 4px 20px rgba(99,102,241,0.3);display:flex;align-items:center;justify-content:center;gap:8px}
+.generate-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(99,102,241,0.4)}
+.generate-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.sel-count{font-size:12px;color:var(--text-muted);margin-top:8px;font-family:'JetBrains Mono',monospace}
+.select-actions{display:flex;gap:8px;margin-top:8px}
+.select-actions button{font-size:10px;padding:4px 10px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text-sub);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
+.select-actions button:hover{border-color:var(--accent-light)}
+
+/* 리포트 영역 */
+.report-output{display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;margin-top:1.5rem;animation:fadeIn .5s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.report-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
+.report-title{font-size:18px;font-weight:800;margin-bottom:4px}
+.report-meta{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
+.report-actions{display:flex;gap:6px}
+.report-actions button{font-size:11px;padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-sub);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
+.report-actions button:hover{border-color:var(--accent-light);color:var(--text)}
+.report-body{font-size:13px;color:var(--text-sub);line-height:1.8}
+.report-body strong{color:var(--text)}
+.report-body h2,.report-body h3{color:var(--text);margin:1.2rem 0 0.6rem;font-weight:700}
+.report-body h2{font-size:16px;border-bottom:1px solid var(--border);padding-bottom:6px}
+.report-body h3{font-size:14px}
+.report-body table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:12px}
+.report-body th{background:var(--surface2);padding:8px 12px;text-align:left;font-weight:600;color:var(--text);border:1px solid var(--border)}
+.report-body td{padding:8px 12px;border:1px solid var(--border)}
+
+.loading-report{text-align:center;padding:3rem;color:var(--text-muted)}
+.loading-report .spinner{width:32px;height:32px;border:3px solid var(--surface3);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.footer{text-align:center;padding:2rem;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:2rem}
+@media(max-width:640px){.type-btns{flex-direction:column}.type-btn{min-width:auto}}
+
+[data-theme="light"]{--bg:#f6f5f1;--surface:#ffffff;--surface2:#f0eeea;--surface3:#e8e6e1;--border:rgba(0,0,0,0.09);--border-hover:rgba(0,0,0,0.18);--text:#1a1a2e;--text-sub:#666;--text-muted:#999;--accent:#4f46e5;--accent-light:#6366f1;--gold:#d97706;--green:#059669;--red:#dc2626;--blue:#2563eb;--purple:#7c3aed}
+[data-theme="light"] .bg-glow{opacity:0}
+[data-theme="light"] .generate-btn{box-shadow:0 4px 20px rgba(99,102,241,0.15)}
+@media print{
+  body{background:white;color:#1a1a2e;padding:0}
+  .header,.step-card,.generate-btn,.footer,.hermes-btn,.hermes-panel,.titan-nav,.theme-toggle,.bg-glow,.report-actions,.nav-mobile-menu{display:none!important}
+  .report-output{display:block!important;border:none;padding:0;margin:0;box-shadow:none;background:white}
+  .report-body{color:#333}.report-body strong{color:#1a1a2e}
+  .report-body th{background:#f0f0f3}.report-body td,.report-body th{border-color:#ddd}
+}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<script src="titans-data.js"></script>
+<script src="titan-nav.js"></script>
+
+<div class="header">
+  <h1>📊 Titan Analysis Report</h1>
+  <p>섹터별 타이탄을 선택하고 AI 교차분석 리포트를 생성합니다</p>
+</div>
+
+<div class="main">
+  <!-- STEP 1: 섹터 선택 -->
+  <div class="step-card">
+    <div class="step-label"><span class="num">1</span> 섹터 & 타이탄 선택</div>
+    <div class="sector-btns" id="sector-btns"></div>
+    <input type="text" class="search-input" id="titan-search" placeholder="이름으로 검색..." oninput="filterTitans()">
+    <div class="titan-grid" id="titan-grid"></div>
+    <div class="sel-count" id="sel-count">0명 선택됨 (최소 2명)</div>
+    <div class="select-actions">
+      <button type="button" onclick="selectAllVisible()">전체 선택</button>
+      <button type="button" onclick="clearSelection()">선택 해제</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: 기간 선택 -->
+  <div class="step-card">
+    <div class="step-label"><span class="num">2</span> 분석 기간</div>
+    <div class="period-btns" id="period-btns">
+      <button type="button" class="period-btn" onclick="setPeriod('1w',this)">최근 1주</button>
+      <button type="button" class="period-btn active" onclick="setPeriod('1m',this)">최근 1개월</button>
+      <button type="button" class="period-btn" onclick="setPeriod('3m',this)">최근 3개월</button>
+      <button type="button" class="period-btn" onclick="setPeriod('6m',this)">최근 6개월</button>
+      <button type="button" class="period-btn" onclick="setPeriod('all',this)">전기간</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: 리포트 유형 -->
+  <div class="step-card">
+    <div class="step-label"><span class="num">3</span> 리포트 유형</div>
+    <div class="type-btns">
+      <div class="type-btn active" onclick="setType('signal',this)">
+        <h4>💰 투자 시그널 교차분석</h4>
+        <p>선택한 타이탄들의 투자 시그널, 관심 섹터, 포트폴리오 움직임을 비교 분석</p>
+      </div>
+      <div class="type-btn" onclick="setType('philosophy',this)">
+        <h4>🧠 철학 & 원칙 비교</h4>
+        <p>핵심 철학, 의사결정 원칙, 세계관의 공통점과 차이점 분석</p>
+      </div>
+      <div class="type-btn" onclick="setType('trend',this)">
+        <h4>📰 뉴스 트렌드 분석</h4>
+        <p>최근 뉴스 기반 교차 키워드, 공동 관심사, 업계 방향성 도출</p>
+      </div>
+      <div class="type-btn" onclick="setType('full',this)">
+        <h4>📋 종합 리서치 리포트</h4>
+        <p>철학 + 시그널 + 뉴스 + 논문까지 포함한 풀 리포트</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 생성 버튼 -->
+  <button type="button" class="generate-btn" id="gen-btn" onclick="generateReport()" disabled>
+    📊 리포트 생성 (<span id="gen-count">0</span>명 선택)
+  </button>
+
+  <!-- 리포트 출력 -->
+  <div class="report-output" id="report-output">
+    <div class="report-header">
+      <div>
+        <div class="report-title" id="report-title"></div>
+        <div class="report-meta" id="report-meta"></div>
+      </div>
+      <div class="report-actions">
+        <button type="button" onclick="window.print()">🖨 인쇄/PDF</button>
+        <button type="button" onclick="copyReport()">📋 복사</button>
+      </div>
+    </div>
+    <div class="report-body" id="report-body"></div>
+  </div>
+</div>
+
+<div class="footer">Titan Analysis Report · <a href="index.html">Titan Tracker</a> · Point & Line</div>
+
+<script>
+const CAT_COLORS = {AI:'#6366f1',Science:'#0ea5e9',Tech:'#22c55e',Business:'#f59e0b',Philosophy:'#a855f7',Health:'#ec4899',Finance:'#eab308',Design:'#f97316'};
+const CAT_MAP_DATA = {
+  AI:['Geoffrey Hinton','Yoshua Bengio','Dario Amodei','Sam Altman','Yann LeCun','Andrej Karpathy','Demis Hassabis','Ilya Sutskever','Fei-Fei Li','Andrew Ng','Ian Goodfellow','Jim Fan','Lilian Weng','Jeremy Howard','Lex Fridman','Hugging Face (Clem Delangue)','Arthur Mensch','Noam Shazeer','Harrison Chase','Amjad Masad','Emad Mostaque','Connor Leahy','Mustafa Suleyman','Jan Leike','Mira Murati','Greg Brockman','Anthropic (Chris Olah)','Perplexity (Aravind Srinivas)','Cursor (Michael Truell)','Windsurf (Varun Mohan)','Genspark (Eric Jing)','Matt Shumer','Matthew Berman','David Shapiro','Riley Brown','AI Jason'],
+  Science:['Ed Witten','Brian Cox','Sabine Hossenfelder','Neil deGrasse Tyson','Sean Carroll','David Deutsch','Jennifer Doudna','Eric Lander','Terence Tao','Roger Penrose','Carlo Rovelli','Max Tegmark','Michio Kaku','Katie Mack','David Eagleman'],
+  Tech:['Elon Musk','Jensen Huang','Satya Nadella','Sundar Pichai','Tim Cook','Mark Zuckerberg','Linus Torvalds','Vitalik Buterin','Patrick Collison','Daniel Gross','Nat Friedman','George Hotz','Dylan Field','Guillermo Rauch','Mitchell Hashimoto','DHH (David Heinemeier Hansson)','Pieter Levels','Theo Browne','Fireship (Jeff Delaney)','Chris Lattner','Ivan Zhao','Obsidian (Shida Li)'],
+  Business:['Ray Dalio','Charlie Munger','Naval Ravikant','Paul Graham','Marc Andreessen','Peter Thiel','Reed Hastings','Jeff Bezos','Jamie Dimon','Cathie Wood','Reid Hoffman','Howard Marks','Masayoshi Son','Patrick Bet-David','Lenny Rachitsky','Ben Thompson','Packy McCormick'],
+  Philosophy:['Yuval Noah Harari','Daniel Kahneman','Nassim Nicholas Taleb','Tyler Cowen','Nick Bostrom','Balaji Srinivasan','Jordan Peterson','Jaron Lanier','Tristan Harris','David Epstein'],
+  Health:['Andrew Huberman','Peter Attia','David Sinclair','Rhonda Patrick','Eric Topol','Siddhartha Mukherjee','Matthew Walker','Atul Gawande'],
+  Finance:['Michael Burry','Stanley Druckenmiller','Aswath Damodaran','Chamath Palihapitiya'],
+  Design:['Jony Ive','Don Norman','John Maeda']
+};
+const nameToCat = {};
+Object.entries(CAT_MAP_DATA).forEach(([c,ns])=>ns.forEach(n=>{nameToCat[n]=c}));
+
+let selectedSector = null;
+let selectedTitans = new Set();
+let selectedPeriod = '1m';
+let selectedType = 'signal';
+
+function escapeHtml(s){if(!s)return'';const d=document.createElement('div');d.appendChild(document.createTextNode(s));return d.innerHTML}
+
+// 섹터 버튼 렌더
+function renderSectors(){
+  const c = document.getElementById('sector-btns');
+  const total = Object.values(CAT_MAP_DATA).reduce((s,a)=>s+a.length,0);
+  let html = '<button type="button" class="sector-btn active" onclick="selectSector(null,this)"><span class="cnt">'+total+'</span> 전체</button>';
+  Object.entries(CAT_MAP_DATA).forEach(([cat,names])=>{
+    html += '<button type="button" class="sector-btn" onclick="selectSector(\''+cat+'\',this)"><span class="sector-dot" style="background:'+CAT_COLORS[cat]+'"></span>'+cat+' <span class="cnt">'+names.length+'</span></button>';
+  });
+  c.innerHTML = html;
+}
+
+function selectSector(cat, el){
+  selectedSector = cat;
+  document.querySelectorAll('.sector-btn').forEach(b=>b.classList.remove('active'));
+  if(el) el.classList.add('active');
+  filterTitans();
+}
+
+// 타이탄 그리드 렌더
+function filterTitans(){
+  const q = (document.getElementById('titan-search')?.value||'').toLowerCase().trim();
+  const grid = document.getElementById('titan-grid');
+  const profiles = typeof TITAN_PROFILES!=='undefined' ? TITAN_PROFILES : {};
+  const all = Object.keys(profiles);
+  const filtered = all.filter(name => {
+    if(selectedSector && nameToCat[name] !== selectedSector) return false;
+    if(q && !name.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  grid.innerHTML = filtered.map(name => {
+    const cat = nameToCat[name] || '';
+    const color = CAT_COLORS[cat] || '#888';
+    const sel = selectedTitans.has(name);
+    return '<div class="t-chip'+(sel?' selected':'')+'" onclick="toggleTitan(\''+escapeHtml(name).replace(/'/g,"\\'")+'\')"><span class="dot" style="background:'+color+'"></span>'+escapeHtml(name)+(sel?' ✓':'')+'</div>';
+  }).join('');
+  updateCount();
+}
+
+function toggleTitan(name){
+  if(selectedTitans.has(name)) selectedTitans.delete(name);
+  else selectedTitans.add(name);
+  filterTitans();
+}
+
+function selectAllVisible(){
+  const q = (document.getElementById('titan-search')?.value||'').toLowerCase().trim();
+  const profiles = typeof TITAN_PROFILES!=='undefined' ? TITAN_PROFILES : {};
+  Object.keys(profiles).forEach(name => {
+    if(selectedSector && nameToCat[name] !== selectedSector) return;
+    if(q && !name.toLowerCase().includes(q)) return;
+    selectedTitans.add(name);
+  });
+  filterTitans();
+}
+
+function clearSelection(){ selectedTitans.clear(); filterTitans(); }
+
+function updateCount(){
+  const n = selectedTitans.size;
+  document.getElementById('sel-count').textContent = n+'명 선택됨' + (n<2 ? ' (최소 2명)' : '');
+  document.getElementById('gen-count').textContent = n;
+  document.getElementById('gen-btn').disabled = n < 2;
+}
+
+function setPeriod(p, el){ selectedPeriod = p; document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active')); if(el) el.classList.add('active'); }
+function setType(t, el){ selectedType = t; document.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active')); if(el) el.classList.add('active'); }
+
+// 리포트 생성
+async function generateReport(){
+  const names = Array.from(selectedTitans);
+  if(names.length < 2) return;
+  const profiles = typeof TITAN_PROFILES!=='undefined' ? TITAN_PROFILES : {};
+  const papers = typeof TITAN_PAPERS!=='undefined' ? TITAN_PAPERS : {};
+
+  const output = document.getElementById('report-output');
+  const body = document.getElementById('report-body');
+  output.style.display = 'block';
+  body.innerHTML = '<div class="loading-report"><div class="spinner"></div>AI가 리포트를 생성하고 있습니다... ('+names.length+'명 분석 중)</div>';
+
+  const periodLabel = {
+    '1w':'최근 1주','1m':'최근 1개월','3m':'최근 3개월','6m':'최근 6개월','all':'전기간(누적)'
+  }[selectedPeriod] || selectedPeriod;
+  const typeLabel = {
+    'signal':'투자 시그널 교차분석','philosophy':'철학 & 원칙 비교',
+    'trend':'뉴스 트렌드 분석','full':'종합 리서치 리포트'
+  }[selectedType] || selectedType;
+
+  document.getElementById('report-title').textContent = typeLabel;
+  document.getElementById('report-meta').textContent = names.length+'명 · '+periodLabel+' · '+new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
+
+  // 프로필 데이터 수집
+  let dataText = '';
+  names.forEach(name => {
+    const p = profiles[name];
+    if(!p) return;
+    dataText += '\n\n=== '+name+' ('+( nameToCat[name]||'')+') ===\n';
+    dataText += '철학: '+p.philosophy+'\n';
+    dataText += '원칙: '+(p.principles||[]).join('; ')+'\n';
+    if(p.invest) dataText += '투자인사이트: '+p.invest+'\n';
+    if(p.signal) dataText += '시그널: '+p.signal+'\n';
+    if(p.timeline) dataText += '타임라인: '+(p.timeline||[]).map(t=>t.y+': '+t.t).join(' | ')+'\n';
+    if(papers[name]) dataText += '논문: '+papers[name].map(pp=>pp.title+' ('+pp.year+', '+pp.journal+')').join('; ')+'\n';
+  });
+
+  // 리포트 유형별 프롬프트
+  const systemPrompt = '당신은 세계적 수준의 투자/테크 리서치 애널리스트입니다. 한국어로 격조 있고 권위 있는 분석 리포트를 작성합니다. Markdown 형식(##, ###, **, 표)을 사용하세요. 데이터에 기반한 팩트 위주로 작성하되, 통찰력 있는 시사점을 도출하세요.';
+
+  const typePrompts = {
+    signal: `## 투자 시그널 교차분석 리포트
+분석 대상: ${names.join(', ')} (${names.length}명)
+기간: ${periodLabel}
+
+다음 구조로 작성:
+## 1. Executive Summary (3줄 요약)
+## 2. 개인별 투자 시그널 요약 (각 2-3줄)
+## 3. 교차 분석: 공통 투자 테마
+## 4. 시그널 비교 매트릭스 (마크다운 표)
+| 이름 | 핵심 섹터 | 강세 시그널 | 리스크 요인 |
+## 5. 투자 시사점 & 액션 아이템
+## 6. 주의사항 & 리스크`,
+
+    philosophy: `## 철학 & 원칙 비교 분석 리포트
+분석 대상: ${names.join(', ')} (${names.length}명)
+기간: ${periodLabel}
+
+다음 구조로 작성:
+## 1. Executive Summary
+## 2. 개인별 핵심 철학 요약 (각 3줄)
+## 3. 공통 사상적 기반 (겹치는 원칙/가치)
+## 4. 주요 분기점 (의견이 갈리는 주제)
+## 5. 철학 비교 매트릭스
+| 이름 | 세계관 | 핵심 원칙 | 리스크 인식 |
+## 6. 의사결정에 대한 시사점`,
+
+    trend: `## 뉴스 트렌드 교차분석 리포트
+분석 대상: ${names.join(', ')} (${names.length}명)
+기간: ${periodLabel}
+
+다음 구조로 작성:
+## 1. Executive Summary
+## 2. 교차 키워드 TOP 5 (여러 타이탄이 공통 관심)
+## 3. 개인별 최근 핵심 활동 (2-3줄씩)
+## 4. 업계 방향성 도출 (이 그룹이 가리키는 미래)
+## 5. 섹터별 임팩트 분석
+## 6. 향후 주시 포인트`,
+
+    full: `## 종합 리서치 리포트
+분석 대상: ${names.join(', ')} (${names.length}명)
+기간: ${periodLabel}
+
+다음 구조로 풀 리포트 작성 (3000자 이상):
+## 1. Executive Summary (5줄 요약)
+## 2. 프로필 & 포지셔닝 매트릭스
+| 이름 | 분야 | 핵심 포지션 | 영향력 |
+## 3. 철학 & 원칙 교차분석
+## 4. 투자 시그널 & 섹터 분석
+## 5. 핵심 논문/연구 교차점 (해당시)
+## 6. 뉴스 트렌드 & 방향성
+## 7. SWOT 분석 (이 그룹 전체)
+## 8. 투자 시사점 & 액션 아이템
+## 9. 리스크 요인 & 주의사항
+## 10. 결론`
+  };
+
+  const userMsg = (typePrompts[selectedType] || typePrompts.signal) + '\n\n=== 타이탄 데이터 ===\n' + dataText;
+
+  // Gemini 호출
+  const key = window.getGeminiKey ? window.getGeminiKey() : '';
+  if(!key){
+    body.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--red)">config.js에 Gemini API 키를 설정해주세요</div>';
+    return;
+  }
+
+  try {
+    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        system_instruction:{parts:[{text:systemPrompt}]},
+        contents:[{role:'user',parts:[{text:userMsg}]}],
+        generationConfig:{temperature:0.7, maxOutputTokens: selectedType==='full' ? 4096 : 2048, topP:0.9}
+      })
+    });
+    if(!res.ok){ const e=await res.json().catch(()=>({})); throw new Error(e.error?.message||'API 오류 '+res.status); }
+    const data = await res.json();
+    const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || '리포트 생성 실패';
+
+    // Markdown → HTML 변환
+    body.innerHTML = aiText
+      .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\|(.*)\|/g, function(match){
+        const cells = match.split('|').filter(c=>c.trim());
+        if(cells.every(c=>c.trim().match(/^[-:]+$/))) return '';
+        const tag = body.querySelectorAll('table').length===0 ? 'th' : 'td';
+        return '<tr>'+cells.map(c=>'<'+tag+'>'+c.trim()+'</'+tag+'>').join('')+'</tr>';
+      })
+      .replace(/(<tr>.*?<\/tr>(\s*<tr>.*?<\/tr>)*)/gs, '<table>$1</table>')
+      .replace(/\n/g, '<br>')
+      .replace(/^- /gm, '&bull; ');
+
+    output.scrollIntoView({behavior:'smooth'});
+  } catch(e){
+    body.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--red)">'+escapeHtml(e.message)+'<br><span style="font-size:10px;color:var(--text-muted)">Rate limit일 수 있습니다. 30초 후 다시 시도해주세요.</span></div>';
+  }
+}
+
+function copyReport(){
+  const body = document.getElementById('report-body');
+  const text = body.innerText;
+  navigator.clipboard.writeText(text).then(()=>{ alert('리포트가 클립보드에 복사되었습니다.'); });
+}
+
+// 초기화
+renderSectors();
+filterTitans();
+</script>
+</body>
+</html>

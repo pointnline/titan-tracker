@@ -1,4 +1,4 @@
-// Titan Tracker — 공통 네비 + Hermes 챗봇 + AI 유틸 (v1.07)
+// Titan Tracker — 공통 네비 + Hermes 챗봇 + AI 유틸 + GA4 (v1.15)
 // 모든 페이지에서 <script src="titan-nav.js"></script> 하나로 전부 로드
 
 (function() {
@@ -13,93 +13,96 @@
     if (xhr.status === 200) { eval(xhr.responseText); }
   } catch(e) { /* config.js 없음 — fallback */ }
 
-  // === 네비게이션 바 ===
-  // 기존 인라인 nav 제거 (중복 방지)
-  document.querySelectorAll('.titan-nav').forEach(el => el.remove());
-  const currentPage = location.pathname.split('/').pop() || 'index.html';
-  const navLinks = [
-    { href: 'index.html', label: '🔭 Titan Tracker', isBrand: true },
-    { href: 'insights.html', label: '📝 Insights' },
-    { href: 'dashboard.html', label: '📊 Dashboard' },
-    { href: 'signals.html', label: '🎯 Signals' },
-    { href: 'digest.html', label: '📰 Digest' },
-    { href: 'study.html', label: '🧠 Study' },
-    { href: 'search.html', label: '🔍 Search' },
-  ];
+  // === GA4 (Google Analytics 4) ===
+  // config.js의 TITAN_CONFIG.GA4_ID 또는 기본값 사용
+  const GA4_ID = (typeof TITAN_CONFIG !== 'undefined' && TITAN_CONFIG.GA4_ID) || '';
+  if (GA4_ID) {
+    // gtag.js 스크립트 로드
+    const gs = document.createElement('script');
+    gs.async = true;
+    gs.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA4_ID;
+    document.head.appendChild(gs);
 
-  const nav = document.createElement('nav');
-  nav.className = 'titan-nav';
-  nav.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;gap:0;padding:0 1rem;height:40px;background:rgba(10,11,16,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.06);font-size:11px';
+    // gtag 초기화
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function() { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    window.gtag('config', GA4_ID, {
+      page_title: document.title,
+      page_location: window.location.href,
+      send_page_view: true
+    });
 
-  // 브랜드 링크 (항상 표시)
-  const brandLink = navLinks.find(l => l.isBrand);
-  const brandA = document.createElement('a');
-  brandA.href = brandLink.href;
-  brandA.textContent = brandLink.label;
-  const isBrandActive = currentPage === brandLink.href;
-  brandA.style.cssText = 'color:' + (isBrandActive ? '#818cf8' : '#8b8fa3') + ';font-weight:600;margin-right:auto;text-decoration:none;display:flex;align-items:center;gap:5px;flex-shrink:0';
-  nav.appendChild(brandA);
+    // === 핵심 이벤트 트래킹 헬퍼 ===
+    window.trackEvent = function(eventName, params) {
+      if (window.gtag) window.gtag('event', eventName, params || {});
+    };
 
-  // 데스크탑 링크 컨테이너 (모바일에서 숨김)
-  const linksWrap = document.createElement('div');
-  linksWrap.className = 'nav-links-desktop';
-  linksWrap.style.cssText = 'display:flex;align-items:center;gap:0';
+    // 페이지별 자동 이벤트
+    var pageName = (location.pathname.split('/').pop() || 'index.html').replace('.html', '');
+    window.trackEvent('page_view_custom', { page_name: pageName, titan_count: (typeof TITAN_PROFILES !== 'undefined') ? Object.keys(TITAN_PROFILES).length : 0 });
 
-  navLinks.filter(l => !l.isBrand).forEach(link => {
-    const a = document.createElement('a');
-    a.href = link.href;
-    a.textContent = link.label;
-    const isActive = currentPage === link.href;
-    a.style.cssText = 'color:' + (isActive ? '#818cf8' : '#5a5e72') + ';padding:4px 10px;text-decoration:none;border-radius:6px;transition:color .2s;white-space:nowrap;font-size:11px';
-    if (!isActive) {
-      a.onmouseover = function() { this.style.color = '#818cf8'; };
-      a.onmouseout = function() { this.style.color = '#5a5e72'; };
+    // 타이탄 클릭 추적 (이벤트 위임)
+    document.addEventListener('click', function(e) {
+      // 타이탄 카드/칩 클릭
+      var titanEl = e.target.closest('.titan-card, .titan-chip, .t-chip');
+      if (titanEl) {
+        var titanName = titanEl.textContent.trim().replace(' ✓', '').substring(0, 40);
+        window.trackEvent('titan_click', { titan_name: titanName, page_name: pageName });
+      }
+      // AI 분석 버튼 클릭
+      if (e.target.closest('.generate-btn, [onclick*="analyze"], [onclick*="generateReport"]')) {
+        window.trackEvent('ai_analysis', { page_name: pageName });
+      }
+      // 네비게이션 클릭
+      var navLink = e.target.closest('.titan-nav a, #nav-icons a');
+      if (navLink) {
+        window.trackEvent('navigation', { destination: navLink.href, from_page: pageName });
+      }
+    });
+
+    // Hermes 챗봇 사용 추적
+    var origHermesSend = window._hermesSend;
+    if (typeof origHermesSend === 'function') {
+      // 나중에 _hermesSend가 정의되면 래핑
+      setTimeout(function() {
+        if (window._hermesSend && window._hermesSend !== origHermesSend) {
+          var wrapped = window._hermesSend;
+          window._hermesSend = function() {
+            window.trackEvent('hermes_chat', { page_name: pageName });
+            return wrapped.apply(this, arguments);
+          };
+        }
+      }, 2000);
     }
-    linksWrap.appendChild(a);
-  });
-  nav.appendChild(linksWrap);
 
-  // 모바일 햄버거 메뉴
-  const burger = document.createElement('button');
-  burger.className = 'nav-burger';
-  burger.innerHTML = '☰';
-  burger.style.cssText = 'display:none;background:none;border:1px solid rgba(255,255,255,0.1);color:#8b8fa3;font-size:16px;cursor:pointer;padding:4px 8px;border-radius:6px;line-height:1';
-  nav.appendChild(burger);
-
-  // 모바일 드롭다운 메뉴
-  const mobileMenu = document.createElement('div');
-  mobileMenu.className = 'nav-mobile-menu';
-  mobileMenu.style.cssText = 'display:none;position:fixed;top:40px;left:0;right:0;background:rgba(10,11,16,0.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.08);padding:8px 0;z-index:99;flex-direction:column';
-  navLinks.filter(l => !l.isBrand).forEach(link => {
-    const a = document.createElement('a');
-    a.href = link.href;
-    a.textContent = link.label;
-    const isActive = currentPage === link.href;
-    a.style.cssText = 'color:' + (isActive ? '#818cf8' : '#8b8fa3') + ';padding:10px 1.5rem;text-decoration:none;font-size:13px;border-left:3px solid ' + (isActive ? '#6366f1' : 'transparent') + ';transition:all .2s';
-    a.onmouseover = function() { this.style.background = 'rgba(99,102,241,0.08)'; };
-    a.onmouseout = function() { this.style.background = 'transparent'; };
-    mobileMenu.appendChild(a);
-  });
-  document.body.insertBefore(mobileMenu, document.body.firstChild);
-
-  let menuOpen = false;
-  burger.onclick = function() {
-    menuOpen = !menuOpen;
-    mobileMenu.style.display = menuOpen ? 'flex' : 'none';
-    burger.innerHTML = menuOpen ? '✕' : '☰';
-  };
-
-  // 반응형 CSS 주입
-  if (!document.getElementById('titan-nav-responsive')) {
-    const style = document.createElement('style');
-    style.id = 'titan-nav-responsive';
-    style.textContent = '@media(max-width:768px){.nav-links-desktop{display:none!important}.nav-burger{display:block!important}}@media(min-width:769px){.nav-mobile-menu{display:none!important}}';
-    document.head.appendChild(style);
+    console.log('[GA4] Tracking initialized: ' + GA4_ID);
+  } else {
+    // GA4 미설정 시 빈 함수 (에러 방지)
+    window.trackEvent = function() {};
+    console.log('[GA4] No GA4_ID in config.js — tracking disabled. Add GA4_ID to TITAN_CONFIG.');
   }
 
-  document.body.insertBefore(nav, document.body.firstChild);
-  const cs = getComputedStyle(document.body);
-  if ((parseInt(cs.paddingTop) || 0) < 40) document.body.style.paddingTop = '44px';
+  // === 좌상단 홈 버튼 (top nav 대체) ===
+  // 기존 인라인 nav 제거
+  document.querySelectorAll('.titan-nav').forEach(el => el.remove());
+  const currentPage = location.pathname.split('/').pop() || 'index.html';
+
+  // 메인(index.html)이 아닐 때만 홈 버튼 표시
+  if (currentPage !== 'index.html') {
+    const homeBtn = document.createElement('a');
+    homeBtn.href = 'index.html';
+    homeBtn.id = 'home-btn';
+    homeBtn.title = 'Titan Tracker 홈';
+    homeBtn.style.cssText = 'position:fixed;top:14px;left:14px;z-index:100;display:flex;align-items:center;gap:7px;padding:6px 14px 6px 8px;border-radius:12px;background:rgba(10,11,16,0.85);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);text-decoration:none;color:#8b8fa3;font-family:Inter,-apple-system,sans-serif;font-size:11px;font-weight:600;transition:all .25s;cursor:pointer';
+    homeBtn.innerHTML = '<img src="rainbowmoon-logo.jpg" alt="Home" style="width:24px;height:24px;border-radius:50%;object-fit:cover;border:1.5px solid rgba(255,255,255,0.12)"><span>Titan Tracker</span>';
+    homeBtn.onmouseover = function() { this.style.borderColor='#818cf8'; this.style.color='#e8e8ed'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 16px rgba(99,102,241,0.2)'; };
+    homeBtn.onmouseout = function() { this.style.borderColor='rgba(255,255,255,0.08)'; this.style.color='#8b8fa3'; this.style.transform=''; this.style.boxShadow=''; };
+    document.body.appendChild(homeBtn);
+  }
+
+  // 기존 padding-top 제거 (top nav 없으므로)
+  document.body.style.paddingTop = '0';
 
   // === 테마 토글 ===
   const savedTheme = localStorage.getItem('titan-theme');
@@ -120,11 +123,43 @@
     document.body.appendChild(btn);
   }
 
-  // === 피드 자동 새로고침 (5분) ===
-  setTimeout(() => {
-    if (typeof window.loadAllFeeds === 'function') {
-      setInterval(() => window.loadAllFeeds(), 5 * 60 * 1000);
-    }
+  // === 피드 자동 새로고침 (5분) + 카운트다운 UI ===
+  setTimeout(function() {
+    if (typeof window.loadAllFeeds !== 'function') return;
+    var REFRESH_SEC = 300; // 5분
+    var remaining = REFRESH_SEC;
+
+    // 카운트다운 배지 생성
+    var badge = document.createElement('div');
+    badge.id = 'refresh-badge';
+    badge.style.cssText = 'position:fixed;bottom:80px;left:16px;z-index:90;background:rgba(18,20,29,0.9);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:6px 12px;font-family:"JetBrains Mono",monospace;font-size:10px;color:#8b8fa3;display:flex;align-items:center;gap:6px;cursor:pointer;transition:all .2s;backdrop-filter:blur(8px)';
+    badge.title = '클릭하면 즉시 새로고침';
+    badge.innerHTML = '<span style="color:#22c55e;font-size:6px">●</span> <span id="refresh-timer">5:00</span> 후 새로고침';
+    badge.onclick = function() {
+      remaining = 0;
+    };
+    document.body.appendChild(badge);
+
+    var timerEl = document.getElementById('refresh-timer');
+
+    setInterval(function() {
+      remaining--;
+      if (remaining <= 0) {
+        // 새로고침 실행
+        if (timerEl) timerEl.textContent = '로딩...';
+        if (badge) badge.style.borderColor = '#22c55e';
+        try { window.loadAllFeeds(); } catch(e){}
+        remaining = REFRESH_SEC;
+        setTimeout(function(){ if(badge) badge.style.borderColor='rgba(255,255,255,0.08)'; }, 2000);
+        if (window.trackEvent) window.trackEvent('feed_refresh', {auto: true});
+      }
+      // 타이머 표시
+      if (timerEl) {
+        var m = Math.floor(remaining / 60);
+        var s = remaining % 60;
+        timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+      }
+    }, 1000);
   }, 3000);
 
   // === API Key ===
@@ -181,7 +216,25 @@
       views.sort((a, b) => b.count - a.count || b.last - a.last);
       return views;
     };
-  })();
+  // === PWA Service Worker 등록 + manifest 주입 ===
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  }
+  // manifest + theme-color 메타 태그 주입
+  if (!document.querySelector('link[rel="manifest"]')) {
+    var mf = document.createElement('link');
+    mf.rel = 'manifest';
+    mf.href = 'manifest.json';
+    document.head.appendChild(mf);
+  }
+  if (!document.querySelector('meta[name="theme-color"]')) {
+    var tc = document.createElement('meta');
+    tc.name = 'theme-color';
+    tc.content = '#6366f1';
+    document.head.appendChild(tc);
+  }
+
+})();
 
   // === 피드 아코디언 시스템 ===
   const feedStyle = document.createElement('style');
@@ -208,38 +261,31 @@
       const title = section.querySelector('.feed-title');
       if (!feedList || !title) return;
 
-      // 초기 상태: 접음 (loading 문구 제거)
-      feedList.innerHTML = '';
-      section.classList.remove('expanded');
+      // 초기 상태: 기본 펼침 + 자동 로드
+      var feedId = feedList.id || '';
+      var feedKey = feedId.replace('-feed', '');
+      section.classList.add('expanded');
       section._loaded = false;
 
-      // feed key 추출: id가 'xxx-feed' 형식
-      const feedId = feedList.id || '';
-      const feedKey = feedId.replace('-feed', '');
+      // 자동 로드 (기본 펼침이므로 바로 피드 로드)
+      if (typeof window.loadFeed === 'function' && feedKey) {
+        section._loaded = true;
+        window.loadFeed(feedKey).then(function() {
+          var count = feedList.querySelectorAll('.feed-item').length;
+          var countEl = title.querySelector('.feed-count');
+          if (!countEl) {
+            countEl = document.createElement('span');
+            countEl.className = 'feed-count';
+            title.appendChild(countEl);
+          }
+          countEl.textContent = count + '개';
+          section.classList.add('loaded');
+        }).catch(function(){});
+      }
 
-      // 클릭 핸들러
+      // 클릭 핸들러 (접기/펼치기 토글)
       title.addEventListener('click', function() {
-        const isExpanded = section.classList.contains('expanded');
-        if (isExpanded) {
-          section.classList.remove('expanded');
-          return;
-        }
-        section.classList.add('expanded');
-        // 처음 열 때만 로드
-        if (!section._loaded && typeof window.loadFeed === 'function' && feedKey) {
-          section._loaded = true;
-          window.loadFeed(feedKey).then(function() {
-            var count = feedList.querySelectorAll('.feed-item').length;
-            var countEl = title.querySelector('.feed-count');
-            if (!countEl) {
-              countEl = document.createElement('span');
-              countEl.className = 'feed-count';
-              title.appendChild(countEl);
-            }
-            countEl.textContent = count + '개';
-            section.classList.add('loaded');
-          });
-        }
+        section.classList.toggle('expanded');
       });
     });
 

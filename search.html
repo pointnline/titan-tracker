@@ -8,6 +8,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#0f1117;--surface:#1a1d27;--surface2:#232736;--surface3:#2a2e3d;--border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.12);--text:#e8e8ed;--text-sub:#8b8fa3;--text-muted:#5a5e72;--accent:#6366f1;--accent-light:#818cf8;--gold:#f59e0b;--green:#22c55e;--red:#ef4444;--blue:#0ea5e9;--purple:#a855f7;--radius:16px;--radius-sm:12px;--radius-xs:8px}
+[data-theme="light"]{--bg:#f6f5f1;--surface:#fff;--surface2:#f0eeea;--surface3:#e8e6e1;--border:rgba(0,0,0,0.09);--border-hover:rgba(0,0,0,0.18);--text:#1a1a2e;--text-sub:#666;--text-muted:#999;--accent:#4f46e5;--accent-light:#6366f1}
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;padding-top:44px}
 a{color:var(--accent-light);text-decoration:none}
 .header{background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(168,85,247,0.06));border-bottom:1px solid var(--border);padding:2rem 1.5rem;text-align:center}
@@ -69,7 +70,7 @@ mark{background:rgba(99,102,241,0.25);color:#c7d2fe;padding:1px 3px;border-radiu
 
 <div class="header">
   <h1>🔍 Titan Search</h1>
-  <p>105명 타이탄 프로필 검색 + 실시간 뉴스 통합 검색</p>
+  <p><span id="titan-total-count"></span>명 타이탄 프로필 검색 + 실시간 뉴스 통합 검색</p>
 </div>
 
 <div class="tabs">
@@ -124,7 +125,7 @@ const SECTOR_MAP = {
   'Health':['Peter Attia','David Sinclair','Matthew Walker','Atul Gawande'],
   'Finance':['Michael Burry','Stanley Druckenmiller','Aswath Damodaran','Chamath Palihapitiya'],
   'Design':['Jony Ive','Don Norman','John Maeda'],
-  'AI Tools':['Demis Hassabis','Ilya Sutskever','Mira Murati','Greg Brockman','Fei-Fei Li','Ivan Zhao','Perplexity (Aravind Srinivas)','Cursor (Michael Truell)','Windsurf (Varun Mohan)','Anthropic (Chris Olah)','Genspark (Eric Jing)','Obsidian (Shida Li)','Matt Shumer','Lenny Rachitsky','Ben Thompson','Packy McCormick','Matthew Berman','David Shapiro']
+  'AI Tools':['Demis Hassabis','Ilya Sutskever','Mira Murati','Greg Brockman','Fei-Fei Li','Ivan Zhao','Perplexity (Aravind Srinivas)','Cursor (Michael Truell)','Windsurf (Varun Mohan)','Anthropic (Chris Olah)','Genspark (Eric Jing)','Obsidian (Shida Li)','Matt Shumer','Lenny Rachitsky','Ben Thompson','Packy McCormick','Matthew Berman','David Shapiro','Riley Brown','AI Jason']
 };
 const SECTOR_COLORS = {AI:'#6366f1',Science:'#0ea5e9',Tech:'#22c55e',Business:'#f59e0b',Philosophy:'#a855f7',Health:'#ec4899',Finance:'#eab308',Design:'#f97316','AI Tools':'#14b8a6'};
 const nameToSector = {};
@@ -291,6 +292,8 @@ async function doSearch(){
 renderSectorFilters();
 renderFilters();
 searchTitans();
+// 동적 카운트 업데이트
+(function(){const el=document.getElementById('titan-total-count');if(el&&typeof TITAN_PROFILES!=='undefined')el.textContent=Object.keys(TITAN_PROFILES).length;})();
 </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-// Titan Tracker — 검증된 프로필 데이터 (120명)
+// Titan Tracker — 검증된 프로필 데이터 (117명)
 // AI 생성 아님. 공개된 저서, 인터뷰, 공식 발언 기반 팩트.
 // 마지막 업데이트: 2026-03
 
@@ -751,4 +751,85 @@ const TITAN_PROFILES = {
 
 "AI Jason":{philosophy:"AI 논문과 최신 연구를 실용적 관점에서 해석하고, 일반인도 이해할 수 있는 수준으로 전달한다.",principles:["AI 논문 해설 — 최신 연구 논문을 시각적으로 쉽게 설명","AI 트렌드 분석 — 주요 모델 출시/연구 동향 빠른 분석","실용적 AI — 연구와 실전 적용의 다리 역할"],books:[{title:"YouTube AI 논문 리뷰 채널",year:"2023~",url:"https://www.youtube.com/@AIJasonZ"},{title:"AI 트렌드 분석 시리즈",year:"지속",url:"https://www.youtube.com/results?search_query=ai+jason+paper+review"}],timeline:[{y:"2024~",t:"AI YouTube 핵심 채널. GPT-4o, Claude 3.5, Sora 등 주요 모델 즉시 분석"},{y:"2023",t:"AI 논문 해설 YouTube 채널 본격 성장. 시각적 설명 스타일로 인기"},{y:"이전",t:"테크 업계 엔지니어 출신"}],channels:[{name:"YouTube",url:"https://www.youtube.com/@AIJasonZ"},{name:"X",url:"https://x.com/ajaborason_z"}],invest:"AI 논문 트렌드가 AI 기업 전략 방향 선행 지표. 주요 모델 벤치마크 리뷰.",signal:"AI 논문 트렌드, 신규 모델 벤치마크, AI 아키텍처 혁신"}
 
+};
+
+// ═══════════════════════════════════════
+// 타이탄 핵심 논문 데이터베이스
+// titans-data.js에 TITAN_PROFILES와 함께 로드됨
+// ═══════════════════════════════════════
+const TITAN_PAPERS = {
+"Geoffrey Hinton": [
+  {title:"Learning representations by back-propagating errors", year:"1986", journal:"Nature", impact:"딥러닝 학습 알고리즘의 근간. 역전파 대중화", url:"https://www.nature.com/articles/323533a0", citations:"45K+"},
+  {title:"Reducing the Dimensionality of Data with Neural Networks", year:"2006", journal:"Science", impact:"Deep Belief Networks — 딥러닝 부활의 신호탄", url:"https://www.science.org/doi/10.1126/science.1127647", citations:"17K+"},
+  {title:"ImageNet Classification with Deep CNNs (AlexNet)", year:"2012", journal:"NeurIPS", impact:"AlexNet — 딥러닝 혁명의 시작점. 컴퓨터 비전 패러다임 전환", url:"https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html", citations:"120K+"}
+],
+"Yoshua Bengio": [
+  {title:"A Neural Probabilistic Language Model", year:"2003", journal:"JMLR", impact:"워드 임베딩/언어 모델의 초기 신경망 접근. GPT 계보의 시초", url:"https://www.jmlr.org/papers/v3/bengio03a.html", citations:"10K+"},
+  {title:"Generative Adversarial Nets (GAN)", year:"2014", journal:"NeurIPS", impact:"GAN — 생성 AI의 기초 (Ian Goodfellow 지도)", url:"https://arxiv.org/abs/1406.2661", citations:"55K+"},
+  {title:"Attention-Based Neural Machine Translation", year:"2015", journal:"ICLR", impact:"Attention 메커니즘의 초기 적용. Transformer 탄생의 전초", url:"https://arxiv.org/abs/1409.0473", citations:"20K+"}
+],
+"Yann LeCun": [
+  {title:"Gradient-Based Learning Applied to Document Recognition", year:"1998", journal:"Proceedings of the IEEE", impact:"LeNet/CNN — 합성곱 신경망의 원전. 현대 컴퓨터 비전의 기초", url:"https://ieeexplore.ieee.org/document/726791", citations:"50K+"},
+  {title:"A Path Towards Autonomous Machine Intelligence", year:"2022", journal:"OpenReview", impact:"World Models + JEPA — 자기지도학습 기반 AGI 비전", url:"https://openreview.net/forum?id=BZ5a1r-kVsf", citations:"1K+"}
+],
+"Ian Goodfellow": [
+  {title:"Generative Adversarial Networks", year:"2014", journal:"NeurIPS", impact:"GAN 원본 논문 — 이미지 생성 AI, Deepfake 등의 기초", url:"https://arxiv.org/abs/1406.2661", citations:"55K+"},
+  {title:"Deep Learning (교과서)", year:"2016", journal:"MIT Press", impact:"딥러닝 분야 표준 교과서 (Bengio, Courville 공저)", url:"https://www.deeplearningbook.org", citations:"40K+"}
+],
+"Noam Shazeer": [
+  {title:"Attention Is All You Need", year:"2017", journal:"NeurIPS", impact:"Transformer 아키텍처 — GPT, BERT, 현대 AI의 근간", url:"https://arxiv.org/abs/1706.03762", citations:"130K+"},
+  {title:"Outrageously Large Neural Networks: The Sparsely-Gated MoE Layer", year:"2017", journal:"ICLR", impact:"Mixture of Experts — 효율적 대규모 모델의 기초", url:"https://arxiv.org/abs/1701.06538", citations:"3K+"}
+],
+"Ilya Sutskever": [
+  {title:"Sequence to Sequence Learning with Neural Networks", year:"2014", journal:"NeurIPS", impact:"Seq2Seq — 기계번역/챗봇의 기초 아키텍처", url:"https://arxiv.org/abs/1409.3215", citations:"22K+"},
+  {title:"ImageNet Classification with Deep CNNs (AlexNet)", year:"2012", journal:"NeurIPS", impact:"AlexNet 공동 개발 — 딥러닝 혁명 촉발 (Hinton 지도)", url:"https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html", citations:"120K+"}
+],
+"Demis Hassabis": [
+  {title:"Highly accurate protein structure prediction with AlphaFold", year:"2021", journal:"Nature", impact:"AlphaFold2 — 단백질 접힘 50년 난제 해결. 노벨화학상(2024)", url:"https://www.nature.com/articles/s41586-021-03819-2", citations:"25K+"},
+  {title:"Mastering the game of Go with deep neural networks", year:"2016", journal:"Nature", impact:"AlphaGo — 바둑에서 인간 최초 패배. AI 역사 전환점", url:"https://www.nature.com/articles/nature16961", citations:"15K+"},
+  {title:"A general reinforcement learning algorithm that masters chess, shogi and Go", year:"2018", journal:"Science", impact:"AlphaZero — 자기대국만으로 체스/바둑/장기 초인간 달성", url:"https://www.science.org/doi/10.1126/science.aar6404", citations:"7K+"}
+],
+"Fei-Fei Li": [
+  {title:"ImageNet: A Large-Scale Hierarchical Image Database", year:"2009", journal:"CVPR", impact:"ImageNet — 1400만 이미지 데이터셋. AI 혁명의 연료", url:"https://ieeexplore.ieee.org/document/5206848", citations:"40K+"}
+],
+"Anthropic (Chris Olah)": [
+  {title:"Scaling Monosemanticity", year:"2024", journal:"Anthropic Research", impact:"Claude 내부 수백만 해석 가능 특성 추출 성공. AI 해석성 랜드마크", url:"https://www.anthropic.com/research/mapping-mind-language-model", citations:"신규"},
+  {title:"Toy Models of Superposition", year:"2022", journal:"Transformer Circuits", impact:"AI 뉴런의 중첩 저장 방식 발견", url:"https://transformer-circuits.pub/2022/toy_model/index.html", citations:"500+"}
+],
+"Jennifer Doudna": [
+  {title:"A Programmable Dual-RNA-Guided DNA Endonuclease", year:"2012", journal:"Science", impact:"CRISPR-Cas9 유전자 가위 발명 — 노벨화학상(2020)", url:"https://www.science.org/doi/10.1126/science.1225829", citations:"15K+"}
+],
+"Eric Lander": [
+  {title:"Initial sequencing and analysis of the human genome", year:"2001", journal:"Nature", impact:"인간게놈프로젝트 완성 논문 — 30억 염기서열 최초 해독", url:"https://www.nature.com/articles/35057062", citations:"25K+"}
+],
+"Terence Tao": [
+  {title:"The primes contain arbitrarily long arithmetic progressions", year:"2008", journal:"Annals of Mathematics", impact:"Green-Tao 정리 — 소수에서 임의 길이 등차수열 존재 증명. 필즈상", url:"https://annals.math.princeton.edu/2008/167-2/p03", citations:"2K+"}
+],
+"Roger Penrose": [
+  {title:"Gravitational Collapse and Space-Time Singularities", year:"1965", journal:"Physical Review Letters", impact:"Penrose 특이점 정리 — 블랙홀 형성의 필연성. 노벨물리학상(2020)", url:"https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.14.57", citations:"3K+"}
+],
+"Ed Witten": [
+  {title:"String Theory Dynamics In Various Dimensions", year:"1995", journal:"Nuclear Physics B", impact:"M-이론 제안 — 5개 끈이론의 통합. 필즈상(1990) 수상 물리학자", url:"https://arxiv.org/abs/hep-th/9503124", citations:"5K+"}
+],
+"Daniel Kahneman": [
+  {title:"Prospect Theory: An Analysis of Decision under Risk", year:"1979", journal:"Econometrica", impact:"전망 이론 — 행동경제학 탄생. 노벨경제학상(2002)", url:"https://www.jstor.org/stable/1914185", citations:"70K+"}
+],
+"David Sinclair": [
+  {title:"Declining NAD+ Induces a Pseudohypoxic State", year:"2013", journal:"Cell", impact:"NAD+ 경로가 노화의 핵심 메커니즘임을 규명", url:"https://www.cell.com/cell/fulltext/S0092-8674(13)01521-3", citations:"3K+"}
+],
+"Arthur Mensch": [
+  {title:"Training Compute-Optimal Large Language Models (Chinchilla)", year:"2022", journal:"NeurIPS", impact:"Chinchilla Scaling Laws — 모델 크기 vs 데이터 최적 비율 재정의", url:"https://arxiv.org/abs/2203.15556", citations:"3K+"}
+],
+"Andrew Ng": [
+  {title:"Building High-level Features Using Large Scale Unsupervised Learning", year:"2012", journal:"ICML", impact:"Google Brain — 1만6천 CPU로 고양이 인식. 대규모 비지도학습", url:"https://arxiv.org/abs/1112.6209", citations:"4K+"}
+],
+"Max Tegmark": [
+  {title:"The Mathematical Universe", year:"2008", journal:"Foundations of Physics", impact:"수학적 우주 가설 — 물리적 실재 = 수학적 구조", url:"https://arxiv.org/abs/0704.0646", citations:"1K+"}
+],
+"Jeremy Howard": [
+  {title:"Universal Language Model Fine-tuning for Text Classification (ULMFiT)", year:"2018", journal:"ACL", impact:"NLP Transfer Learning 선구. BERT/GPT 패러다임의 전초", url:"https://arxiv.org/abs/1801.06146", citations:"5K+"}
+],
+"Jim Fan": [
+  {title:"Voyager: An Open-Ended Embodied Agent with LLMs", year:"2023", journal:"NeurIPS", impact:"LLM 기반 자율 에이전트 — Minecraft에서 무한 탐험", url:"https://voyager.minedojo.org", citations:"500+"}
+]
 };

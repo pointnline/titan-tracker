@@ -8,6 +8,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#0a0b10;--surface:#12141d;--surface2:#1a1d2a;--surface3:#232738;--border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.14);--text:#e8e8ed;--text-sub:#8b8fa3;--text-muted:#4a4e62;--accent:#6366f1;--accent-light:#818cf8;--gold:#f59e0b;--green:#22c55e;--red:#ef4444;--blue:#0ea5e9;--purple:#a855f7;--pink:#ec4899;--radius:16px;--radius-sm:12px;--radius-xs:8px}
+[data-theme="light"]{--bg:#f6f5f1;--surface:#fff;--surface2:#f0eeea;--surface3:#e8e6e1;--border:rgba(0,0,0,0.09);--border-hover:rgba(0,0,0,0.18);--text:#1a1a2e;--text-sub:#666;--text-muted:#999;--accent:#4f46e5;--accent-light:#6366f1;--pink:#db2777}
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;padding-top:44px}
 a{color:var(--accent-light);text-decoration:none}
 .bg-glow{position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse,rgba(239,68,68,0.12) 0%,transparent 70%);pointer-events:none;z-index:0;opacity:.5}
@@ -69,7 +70,7 @@ a{color:var(--accent-light);text-decoration:none}
 
 <div class="header">
   <h1>🎯 Investment Signal Radar</h1>
-  <p>105명 타이탄의 투자 시그널을 섹터별로 추적합니다</p>
+  <p><script>document.write(typeof TITAN_PROFILES!=='undefined'?Object.keys(TITAN_PROFILES).length:'117')</script>명 타이탄의 투자 시그널을 섹터별로 추적합니다</p>
   <div class="update-time" id="update-time"></div>
 </div>
 

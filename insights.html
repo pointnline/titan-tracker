@@ -212,6 +212,7 @@ a{text-decoration:none;color:var(--accent-light)}
 <div class="bg-glow"></div>
 <div class="bg-glow2"></div>
 
+<script src="titans-data.js"></script>
 <nav class="titan-nav" style="position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;gap:0;padding:0 1rem;height:40px;background:rgba(10,11,16,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.06);font-size:11px"><a href="index.html" style="color:#8b8fa3;font-weight:600;margin-right:auto;text-decoration:none">🔭 Titan Tracker</a><a href="insights.html" style="color:#818cf8;padding:4px 10px;text-decoration:none">📝 Insights</a><a href="dashboard.html" style="color:#5a5e72;padding:4px 10px;text-decoration:none" onmouseover="this.style.color='#818cf8'" onmouseout="this.style.color='#5a5e72'">📊 Dashboard</a><a href="study.html" style="color:#5a5e72;padding:4px 10px;text-decoration:none" onmouseover="this.style.color='#818cf8'" onmouseout="this.style.color='#5a5e72'">🧠 Study</a></nav>
 
 <div class="header">
@@ -293,114 +294,20 @@ function sanitizeUrl(url) {
 
 const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
 
-// 6 타이탄의 피드 소스
-const TITAN_FEEDS = {
-  wolfram: {
-    name: 'Stephen Wolfram',
-    color: '#6366f1',
-    feeds: [
-      'https://writings.stephenwolfram.com/feed/',
-      'https://blog.wolfram.com/feed/'
-    ]
-  },
-  gates: {
-    name: 'Bill Gates',
-    color: '#0ea5e9',
-    feeds: [
-      'https://news.google.com/rss/search?q=site%3Agatesnotes.com&hl=en',
-      'https://news.google.com/rss/search?q=Bill+Gates&hl=en&gl=US'
-    ]
-  },
-  musk: {
-    name: 'Elon Musk',
-    color: '#a855f7',
-    feeds: [
-      'https://news.google.com/rss/search?q=Tesla+Elon+Musk&hl=en&gl=US',
-      'https://news.google.com/rss/search?q=SpaceX+Starship&hl=en&gl=US',
-      'https://news.google.com/rss/search?q=xAI+Grok+Elon+Musk&hl=en&gl=US'
-    ]
-  },
-  bezos: {
-    name: 'Jeff Bezos',
-    color: '#f59e0b',
-    feeds: [
-      'https://news.google.com/rss/search?q=Amazon+Jeff+Bezos+AWS&hl=en&gl=US',
-      'https://news.google.com/rss/search?q=Blue+Origin+New+Glenn&hl=en&gl=US'
-    ]
-  },
-  amodei: {
-    name: 'Dario Amodei',
-    color: '#ef4444',
-    feeds: [
-      'https://news.google.com/rss/search?q=Anthropic+Claude+Dario+Amodei&hl=en',
-      'https://news.google.com/rss/search?q=Anthropic+AI+safety&hl=en&gl=US'
-    ]
-  },
-  dalio: {
-    name: 'Ray Dalio',
-    color: '#eab308',
-    feeds: [
-      'https://news.google.com/rss/search?q=%22Ray+Dalio%22+Bridgewater+economy&hl=en',
-      'https://news.google.com/rss/search?q=%22Ray+Dalio%22+principles+debt&hl=en'
-    ]
-  },
-  altman: {
-    name: 'Sam Altman',
-    color: '#10b981',
-    feeds: [
-      'https://news.google.com/rss/search?q=Sam+Altman+OpenAI&hl=en&gl=US',
-      'https://news.google.com/rss/search?q=OpenAI+GPT+ChatGPT&hl=en&gl=US'
-    ]
-  },
-  huang: {
-    name: 'Jensen Huang',
-    color: '#84cc16',
-    feeds: [
-      'https://news.google.com/rss/search?q=Jensen+Huang+NVIDIA&hl=en&gl=US',
-      'https://news.google.com/rss/search?q=NVIDIA+GPU+AI+infrastructure&hl=en&gl=US'
-    ]
-  },
-  nadella: {
-    name: 'Satya Nadella',
-    color: '#0078d4',
-    feeds: [
-      'https://news.google.com/rss/search?q=Satya+Nadella+Microsoft&hl=en&gl=US',
-      'https://news.google.com/rss/search?q=Microsoft+AI+Copilot+Azure&hl=en&gl=US'
-    ]
-  },
-  karpathy: {
-    name: 'Andrej Karpathy',
-    color: '#22c55e',
-    feeds: [
-      'https://news.google.com/rss/search?q=Andrej+Karpathy+AI+education&hl=en&gl=US',
-      'https://news.google.com/rss/search?q=Karpathy+nanoGPT+deep+learning&hl=en&gl=US'
-    ]
-  },
-  lecun: {
-    name: 'Yann LeCun',
-    color: '#3b82f6',
-    feeds: [
-      'https://news.google.com/rss/search?q=Yann+LeCun+Meta+AI&hl=en&gl=US',
-      'https://news.google.com/rss/search?q=LeCun+deep+learning+Llama&hl=en&gl=US'
-    ]
-  },
-  huberman: {
-    name: 'Andrew Huberman',
-    color: '#ec4899',
-    feeds: [
-      'https://news.google.com/rss/search?q=Andrew+Huberman+neuroscience&hl=en&gl=US',
-      'https://news.google.com/rss/search?q=Huberman+Lab+podcast+protocol&hl=en&gl=US'
-    ]
-  },
-  pichai: {
-    name: 'Sundar Pichai',
-    color: '#4285f4',
-    feeds: [
-      'https://news.google.com/rss/search?q=Sundar+Pichai+Google+Alphabet&hl=en&gl=US',
-      'https://news.google.com/rss/search?q=Google+Gemini+AI+DeepMind&hl=en&gl=US'
-    ]
-  }
-};
+// ═══ 동적 타이탄 피드 빌드 (titans-data.js 기반) ═══
+const INSIGHT_COLORS = ['#6366f1','#0ea5e9','#a855f7','#f59e0b','#ef4444','#eab308','#10b981','#84cc16','#0078d4','#22c55e','#3b82f6','#ec4899','#4285f4','#14b8a6','#f97316','#8b5cf6','#7c3aed','#e11d48','#0891b2','#d946ef'];
+const TITAN_FEEDS = {};
+(function buildInsightFeeds(){
+  const profiles = typeof TITAN_PROFILES !== 'undefined' ? TITAN_PROFILES : {};
+  Object.keys(profiles).forEach((name, i) => {
+    const key = name.toLowerCase().replace(/[^a-z0-9]/g,'').substring(0,15);
+    TITAN_FEEDS[key] = {
+      name: name,
+      color: INSIGHT_COLORS[i % INSIGHT_COLORS.length],
+      feeds: ['https://news.google.com/rss/search?q=' + encodeURIComponent(name) + '&hl=en&gl=US']
+    };
+  });
+})();
 
 // === 타이탄 선택 필터 ===
 let selectedTitans = new Set(Object.keys(TITAN_FEEDS));

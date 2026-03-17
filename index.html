@@ -20,7 +20,7 @@
   --gold:#f59e0b;--gold-glow:rgba(245,158,11,0.2);
   --radius:20px;--radius-sm:14px;--radius-xs:8px;
 }
-body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;padding-top:44px}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;padding-top:0}
 a{text-decoration:none;color:inherit}
 
 /* 배경 효과 */
@@ -185,7 +185,7 @@ td{padding:10px;font-size:12px;vertical-align:middle}
 </style>
 </head>
 <body>
-<nav class="titan-nav" style="position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;gap:0;padding:0 1rem;height:40px;background:rgba(10,11,16,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.06);font-size:11px"><a href="index.html" style="color:#818cf8;font-weight:600;margin-right:auto;text-decoration:none">🔭 Titan Tracker</a><a href="insights.html" style="color:#5a5e72;padding:4px 10px;text-decoration:none" onmouseover="this.style.color='#818cf8'" onmouseout="this.style.color='#5a5e72'">📝 Insights</a><a href="dashboard.html" style="color:#5a5e72;padding:4px 10px;text-decoration:none" onmouseover="this.style.color='#818cf8'" onmouseout="this.style.color='#5a5e72'">📊 Dashboard</a><a href="study.html" style="color:#5a5e72;padding:4px 10px;text-decoration:none" onmouseover="this.style.color='#818cf8'" onmouseout="this.style.color='#5a5e72'">🧠 Study</a></nav>
+<!-- top nav 제거됨 — titan-nav.js가 홈 버튼만 표시 -->
 <button class="theme-toggle" onclick="toggleTheme()" title="라이트/다크 모드 전환">🌙</button>
 
 <div class="bg-glow"></div>
@@ -193,11 +193,11 @@ td{padding:10px;font-size:12px;vertical-align:middle}
 
 <!-- 히어로 -->
 <div class="hero">
-  <div class="hero-badge">🔭 Knowledge Tracker</div>
+  <div class="hero-badge" style="gap:8px"><img src="rainbowmoon-logo.jpg" alt="RainbowMoon" style="width:22px;height:22px;border-radius:50%;object-fit:cover;border:1.5px solid rgba(255,255,255,0.15)"> Point & Line · RainbowMoon</div>
   <h1>Titan Tracker</h1>
   <div class="subtitle">
     <em>거인의 어깨 위에서</em> 더 멀리 바라보다<br>
-    AI · 과학 · 기술 분야 거인들의 활동을 한 곳에서 추적합니다
+    117명 거장의 시그널을 AI가 교차분석하는 인텔리전스 플랫폼
   </div>
   <div class="hero-quote">"If I have seen further, it is by standing on the shoulders of giants." — Isaac Newton</div>
 </div>
@@ -205,7 +205,7 @@ td{padding:10px;font-size:12px;vertical-align:middle}
 <!-- 통계 -->
 <div class="stats-bar">
   <div class="stat">
-    <div class="stat-val">100</div>
+    <div class="stat-val">117</div>
     <div class="stat-label">추적 대상 거인</div>
   </div>
   <div class="stat">
@@ -218,13 +218,51 @@ td{padding:10px;font-size:12px;vertical-align:middle}
   </div>
 </div>
 
+<!-- 🧭 Quick Navigation Icons -->
+<div style="position:relative;z-index:1;max-width:700px;margin:0 auto 2.5rem;padding:0 1.5rem">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px" id="nav-icons">
+    <a href="insights.html" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;border-radius:16px;background:var(--surface);border:1px solid var(--border);text-decoration:none;transition:all .25s;color:var(--text-sub)" onmouseover="this.style.borderColor='#818cf8';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,.3)'" onmouseout="this.style.borderColor='';this.style.transform='';this.style.boxShadow=''">
+      <span style="font-size:24px">📝</span>
+      <span style="font-size:10px;font-weight:600;letter-spacing:.02em">Insights</span>
+    </a>
+    <a href="dashboard.html" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;border-radius:16px;background:var(--surface);border:1px solid var(--border);text-decoration:none;transition:all .25s;color:var(--text-sub)" onmouseover="this.style.borderColor='#f59e0b';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,.3)'" onmouseout="this.style.borderColor='';this.style.transform='';this.style.boxShadow=''">
+      <span style="font-size:24px">📊</span>
+      <span style="font-size:10px;font-weight:600;letter-spacing:.02em">Dashboard</span>
+    </a>
+    <a href="signals.html" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;border-radius:16px;background:var(--surface);border:1px solid var(--border);text-decoration:none;transition:all .25s;color:var(--text-sub)" onmouseover="this.style.borderColor='#ef4444';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,.3)'" onmouseout="this.style.borderColor='';this.style.transform='';this.style.boxShadow=''">
+      <span style="font-size:24px">🎯</span>
+      <span style="font-size:10px;font-weight:600;letter-spacing:.02em">Signals</span>
+    </a>
+    <a href="digest.html" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;border-radius:16px;background:var(--surface);border:1px solid var(--border);text-decoration:none;transition:all .25s;color:var(--text-sub)" onmouseover="this.style.borderColor='#f59e0b';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,.3)'" onmouseout="this.style.borderColor='';this.style.transform='';this.style.boxShadow=''">
+      <span style="font-size:24px">📰</span>
+      <span style="font-size:10px;font-weight:600;letter-spacing:.02em">Digest</span>
+    </a>
+    <a href="study.html" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;border-radius:16px;background:var(--surface);border:1px solid var(--border);text-decoration:none;transition:all .25s;color:var(--text-sub)" onmouseover="this.style.borderColor='#22c55e';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,.3)'" onmouseout="this.style.borderColor='';this.style.transform='';this.style.boxShadow=''">
+      <span style="font-size:24px">🧠</span>
+      <span style="font-size:10px;font-weight:600;letter-spacing:.02em">Study</span>
+    </a>
+    <a href="search.html" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;border-radius:16px;background:var(--surface);border:1px solid var(--border);text-decoration:none;transition:all .25s;color:var(--text-sub)" onmouseover="this.style.borderColor='#0ea5e9';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,.3)'" onmouseout="this.style.borderColor='';this.style.transform='';this.style.boxShadow=''">
+      <span style="font-size:24px">🔍</span>
+      <span style="font-size:10px;font-weight:600;letter-spacing:.02em">Search</span>
+    </a>
+    <a href="report.html" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;border-radius:16px;background:var(--surface);border:1px solid var(--border);text-decoration:none;transition:all .25s;color:var(--text-sub)" onmouseover="this.style.borderColor='#a855f7';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,.3)'" onmouseout="this.style.borderColor='';this.style.transform='';this.style.boxShadow=''">
+      <span style="font-size:24px">📋</span>
+      <span style="font-size:10px;font-weight:600;letter-spacing:.02em">Report</span>
+    </a>
+    <a href="titans-list.html" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;border-radius:16px;background:var(--surface);border:1px solid var(--border);text-decoration:none;transition:all .25s;color:var(--text-sub)" onmouseover="this.style.borderColor='#818cf8';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,.3)'" onmouseout="this.style.borderColor='';this.style.transform='';this.style.boxShadow=''">
+      <span style="font-size:24px">📖</span>
+      <span style="font-size:10px;font-weight:600;letter-spacing:.02em">Full List</span>
+    </a>
+  </div>
+</div>
+
 <!-- 🏆 Popular Titans Top 5 -->
 <div class="titans-section" id="popular-section" style="display:none">
   <div class="section-header">
     <div class="section-title">🏆 Popular Titans</div>
     <div class="section-count">조회수 기준 Top 5</div>
   </div>
-  <div id="popular-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:2rem"></div>
+  <div id="popular-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:1rem"></div>
 </div>
 
 <!-- 타이탄 목록 -->
@@ -242,32 +280,10 @@ td{padding:10px;font-size:12px;vertical-align:middle}
 </div>
 </div>
 
-<!-- Insights 버튼들 -->
-<div style="position:relative;z-index:1;max-width:900px;margin:0 auto 2rem;padding:0 1.5rem;text-align:center;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-  <a href="dashboard.html" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;
-    border-radius:30px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;
-    font-size:14px;font-weight:700;text-decoration:none;transition:all .3s;
-    box-shadow:0 4px 20px rgba(245,158,11,0.3)">
-    📊 Visual Dashboard
-  </a>
-  <a href="insights.html" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;
-    border-radius:30px;background:linear-gradient(135deg,var(--accent),#a855f7);color:white;
-    font-size:14px;font-weight:700;text-decoration:none;transition:all .3s;
-    box-shadow:0 4px 20px rgba(99,102,241,0.3)">
-    📝 Detailed Report
-  </a>
-  <a href="study.html" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;
-    border-radius:30px;background:linear-gradient(135deg,#22c55e,#10b981);color:white;
-    font-size:14px;font-weight:700;text-decoration:none;transition:all .3s;
-    box-shadow:0 4px 20px rgba(34,197,94,0.3)">
-    🧠 Study Hub
-  </a>
-</div>
-
 <!-- 구분선 -->
 <div class="divider">
   <div class="divider-line"></div>
-  <div class="divider-label"><span>ALL 100 TITANS</span></div>
+  <div class="divider-label"><span>ALL 117 TITANS</span></div>
 </div>
 
 <!-- 100 Titans 전체 목록 -->
@@ -283,7 +299,7 @@ td{padding:10px;font-size:12px;vertical-align:middle}
     <button class="filter-btn" onclick="filterCat('Finance')">💰 금융</button>
     <button class="filter-btn" onclick="filterCat('Design')">🎨 디자인</button>
     <input class="search-box" type="text" placeholder="이름 또는 키워드 검색..." oninput="searchTitans(this.value)">
-    <span class="count-badge" id="count-badge">100명</span>
+    <span class="count-badge" id="count-badge">117명</span>
   </div>
   <table>
     <thead><tr><th>#</th><th>이름</th><th>카테고리</th><th>영향력</th><th>채널</th><th>키워드</th></tr></thead>
@@ -333,7 +349,7 @@ const TITANS = [
   {n:"Sam Altman",r:"OpenAI CEO",c:"AI",ch:["X","Blog","인터뷰"],k:"GPT, AGI, AI 정책",color:"#10b981",impact:98},
   {n:"Demis Hassabis",r:"DeepMind CEO · 노벨화학상",c:"AI",ch:["X","인터뷰","논문"],k:"AlphaFold, AlphaGo, AGI",color:"#06b6d4",impact:97},
   {n:"Ilya Sutskever",r:"SSI 공동창립자 · 전 OpenAI 수석과학자",c:"AI",ch:["인터뷰","논문"],k:"스케일링, 초지능, AI 안전",color:"#8b5cf6",impact:96},
-  {n:"Fei-Fei Li",r:"Stanford HAI · ImageNet 창시자",c:"AI",ch:["X","인터뷰","논문"],k:"컴퓨터비전, AI 민주화",color:"#ec4899",impact:94},
+  {n:"Fei-Fei Li",r:"Stanford HAI · ImageNet · World Labs",c:"AI",ch:["X","인터뷰","논문"],k:"컴퓨터비전, AI 민주화, 3D AI",color:"#ec4899",impact:94},
   {n:"Andrew Ng",r:"DeepLearning.AI · Coursera 공동창립자",c:"AI",ch:["X","YouTube","Newsletter"],k:"AI 교육, MLOps, 에이전트",color:"#f97316",impact:95},
   {n:"Ian Goodfellow",r:"GAN 발명자 · 전 Apple ML",c:"AI",ch:["논문","X"],k:"GAN, 적대적학습",color:"#14b8a6",impact:90},
   {n:"Yoshua Bengio",r:"Mila 디렉터 · 튜링상 수상",c:"AI",ch:["X","논문","Blog"],k:"딥러닝, AI 윤리, 인과추론",color:"#6366f1",impact:97},
@@ -350,6 +366,23 @@ const TITANS = [
   {n:"Connor Leahy",r:"Conjecture CEO · EleutherAI",c:"AI",ch:["X","YouTube","인터뷰"],k:"AI Safety, 오픈소스",color:"#4f46e5",impact:82},
   {n:"Mustafa Suleyman",r:"Microsoft AI CEO · DeepMind 공동창립",c:"AI",ch:["X","인터뷰","Book"],k:"AI 거버넌스, 대화형 AI",color:"#0284c7",impact:90},
   {n:"Jan Leike",r:"Anthropic Alignment · 전 OpenAI",c:"AI",ch:["X","논문"],k:"AI Alignment, RLHF",color:"#7c3aed",impact:84},
+  {n:"Mira Murati",r:"Thinking Machines Lab · 전 OpenAI CTO",c:"AI",ch:["X","인터뷰"],k:"AI 제품화, ChatGPT, 에이전트",color:"#e11d48",impact:91},
+  {n:"Greg Brockman",r:"OpenAI President/CTO",c:"AI",ch:["X","Blog","YouTube"],k:"OpenAI, GPT, API 플랫폼",color:"#10b981",impact:90},
+  {n:"Chris Olah",r:"Anthropic Interpretability 리더",c:"AI",ch:["Blog","X","논문"],k:"Mechanistic Interpretability, 뉴런 해석",color:"#8b5cf6",impact:86},
+  {n:"Ivan Zhao",r:"Notion CEO",c:"Tech",ch:["X","Blog"],k:"생산성도구, 세컨드브레인, AI통합",color:"#1e1e1e",impact:87},
+  {n:"Aravind Srinivas",r:"Perplexity AI CEO",c:"AI",ch:["X","YouTube","인터뷰"],k:"AI검색, RAG, Answer Engine",color:"#20b2aa",impact:88},
+  {n:"Michael Truell",r:"Cursor CEO · Anysphere",c:"AI",ch:["X","인터뷰"],k:"AI코딩, IDE, Composer",color:"#6d28d9",impact:87},
+  {n:"Varun Mohan",r:"Windsurf/Codeium CEO",c:"AI",ch:["X","인터뷰"],k:"AI코딩, Cascade, 에이전트",color:"#0891b2",impact:85},
+  {n:"Eric Jing",r:"Genspark CEO · 전 Bing VP",c:"AI",ch:["X","LinkedIn"],k:"AI검색, Sparkpages, 에이전트",color:"#f97316",impact:82},
+  {n:"Shida Li",r:"Obsidian 공동창립자",c:"Tech",ch:["Discord","Blog"],k:"PKM, 로컬퍼스트, 마크다운",color:"#7c3aed",impact:83},
+  {n:"Matt Shumer",r:"HyperWrite · AI 에이전트 빌더",c:"AI",ch:["X","GitHub"],k:"AI에이전트, 프롬프트엔지니어링",color:"#f43f5e",impact:81},
+  {n:"Lenny Rachitsky",r:"Lenny's Newsletter · 전 Airbnb PM",c:"Business",ch:["Newsletter","Podcast","X"],k:"PM, 그로스, 제품전략",color:"#f59e0b",impact:86},
+  {n:"Ben Thompson",r:"Stratechery · 테크전략 분석가",c:"Business",ch:["Newsletter","Podcast","X"],k:"Aggregation Theory, 테크전략",color:"#3b82f6",impact:89},
+  {n:"Packy McCormick",r:"Not Boring · Not Boring Capital",c:"Business",ch:["Newsletter","X","Podcast"],k:"테크분석, 스타트업딥다이브",color:"#a855f7",impact:83},
+  {n:"Matthew Berman",r:"AI 유튜버 · LLM 벤치마크",c:"AI",ch:["YouTube","X","Discord"],k:"LLM리뷰, 벤치마크, 오픈소스AI",color:"#ef4444",impact:82},
+  {n:"David Shapiro",r:"AI 윤리/에이전트 유튜버",c:"AI",ch:["YouTube","X","GitHub"],k:"AI윤리, Heuristic Imperatives",color:"#0ea5e9",impact:80},
+  {n:"Riley Brown",r:"AI 자동화 크리에이터",c:"AI",ch:["YouTube","X"],k:"AI자동화, No-Code, 워크플로우",color:"#22c55e",impact:78},
+  {n:"AI Jason",r:"AI 논문 리뷰 유튜버",c:"AI",ch:["YouTube","X"],k:"AI논문해설, 트렌드분석",color:"#6366f1",impact:79},
   // Science (15)
   {n:"Ed Witten",r:"IAS 교수 · 필즈상 수상",c:"Science",ch:["논문","강연"],k:"끈이론, 수학물리",color:"#3b82f6",impact:95},
   {n:"Brian Cox",r:"맨체스터대 교수 · BBC 과학 진행자",c:"Science",ch:["YouTube","X","TV"],k:"입자물리, 과학 대중화",color:"#06b6d4",impact:88},
@@ -445,61 +478,62 @@ const DEDICATED = {
   'Sundar Pichai':'pichai.html'
 };
 
-const PAGE_SIZE = 9; // 3x3
-let currentPage = 1;
+// 카테고리별 섹터 행 레이아웃
+const CAT_COLORS_INDEX = {AI:'#6366f1',Science:'#0ea5e9',Tech:'#22c55e',Business:'#f59e0b',Philosophy:'#a855f7',Health:'#ec4899',Finance:'#eab308',Design:'#f97316'};
+const CAT_ORDER_INDEX = ['AI','Science','Tech','Business','Philosophy','Health','Finance','Design'];
 
-function renderTitanCards(page) {
-  currentPage = page || 1;
+function renderTitanCards() {
   const grid = document.getElementById('titans-grid');
   if (!grid) return;
-  const start = (currentPage - 1) * PAGE_SIZE;
-  const pageItems = TITANS.slice(start, start + PAGE_SIZE);
-  const totalPages = Math.ceil(TITANS.length / PAGE_SIZE);
 
-  grid.innerHTML = pageItems.map(t => {
-    const initials = t.n.split(' ').map(w=>w[0]).join('').substring(0,2);
-    const href = DEDICATED[t.n] || ('titan.html?name='+encodeURIComponent(t.n)+'&role='+encodeURIComponent(t.r)+'&k='+encodeURIComponent(t.k)+'&color='+encodeURIComponent(t.color)+'&ch='+encodeURIComponent(t.ch.join(',')));
-    const tags = t.k.split(',').slice(0,3).map(k=>'<span class="titan-tag">'+k.trim()+'</span>').join('');
-    const channels = t.ch.slice(0,3).map(c=>'<span class="titan-ch">'+c+'</span>').join('');
-    return '<a href="'+href+'" class="titan-card" style="--card-accent:'+t.color+'">'+
-      '<div class="titan-top">'+
-        '<div class="titan-avatar" style="background:linear-gradient(135deg,'+t.color+','+t.color+'88);display:flex;align-items:center;justify-content:center;font-size:20px;color:white;font-weight:700">'+initials+'</div>'+
-        '<div><div class="titan-name">'+t.n+'</div><div class="titan-role">'+t.r+'</div></div>'+
-      '</div>'+
-      '<div class="titan-tags">'+tags+'</div>'+
-      '<div class="titan-channels">'+channels+'</div>'+
-    '</a>';
-  }).join('');
+  // 카테고리별 그룹핑
+  const grouped = {};
+  CAT_ORDER_INDEX.forEach(function(c){ grouped[c] = []; });
+  TITANS.forEach(function(t) {
+    var cat = t.c || '기타';
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(t);
+  });
 
-  // 페이지네이션 렌더
-  const pag = document.getElementById('titan-pagination');
-  if (!pag) return;
-  let pagHtml = '';
-  const btnStyle = 'padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#8b8fa3;font-size:11px;cursor:pointer;font-family:\'Inter\',sans-serif;transition:all .2s';
-  const activeStyle = 'padding:6px 12px;border-radius:8px;border:1px solid #6366f1;background:#6366f1;color:white;font-size:11px;cursor:default;font-family:\'Inter\',sans-serif';
+  var html = '';
+  CAT_ORDER_INDEX.forEach(function(cat) {
+    var items = grouped[cat];
+    if (!items || !items.length) return;
+    var catColor = CAT_COLORS_INDEX[cat] || '#6366f1';
 
-  if (currentPage > 1) pagHtml += '<button style="'+btnStyle+'" onclick="renderTitanCards('+(currentPage-1)+')">← 이전</button>';
+    html += '<div style="margin-bottom:1.5rem">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-left:4px">';
+    html += '<div style="width:8px;height:8px;border-radius:50%;background:'+catColor+'"></div>';
+    html += '<span style="font-size:13px;font-weight:700;color:'+catColor+'">'+cat+'</span>';
+    html += '<span style="font-size:10px;color:var(--text-muted);font-family:JetBrains Mono,monospace">'+items.length+'</span>';
+    html += '</div>';
+    html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">';
 
-  // 페이지 번호 (최대 7개 표시)
-  var startP = Math.max(1, currentPage - 3);
-  var endP = Math.min(totalPages, startP + 6);
-  if (endP - startP < 6) startP = Math.max(1, endP - 6);
-  for (var p = startP; p <= endP; p++) {
-    if (p === currentPage) {
-      pagHtml += '<button style="'+activeStyle+'">'+p+'</button>';
-    } else {
-      pagHtml += '<button style="'+btnStyle+'" onclick="renderTitanCards('+p+')">'+p+'</button>';
-    }
-  }
+    items.forEach(function(t) {
+      var initials = t.n.split(' ').map(function(w){return w[0]}).join('').substring(0,2);
+      var href = DEDICATED[t.n] || ('titan.html?name='+encodeURIComponent(t.n)+'&role='+encodeURIComponent(t.r)+'&k='+encodeURIComponent(t.k)+'&color='+encodeURIComponent(t.color)+'&ch='+encodeURIComponent(t.ch.join(',')));
+      var tags = t.k.split(',').slice(0,3).map(function(k){return '<span class="titan-tag">'+k.trim()+'</span>'}).join('');
+      var channels = t.ch.slice(0,3).map(function(c){return '<span class="titan-ch">'+c+'</span>'}).join('');
+      html += '<a href="'+href+'" class="titan-card" style="--card-accent:'+t.color+'">'+
+        '<div class="titan-top">'+
+          '<div class="titan-avatar" style="background:linear-gradient(135deg,'+t.color+','+t.color+'88);display:flex;align-items:center;justify-content:center;font-size:18px;color:white;font-weight:700">'+initials+'</div>'+
+          '<div><div class="titan-name">'+t.n+'</div><div class="titan-role" style="font-size:10px;-webkit-line-clamp:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px">'+t.r+'</div></div>'+
+        '</div>'+
+        '<div class="titan-tags">'+tags+'</div>'+
+        '<div class="titan-channels">'+channels+'</div>'+
+      '</a>';
+    });
 
-  if (currentPage < totalPages) pagHtml += '<button style="'+btnStyle+'" onclick="renderTitanCards('+(currentPage+1)+')">다음 →</button>';
-  pagHtml += '<span style="font-size:10px;color:#4a4e62;margin-left:8px">'+currentPage+'/'+totalPages+' ('+TITANS.length+'명)</span>';
-  pag.innerHTML = pagHtml;
+    html += '</div></div>';
+  });
 
-  // 그리드 위로 스크롤
-  if (page && page !== 1) grid.scrollIntoView({behavior:'smooth',block:'start'});
+  grid.innerHTML = html;
+  document.getElementById('titan-section-count').textContent = TITANS.length + '명';
+  // 페이지네이션 불필요 (전체 표시)
+  var pag = document.getElementById('titan-pagination');
+  if (pag) pag.innerHTML = '';
 }
-renderTitanCards(1);
+renderTitanCards();
 
 let currentFilter='all',searchQuery='';
 
@@ -612,27 +646,25 @@ function renderPopular(){
   if(!views.length){return;}
   document.getElementById('popular-section').style.display='block';
   const grid=document.getElementById('popular-grid');
-  grid.style.cssText='display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:2.5rem';
+  grid.style.cssText='display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:1rem';
   grid.innerHTML=views.map((v,i)=>{
     const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
     const initials=v.name.split(' ').map(w=>w[0]).join('').substring(0,2);
     const isTop=i<3;
-    const avatarSize=isTop?72:56;
-    const fontSize=isTop?16:14;
-    const countSize=isTop?32:22;
-    const pad=isTop?'2rem 1.5rem':'1.25rem';
-    const glow=isTop?'box-shadow:0 0 30px '+v.color+'20;':'';
-    const border=isTop?'border:2px solid '+v.color+'40;':'border:1px solid rgba(255,255,255,0.06);';
-    return `<a href="${v.page}" style="background:var(--surface,#1a1d27);${border}border-radius:18px;padding:${pad};text-align:center;text-decoration:none;color:var(--text,#e8e8ed);transition:all .3s cubic-bezier(0.4,0,0.2,1);display:block;${glow}"
-      onmouseover="this.style.transform='translateY(-5px) scale(1.02)';this.style.boxShadow='0 12px 40px ${v.color}30'"
-      onmouseout="this.style.transform='';this.style.boxShadow='${isTop?'0 0 30px '+v.color+'20':''}'"
+    const avatarSize=isTop?48:40;
+    const fontSize=isTop?13:12;
+    const countSize=isTop?20:16;
+    const pad='1rem 0.75rem';
+    const border=isTop?'border:1px solid '+v.color+'40;':'border:1px solid rgba(255,255,255,0.06);';
+    return `<a href="${v.page}" style="background:var(--surface,#1a1d27);${border}border-radius:14px;padding:${pad};text-align:center;text-decoration:none;color:var(--text,#e8e8ed);transition:all .25s;display:block;"
+      onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px ${v.color}20'"
+      onmouseout="this.style.transform='';this.style.boxShadow=''"
       >
-      ${medal?'<div style="font-size:24px;margin-bottom:8px">'+medal+'</div>':''}
-      <div style="width:${avatarSize}px;height:${avatarSize}px;border-radius:50%;background:linear-gradient(135deg,${v.color},${v.color}66);display:flex;align-items:center;justify-content:center;font-size:${fontSize+6}px;font-weight:800;color:white;margin:0 auto 12px;box-shadow:0 4px 20px ${v.color}30">${initials}</div>
+      ${medal?'<div style="font-size:16px;margin-bottom:4px">'+medal+'</div>':''}
+      <div style="width:${avatarSize}px;height:${avatarSize}px;border-radius:50%;background:linear-gradient(135deg,${v.color},${v.color}66);display:flex;align-items:center;justify-content:center;font-size:${fontSize+4}px;font-weight:800;color:white;margin:0 auto 6px;box-shadow:0 2px 12px ${v.color}20">${initials}</div>
       <div style="font-size:${fontSize}px;font-weight:700">${v.name.split(' ').pop()}</div>
-      <div style="font-size:11px;color:var(--text-muted,#5a5e72);margin-top:2px">${v.name.split(' ').slice(0,-1).join(' ')}</div>
-      <div style="font-size:${countSize}px;font-weight:900;color:${v.color};font-family:'JetBrains Mono',monospace;margin-top:8px;text-shadow:0 0 20px ${v.color}30">${v.count}</div>
-      <div style="font-size:10px;color:var(--text-muted,#5a5e72);margin-top:2px;text-transform:uppercase;letter-spacing:0.1em">views</div>
+      <div style="font-size:${countSize}px;font-weight:800;color:${v.color};font-family:'JetBrains Mono',monospace;margin-top:4px">${v.count}</div>
+      <div style="font-size:9px;color:var(--text-muted,#5a5e72);text-transform:uppercase;letter-spacing:0.08em">views</div>
     </a>`;
   }).join('');
 }

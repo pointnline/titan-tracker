@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"cd C:/Users/jun16/projects/titan-tracker && npx vercel login 2>&1\",\"timeout\":120000,\"description\":\"Login to Vercel\"}",
-  "error": "Exit code 1\nYou must run the following command to log in: `vercel login`. Run it without --non-interactive to complete sign-in in your browser.\n{\n  \"status\": \"action_required\",\n  \"reason\": \"login_required\",\n  \"action\": \"login_required\",\n  \"message\": \"You must run the following command to log in: `vercel login`. Run it without --non-interactive to complete sign-in in your browser.\",\n  \"hint\": \"Run this command to log in: vercel login\",\n  \"verification_uri\": \"https://vercel.com/login\",\n  \"next\": [...",
-  "timestamp": "2026-03-14T04:38:28.416Z",
-  "retry_count": 2
+  "tool_input_preview": "{\"command\":\"cd /c/Users/jun16/projects/eagleeye && python -c \\\"from config import GEMINI_API_KEY, ANALYSIS_MODEL; print(f'Gemini API Key: {GEMINI_API_KEY[:10]}...'); print(f'Model: {ANALYSIS_MODEL}')\\...",
+  "error": "Exit code 1\nTraceback (most recent call last):\r\n  File \"<string>\", line 1, in <module>\r\n    from config import GEMINI_API_KEY, ANALYSIS_MODEL; print(f'Gemini API Key: {GEMINI_API_KEY[:10]}...'); print(f'Model: {ANALYSIS_MODEL}')\r\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\jun16\\projects\\eagleeye\\config.py\", line 14, in <module>\r\n    TELEGRAM_API_ID = int(os.getenv(\"TELEGRAM_API_ID\", \"0\"))\r\nValueError: invalid literal for int() with base 10: '���⿡_API_ID_�Է�'",
+  "timestamp": "2026-03-15T08:46:04.410Z",
+  "retry_count": 1
 }

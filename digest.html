@@ -8,6 +8,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#0f1117;--surface:#1a1d27;--surface2:#232736;--surface3:#2a2e3d;--border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.12);--text:#e8e8ed;--text-sub:#8b8fa3;--text-muted:#5a5e72;--accent:#f59e0b;--accent-light:#fbbf24;--radius:16px;--radius-sm:12px;--radius-xs:8px}
+[data-theme="light"]{--bg:#f6f5f1;--surface:#fff;--surface2:#f0eeea;--surface3:#e8e6e1;--border:rgba(0,0,0,0.09);--border-hover:rgba(0,0,0,0.18);--text:#1a1a2e;--text-sub:#666;--text-muted:#999}
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;padding-top:44px}
 a{color:var(--accent-light);text-decoration:none}
 .header{background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(239,68,68,0.06));border-bottom:1px solid var(--border);padding:2rem 1.5rem;text-align:center}
@@ -46,11 +47,13 @@ a{color:var(--accent-light);text-decoration:none}
 </style>
 </head>
 <body>
+<script src="titans-data.js"></script>
 <script src="titan-nav.js"></script>
 
 <div class="header">
   <h1>📰 Titan Weekly Digest</h1>
-  <p>주요 타이탄의 이번 주 핵심 뉴스를 한눈에</p>
+  <p>타이탄의 이번 주 핵심 뉴스를 한눈에</p>
+  <div style="margin-top:12px;display:flex;justify-content:center;gap:6px;flex-wrap:wrap" id="digest-cat-filters"></div>
   <button onclick="aiWeeklySummary()" style="margin-top:10px;padding:8px 20px;border-radius:20px;border:none;background:linear-gradient(135deg,#6366f1,#a855f7);color:white;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">🧠 AI 위클리 요약</button>
   <div class="date-range" id="date-range"></div>
 </div>
@@ -76,21 +79,61 @@ a{color:var(--accent-light);text-decoration:none}
 <div class="footer">Titan Digest · <a href="index.html">Titan Tracker</a> · Point & Line 🌈</div>
 
 <script>
-const TITANS = {
-  wolfram:{name:'Stephen Wolfram',color:'#6366f1',page:'wolfram.html',q:'Stephen+Wolfram+Mathematica+Wolfram+Alpha'},
-  gates:{name:'Bill Gates',color:'#0ea5e9',page:'gates.html',q:'Bill+Gates+foundation+GatesNotes'},
-  musk:{name:'Elon Musk',color:'#a855f7',page:'musk.html',q:'Elon+Musk+Tesla+SpaceX+xAI'},
-  bezos:{name:'Jeff Bezos',color:'#f59e0b',page:'bezos.html',q:'Jeff+Bezos+Amazon+Blue+Origin'},
-  amodei:{name:'Dario Amodei',color:'#ef4444',page:'amodei.html',q:'Dario+Amodei+Anthropic+Claude'},
-  dalio:{name:'Ray Dalio',color:'#eab308',page:'dalio.html',q:'Ray+Dalio+Bridgewater+principles'},
-  altman:{name:'Sam Altman',color:'#10b981',page:'altman.html',q:'Sam+Altman+OpenAI+ChatGPT'},
-  huang:{name:'Jensen Huang',color:'#84cc16',page:'huang.html',q:'Jensen+Huang+NVIDIA+GPU'},
-  nadella:{name:'Satya Nadella',color:'#0078d4',page:'nadella.html',q:'Satya+Nadella+Microsoft+Azure'},
-  karpathy:{name:'Andrej Karpathy',color:'#22c55e',page:'karpathy.html',q:'Andrej+Karpathy+AI+education'},
-  lecun:{name:'Yann LeCun',color:'#3b82f6',page:'lecun.html',q:'Yann+LeCun+Meta+AI+deep+learning'},
-  huberman:{name:'Andrew Huberman',color:'#ec4899',page:'huberman.html',q:'Andrew+Huberman+neuroscience+protocol'},
-  pichai:{name:'Sundar Pichai',color:'#4285f4',page:'pichai.html',q:'Sundar+Pichai+Google+Gemini'}
+// ═══ 동적 타이탄 빌드 (titans-data.js → TITANS) ═══
+const CATEGORY_COLORS = {AI:'#6366f1',Science:'#0ea5e9',Tech:'#22c55e',Business:'#f59e0b',Philosophy:'#a855f7',Health:'#ec4899',Finance:'#eab308',Design:'#f97316'};
+const DIGEST_CATEGORIES = {
+  AI:['Geoffrey Hinton','Yoshua Bengio','Dario Amodei','Sam Altman','Yann LeCun','Andrej Karpathy','Demis Hassabis','Ilya Sutskever','Fei-Fei Li','Andrew Ng','Ian Goodfellow','Jim Fan','Lilian Weng','Jeremy Howard','Lex Fridman','Hugging Face (Clem Delangue)','Arthur Mensch','Noam Shazeer','Harrison Chase','Amjad Masad','Emad Mostaque','Connor Leahy','Mustafa Suleyman','Jan Leike','Mira Murati','Greg Brockman','Anthropic (Chris Olah)','Perplexity (Aravind Srinivas)','Cursor (Michael Truell)','Windsurf (Varun Mohan)','Genspark (Eric Jing)','Matt Shumer','Matthew Berman','David Shapiro','Riley Brown','AI Jason'],
+  Science:['Ed Witten','Brian Cox','Sabine Hossenfelder','Neil deGrasse Tyson','Sean Carroll','David Deutsch','Jennifer Doudna','Eric Lander','Terence Tao','Roger Penrose','Carlo Rovelli','Max Tegmark','Michio Kaku','Katie Mack','David Eagleman'],
+  Tech:['Elon Musk','Jensen Huang','Satya Nadella','Sundar Pichai','Tim Cook','Mark Zuckerberg','Linus Torvalds','Vitalik Buterin','Patrick Collison','Daniel Gross','Nat Friedman','George Hotz','Dylan Field','Guillermo Rauch','Mitchell Hashimoto','DHH (David Heinemeier Hansson)','Pieter Levels','Theo Browne','Fireship (Jeff Delaney)','Chris Lattner','Ivan Zhao','Obsidian (Shida Li)'],
+  Business:['Ray Dalio','Charlie Munger','Naval Ravikant','Paul Graham','Marc Andreessen','Peter Thiel','Reed Hastings','Jeff Bezos','Jamie Dimon','Cathie Wood','Reid Hoffman','Howard Marks','Masayoshi Son','Patrick Bet-David','Lenny Rachitsky','Ben Thompson','Packy McCormick'],
+  Philosophy:['Yuval Noah Harari','Daniel Kahneman','Nassim Nicholas Taleb','Tyler Cowen','Nick Bostrom','Balaji Srinivasan','Jordan Peterson','Jaron Lanier','Tristan Harris','David Epstein'],
+  Health:['Andrew Huberman','Peter Attia','David Sinclair','Rhonda Patrick','Eric Topol','Siddhartha Mukherjee','Matthew Walker','Atul Gawande'],
+  Finance:['Michael Burry','Stanley Druckenmiller','Aswath Damodaran','Chamath Palihapitiya']
 };
+const nameToCategory = {};
+Object.entries(DIGEST_CATEGORIES).forEach(([cat,names])=>names.forEach(n=>{nameToCategory[n]=cat}));
+
+// TITAN_PROFILES → TITANS 동적 변환
+let TITANS = {};
+let currentDigestCat = null; // null = 전체에서 주요 20명
+
+function buildTitans(category) {
+  const result = {};
+  const profiles = typeof TITAN_PROFILES !== 'undefined' ? TITAN_PROFILES : {};
+  const names = category ? (DIGEST_CATEGORIES[category] || []) : Object.keys(profiles);
+  // 카테고리 없으면 주요 20명만 (RSS 과부하 방지)
+  const selected = category ? names.slice(0, 25) : names.slice(0, 20);
+  selected.forEach(name => {
+    if (!profiles[name]) return;
+    const key = name.toLowerCase().replace(/[^a-z0-9]/g,'').substring(0,15);
+    const color = CATEGORY_COLORS[nameToCategory[name]] || '#6366f1';
+    result[key] = {
+      name: name,
+      color: color,
+      page: 'titan.html?name=' + encodeURIComponent(name),
+      q: encodeURIComponent(name).replace(/%20/g,'+')
+    };
+  });
+  return result;
+}
+TITANS = buildTitans(null);
+
+function selectDigestCategory(cat, el) {
+  currentDigestCat = cat;
+  TITANS = buildTitans(cat);
+  document.querySelectorAll('#digest-cat-filters button').forEach(b => b.style.cssText = b.dataset.cat === (cat||'all') ? 'background:#6366f1;color:white;border-color:#6366f1' : '');
+  loadDigest();
+}
+
+// 카테고리 필터 렌더
+(function renderDigestFilters(){
+  const c = document.getElementById('digest-cat-filters');
+  if (!c) return;
+  const cats = [['all','전체 TOP 20',null], ...Object.entries(DIGEST_CATEGORIES).map(([k,v])=>[k,k+' ('+v.length+')',k])];
+  c.innerHTML = cats.map(([id,label,cat]) =>
+    '<button data-cat="'+id+'" onclick="selectDigestCategory('+(cat?"'"+cat+"'":"null")+',this)" style="font-size:10px;padding:4px 12px;border-radius:14px;border:1px solid rgba(255,255,255,0.1);background:'+(id==='all'?'#6366f1':'transparent')+';color:'+(id==='all'?'white':'#8b8fa3')+';cursor:pointer;font-family:Inter,sans-serif;transition:all .2s">'+label+'</button>'
+  ).join('');
+})();
 
 const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
 function escapeHtml(s){if(!s)return'';const d=document.createElement('div');d.appendChild(document.createTextNode(s));return d.innerHTML}

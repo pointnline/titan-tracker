@@ -41,9 +41,23 @@ a{text-decoration:none;color:var(--accent-light)}
 .header p{font-size:14px;color:var(--text-sub);margin-top:10px;line-height:1.6;max-width:520px;margin-left:auto;margin-right:auto}
 
 /* 타이탄 셀렉터 */
-.titan-selector{margin-top:16px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.study-search{width:100%;max-width:400px;margin:12px auto 0;padding:10px 16px;border-radius:var(--radius);
+  border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:13px;
+  font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;display:block}
+.study-search:focus{border-color:var(--accent)}
+.study-search::placeholder{color:var(--text-muted)}
+.study-cat-filters{display:flex;justify-content:center;gap:6px;margin-top:10px;flex-wrap:wrap}
+.study-cat-btn{font-size:10px;padding:4px 12px;border-radius:14px;border:1px solid var(--border);
+  background:transparent;color:var(--text-sub);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
+.study-cat-btn.active{background:var(--accent);border-color:var(--accent);color:white}
+.study-cat-btn:hover{border-color:var(--accent-light)}
+.titan-selector{margin-top:12px;display:flex;flex-direction:column;gap:8px;padding:0 0.5rem}
+.titan-row{display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap}
+.titan-row-label{font-size:10px;font-weight:700;color:var(--text-muted);min-width:70px;padding:6px 0;
+  text-transform:uppercase;letter-spacing:.04em;flex-shrink:0;text-align:right;padding-right:8px}
+@media(max-width:640px){.titan-row-label{min-width:50px;font-size:9px}}
 .titan-chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:500;
-  padding:6px 14px;border-radius:20px;background:var(--surface);border:1px solid var(--border);
+  padding:5px 12px;border-radius:20px;background:var(--surface);border:1px solid var(--border);
   cursor:pointer;user-select:none;transition:all .25s}
 .titan-chip.active{border-color:var(--accent);background:rgba(99,102,241,0.1)}
 .titan-chip.inactive{opacity:0.35;border-color:transparent}
@@ -154,6 +168,7 @@ a{text-decoration:none;color:var(--accent-light)}
 </head>
 <body>
 <script src="config.js"></script>
+<script src="titans-data.js"></script>
 <button class="theme-toggle" onclick="toggleTheme()" title="라이트/다크 모드 전환">🌙</button>
 
 <div class="bg-glow"></div>
@@ -164,6 +179,8 @@ a{text-decoration:none;color:var(--accent-light)}
 <div class="header">
   <h1>🧠 Titan Study Hub</h1>
   <p>거인들의 사고방식을 학습하고 AI 어시스턴트에게 질문하세요</p>
+  <input type="text" class="study-search" id="study-search" placeholder="거인 검색... (117명)" oninput="filterStudyTitans()">
+  <div class="study-cat-filters" id="study-cat-filters"></div>
   <div class="titan-selector" id="titan-selector"></div>
 </div>
 
@@ -474,35 +491,169 @@ const TITAN_STUDY = {
 };
 
 // =============================================
-// 타이탄 선택
+// 전체 타이탄 목록 (TITAN_PROFILES 기반 동적 빌드)
 // =============================================
-let selectedStudyTitan = 'wolfram';
+const STUDY_CATEGORIES = {AI:1,Science:1,Tech:1,Business:1,Philosophy:1,Health:1,Finance:1,Design:1};
+const STUDY_CAT_MAP = {};
+// index.html TITANS 배열의 카테고리 매핑 재활용
+const _catNames = {
+  AI:['Geoffrey Hinton','Yoshua Bengio','Dario Amodei','Sam Altman','Yann LeCun','Andrej Karpathy','Demis Hassabis','Ilya Sutskever','Fei-Fei Li','Andrew Ng','Ian Goodfellow','Jim Fan','Lilian Weng','Jeremy Howard','Lex Fridman','Hugging Face (Clem Delangue)','Arthur Mensch','Noam Shazeer','Harrison Chase','Amjad Masad','Emad Mostaque','Connor Leahy','Mustafa Suleyman','Jan Leike','Mira Murati','Greg Brockman','Anthropic (Chris Olah)','Perplexity (Aravind Srinivas)','Cursor (Michael Truell)','Windsurf (Varun Mohan)','Genspark (Eric Jing)','Matt Shumer','Matthew Berman','David Shapiro','Riley Brown','AI Jason'],
+  Science:['Ed Witten','Brian Cox','Sabine Hossenfelder','Neil deGrasse Tyson','Sean Carroll','David Deutsch','Jennifer Doudna','Eric Lander','Terence Tao','Roger Penrose','Carlo Rovelli','Max Tegmark','Michio Kaku','Katie Mack','David Eagleman'],
+  Tech:['Elon Musk','Jensen Huang','Satya Nadella','Sundar Pichai','Tim Cook','Mark Zuckerberg','Linus Torvalds','Vitalik Buterin','Patrick Collison','Daniel Gross','Nat Friedman','George Hotz','Dylan Field','Guillermo Rauch','Mitchell Hashimoto','DHH (David Heinemeier Hansson)','Pieter Levels','Theo Browne','Fireship (Jeff Delaney)','Chris Lattner','Ivan Zhao','Obsidian (Shida Li)'],
+  Business:['Ray Dalio','Charlie Munger','Naval Ravikant','Paul Graham','Marc Andreessen','Peter Thiel','Reed Hastings','Jeff Bezos','Jamie Dimon','Cathie Wood','Reid Hoffman','Howard Marks','Masayoshi Son','Patrick Bet-David','Lenny Rachitsky','Ben Thompson','Packy McCormick'],
+  Philosophy:['Yuval Noah Harari','Daniel Kahneman','Nassim Nicholas Taleb','Tyler Cowen','Nick Bostrom','Balaji Srinivasan','Jordan Peterson','Jaron Lanier','Tristan Harris','David Epstein'],
+  Health:['Andrew Huberman','Peter Attia','David Sinclair','Rhonda Patrick','Eric Topol','Siddhartha Mukherjee','Matthew Walker','Atul Gawande'],
+  Finance:['Michael Burry','Stanley Druckenmiller','Aswath Damodaran','Chamath Palihapitiya'],
+  Design:['Jony Ive','Don Norman','John Maeda']
+};
+Object.entries(_catNames).forEach(([cat,names])=>names.forEach(n=>{STUDY_CAT_MAP[n]=cat}));
 
-function renderSelector() {
-  const container = document.getElementById('titan-selector');
-  container.innerHTML = Object.entries(TITAN_STUDY).map(([key, info]) => {
-    const active = key === selectedStudyTitan;
-    return '<div class="titan-chip ' + (active ? 'active' : 'inactive') + '" onclick="selectTitan(\'' + key + '\')">' +
-      '<div class="dot" style="background:' + info.color + '"></div>' + info.name +
-      (active ? ' ✓' : '') + '</div>';
-  }).join('');
+// TITAN_STUDY 키 → 풀네임 매핑
+const STUDY_KEY_MAP = {};
+Object.entries(TITAN_STUDY).forEach(([key,val])=>{STUDY_KEY_MAP[val.name]=key});
+
+// 모든 타이탄 이름 목록
+function getAllTitanNames(){
+  const profiles = typeof TITAN_PROFILES !== 'undefined' ? TITAN_PROFILES : {};
+  return Object.keys(profiles);
 }
 
-function selectTitan(key) {
-  selectedStudyTitan = key;
-  renderSelector();
+let selectedStudyTitan = 'Stephen Wolfram'; // 풀네임으로 변경
+let currentStudyCat = null;
+const STUDY_COLORS = ['#6366f1','#0ea5e9','#a855f7','#f59e0b','#ef4444','#eab308','#10b981','#84cc16','#0078d4','#22c55e','#3b82f6','#ec4899'];
+
+// 카테고리 필터 렌더
+(function renderStudyCatFilters(){
+  const c = document.getElementById('study-cat-filters');
+  if (!c) return;
+  const all = getAllTitanNames();
+  c.innerHTML = '<button class="study-cat-btn active" onclick="filterStudyCat(null,this)">전체 ('+all.length+')</button>' +
+    Object.entries(_catNames).map(([cat,names])=>
+      '<button class="study-cat-btn" onclick="filterStudyCat(\''+cat+'\',this)">'+cat+' ('+names.length+')</button>'
+    ).join('');
+})();
+
+function filterStudyCat(cat, el){
+  currentStudyCat = cat;
+  document.querySelectorAll('.study-cat-btn').forEach(b=>b.classList.remove('active'));
+  if(el) el.classList.add('active');
+  filterStudyTitans();
+}
+
+function filterStudyTitans(){
+  const q = (document.getElementById('study-search')?.value || '').toLowerCase().trim();
+  const all = getAllTitanNames();
+  const filtered = all.filter(name => {
+    if(currentStudyCat && STUDY_CAT_MAP[name] !== currentStudyCat) return false;
+    if(q && !name.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  renderSelector(filtered);
+}
+
+const CAT_COLORS_MAP = {AI:'#6366f1',Science:'#0ea5e9',Tech:'#22c55e',Business:'#f59e0b',Philosophy:'#a855f7',Health:'#ec4899',Finance:'#eab308',Design:'#f97316'};
+const CAT_ORDER = ['AI','Science','Tech','Business','Philosophy','Health','Finance','Design'];
+
+function renderSelector(filteredNames) {
+  const all = getAllTitanNames();
+  const names = filteredNames || all;
+  const container = document.getElementById('titan-selector');
+
+  // 카테고리별 그룹핑
+  const grouped = {};
+  CAT_ORDER.forEach(c => { grouped[c] = []; });
+  grouped['기타'] = [];
+  names.forEach(name => {
+    const cat = STUDY_CAT_MAP[name] || '기타';
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(name);
+  });
+
+  let html = '';
+  CAT_ORDER.forEach(cat => {
+    const titans = grouped[cat];
+    if (!titans || !titans.length) return;
+    const catColor = CAT_COLORS_MAP[cat] || '#6366f1';
+    html += '<div class="titan-row">';
+    html += '<div class="titan-row-label" style="color:' + catColor + '">' + cat + '</div>';
+    html += '<div style="display:flex;flex-wrap:wrap;gap:4px;flex:1">';
+    titans.forEach(name => {
+      const active = name === selectedStudyTitan;
+      html += '<div class="titan-chip ' + (active ? 'active' : '') + '" onclick="selectTitan(\'' + escapeHtml(name).replace(/'/g,"\\'") + '\')">' +
+        '<div class="dot" style="background:' + catColor + '"></div>' + escapeHtml(name) +
+        (active ? ' ✓' : '') + '</div>';
+    });
+    html += '</div></div>';
+  });
+  // 기타
+  if (grouped['기타'] && grouped['기타'].length) {
+    html += '<div class="titan-row"><div class="titan-row-label">기타</div><div style="display:flex;flex-wrap:wrap;gap:4px;flex:1">';
+    grouped['기타'].forEach(name => {
+      const active = name === selectedStudyTitan;
+      html += '<div class="titan-chip ' + (active ? 'active' : '') + '" onclick="selectTitan(\'' + escapeHtml(name).replace(/'/g,"\\'") + '\')">' +
+        '<div class="dot" style="background:#888"></div>' + escapeHtml(name) +
+        (active ? ' ✓' : '') + '</div>';
+    });
+    html += '</div></div>';
+  }
+  container.innerHTML = html;
+}
+
+function selectTitan(name) {
+  selectedStudyTitan = name;
+  filterStudyTitans();
   renderStudyContent();
   updateQuickQuestions();
-  // 챗봇에 안내
-  addChatMsg('system', '📚 ' + TITAN_STUDY[key].name + ' 학습 모드로 전환되었습니다.');
+  addChatMsg('system', '📚 ' + escapeHtml(name) + ' 학습 모드로 전환되었습니다.');
 }
 
 // =============================================
 // 학습 콘텐츠 렌더링
 // =============================================
+// TITAN_PROFILES에서 학습 데이터 동적 생성
+function getStudyData(name) {
+  // 기존 TITAN_STUDY에 있으면 우선 사용
+  const legacyKey = Object.entries(TITAN_STUDY).find(([k,v])=>v.name===name);
+  const profiles = typeof TITAN_PROFILES !== 'undefined' ? TITAN_PROFILES : {};
+  const profile = profiles[name];
+  const papers = typeof TITAN_PAPERS !== 'undefined' ? TITAN_PAPERS[name] : null;
+
+  if(legacyKey) {
+    const enhanced = {...legacyKey[1]};
+    // profile 데이터로 보충
+    if(profile) {
+      if(!enhanced.timeline) enhanced.timeline = profile.timeline;
+      if(!enhanced.channels) enhanced.channels = profile.channels;
+      if(!enhanced.invest) enhanced.invest = profile.invest;
+      if(!enhanced.signal) enhanced.signal = profile.signal;
+    }
+    if(papers) enhanced.papers = papers;
+    return enhanced;
+  }
+
+  if(!profile) return null;
+  // TITAN_PROFILES에서 동적 생성
+  return {
+    name: name,
+    color: STUDY_COLORS[getAllTitanNames().indexOf(name) % STUDY_COLORS.length] || '#6366f1',
+    philosophy: profile.philosophy || '',
+    principles: profile.principles || [],
+    books: (profile.books || []).map(b => ({title:b.title, year:b.year, desc:'', url:b.url})),
+    talks: [],
+    quotes: [],
+    quickQs: [name+'의 핵심 철학은?', name+'의 투자 관점에서의 시사점은?', name+'이 강조하는 원칙은?', name+'의 최근 활동은?'],
+    timeline: profile.timeline,
+    channels: profile.channels,
+    invest: profile.invest,
+    signal: profile.signal,
+    papers: papers || null
+  };
+}
+
 function renderStudyContent() {
-  const t = TITAN_STUDY[selectedStudyTitan];
+  const t = getStudyData(selectedStudyTitan);
   const container = document.getElementById('study-content');
+  if(!t) { container.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-muted)">타이탄을 선택하세요</div>'; return; }
 
   container.innerHTML = `
     <div class="study-grid">
@@ -550,13 +701,50 @@ function renderStudyContent() {
         </div>
       </div>
 
-      <!-- 명언 -->
-      <div class="study-card full" style="animation-delay:.25s">
+      <!-- 명언 (있을 때만) -->
+      ${t.quotes && t.quotes.length ? `<div class="study-card full" style="animation-delay:.25s">
         <h3><span class="icon">💬</span> 명언</h3>
         <div class="quote-list">
           ${t.quotes.map(q => '<div class="quote-item" style="border-color:' + t.color + '">' + escapeHtml(q) + '</div>').join('')}
         </div>
-      </div>
+      </div>` : ''}
+
+      <!-- 타임라인 (있을 때만) -->
+      ${t.timeline && t.timeline.length ? `<div class="study-card" style="animation-delay:.3s">
+        <h3><span class="icon">📅</span> 타임라인</h3>
+        <div class="resource-list">
+          ${t.timeline.map(e => '<div class="resource-item"><div><strong style="color:var(--accent-light)">' + escapeHtml(e.y) + '</strong><div style="font-size:11px;color:var(--text-muted);margin-top:3px">' + escapeHtml(e.t) + '</div></div></div>').join('')}
+        </div>
+      </div>` : ''}
+
+      <!-- 투자 인사이트 (있을 때만) -->
+      ${t.invest ? `<div class="study-card" style="animation-delay:.35s">
+        <h3><span class="icon">💰</span> 투자 인사이트</h3>
+        <div class="philosophy" style="border-color:var(--gold)">${escapeHtml(t.invest)}</div>
+        ${t.signal ? '<div style="margin-top:10px;font-size:12px;color:var(--text-sub);padding:10px 14px;background:var(--surface2);border-radius:var(--radius-xs)"><strong style="color:var(--text)">📡 시그널:</strong> ' + escapeHtml(t.signal) + '</div>' : ''}
+      </div>` : ''}
+
+      <!-- 논문 (있을 때만) -->
+      ${t.papers && t.papers.length ? `<div class="study-card full" style="animation-delay:.4s">
+        <h3><span class="icon">📄</span> 핵심 논문</h3>
+        <div class="resource-list">
+          ${t.papers.map(p => '<div class="resource-item"><div>' +
+            '<a href="' + (p.url||'#') + '" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none"><strong>' + escapeHtml(p.title) + '</strong></a>' +
+            '<div style="font-size:11px;color:var(--text-muted);margin-top:3px">' + escapeHtml(p.journal||'') + ' · ' + escapeHtml(p.impact||'') + '</div>' +
+            '<div style="margin-top:4px;display:flex;gap:6px">' +
+            '<span style="font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(239,68,68,0.1);color:#fca5a5">인용 ' + escapeHtml(p.citations||'') + '</span>' +
+            (p.url ? '<a href="' + p.url + '" target="_blank" rel="noopener" style="font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(99,102,241,0.1);color:#818cf8;text-decoration:none">📎 원문</a>' : '') +
+            '</div></div><span class="year">' + (p.year||'') + '</span></div>').join('')}
+        </div>
+      </div>` : ''}
+
+      <!-- 채널/소스 (있을 때만) -->
+      ${t.channels && t.channels.length ? `<div class="study-card" style="animation-delay:.45s">
+        <h3><span class="icon">🔗</span> 채널 & 소스</h3>
+        <div class="resource-list">
+          ${t.channels.map(ch => '<div class="resource-item"><a href="' + (ch.url||'#') + '" target="_blank" rel="noopener" style="color:var(--accent-light)">' + escapeHtml(ch.name) + '</a></div>').join('')}
+        </div>
+      </div>` : ''}
     </div>
   `;
 }
@@ -565,9 +753,11 @@ function renderStudyContent() {
 // 빠른 질문
 // =============================================
 function updateQuickQuestions() {
-  const t = TITAN_STUDY[selectedStudyTitan];
+  const t = getStudyData(selectedStudyTitan);
+  if(!t) return;
+  const qs = t.quickQs || [selectedStudyTitan+'의 핵심 철학은?', selectedStudyTitan+'의 투자 시사점은?'];
   const container = document.getElementById('quick-questions');
-  container.innerHTML = t.quickQs.map(q =>
+  container.innerHTML = qs.map(q =>
     '<div class="quick-q" onclick="askQuick(\'' + escapeHtml(q).replace(/'/g, "\\'") + '\')">' + escapeHtml(q) + '</div>'
   ).join('');
 }
@@ -614,15 +804,18 @@ function formatAiText(text) {
 }
 
 function buildSystemPrompt() {
-  const t = TITAN_STUDY[selectedStudyTitan];
+  const t = getStudyData(selectedStudyTitan);
+  if(!t) return '학습 어시스턴트입니다.';
   return `당신은 "${t.name}"에 대한 전문 학습 어시스턴트입니다. 한국어로 답변하세요.
 
 ## 타이탄 정보:
 - 이름: ${t.name}
 - 핵심 철학: ${t.philosophy}
-- 핵심 원칙: ${t.principles.join('; ')}
-- 주요 저서: ${t.books.map(b => b.title + ' (' + b.year + ')').join(', ')}
-- 명언: ${t.quotes.join(' / ')}
+- 핵심 원칙: ${(t.principles||[]).join('; ')}
+- 주요 저서: ${(t.books||[]).map(b => b.title + ' (' + b.year + ')').join(', ')}
+- 명언: ${(t.quotes||[]).join(' / ')}
+${t.invest ? '- 투자 인사이트: ' + t.invest : ''}
+${t.signal ? '- 시그널: ' + t.signal : ''}
 
 ## 역할:
 1. 이 타이탄의 사고방식, 철학, 원칙에 대해 심층적으로 설명합니다.
@@ -697,7 +890,7 @@ async function sendMessage() {
 // =============================================
 // 초기화
 // =============================================
-renderSelector();
+filterStudyTitans();
 renderStudyContent();
 updateQuickQuestions();
 </script>

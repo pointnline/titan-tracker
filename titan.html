@@ -4,282 +4,630 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title id="page-title">Titan Tracker</title>
+<meta name="description" id="meta-desc" content="">
+<meta property="og:title" id="og-title" content="">
+<meta property="og:description" id="og-desc" content="">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#232736;--surface3:#2a2e3d;--border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.12);--text:#e8e8ed;--text-sub:#8b8fa3;--text-muted:#5a5e72;--accent:#6366f1;--accent-light:#818cf8;--accent-bg:rgba(99,102,241,0.1);--red:#ef4444;--orange:#f97316;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--radius:16px;--radius-sm:12px;--radius-xs:8px}
-body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;padding-top:44px}
-a{color:var(--accent-light);text-decoration:none;transition:color .2s}a:hover{color:#c7d2fe}
-.header{background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(168,85,247,0.06));border-bottom:1px solid var(--border);padding:2rem 1.5rem}
-.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
-.avatar{width:80px;height:80px;border-radius:50%;border:3px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:32px;color:white;font-weight:700;flex-shrink:0}
-.header-info h1{font-size:24px;font-weight:700;letter-spacing:-0.03em}
-.header-info .subtitle{font-size:13px;color:var(--text-sub);margin-top:4px;line-height:1.6}
-.header-info .subtitle span{color:var(--accent-light);font-weight:500}
-.header-badges{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-.badge{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:500;border:1px solid rgba(99,102,241,0.3);background:rgba(99,102,241,0.1);color:var(--accent-light)}
-.tabs-wrap{max-width:1100px;margin:0 auto;padding:0 1.5rem}
-.tabs{display:flex;gap:4px;padding:1rem 0 0;border-bottom:1px solid var(--border);overflow-x:auto}
-.tab{padding:10px 18px;font-size:13px;font-weight:500;color:var(--text-sub);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;border-radius:var(--radius-xs) var(--radius-xs) 0 0}
-.tab:hover{color:var(--text);background:rgba(255,255,255,0.03)}
-.tab.active{color:var(--accent-light);border-bottom-color:var(--accent);background:var(--accent-bg)}
-.main{max-width:1100px;margin:0 auto;padding:1.5rem}
-.tab-content{display:none}.tab-content.active{display:block}
+:root{
+  --bg:#0f1117;--surface:#1a1d27;--surface2:#232736;--surface3:#2a2e3d;
+  --border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.12);
+  --text:#e8e8ed;--text-sub:#8b8fa3;--text-muted:#5a5e72;
+  --accent:#6366f1;--accent-light:#818cf8;--accent-bg:rgba(99,102,241,0.1);
+  --red:#ef4444;--orange:#f97316;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--gold:#f59e0b;
+  --radius:16px;--radius-sm:12px;--radius-xs:8px;
+}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);
+  min-height:100vh;-webkit-font-smoothing:antialiased;padding-top:0}
+a{color:var(--accent-light);text-decoration:none;transition:color .2s}
+a:hover{color:#c7d2fe}
 
-/* Feed */
-.feed-section{margin-bottom:2rem}.feed-title{font-size:15px;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:8px;cursor:pointer;padding:12px 0;transition:background .15s;border-radius:8px}
+/* ═══ 헤더 (wolfram.html 동일) ═══ */
+.header{
+  background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(168,85,247,0.1));
+  border-bottom:1px solid var(--border);padding:2.5rem 1.5rem 2rem;
+}
+.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
+.avatar{width:88px;height:88px;border-radius:50%;border:3px solid var(--accent);
+  object-fit:cover;flex-shrink:0;box-shadow:0 4px 24px rgba(0,0,0,0.3)}
+.avatar-initials{width:88px;height:88px;border-radius:50%;border:3px solid var(--accent);
+  display:flex;align-items:center;justify-content:center;font-size:32px;color:white;
+  font-weight:800;flex-shrink:0;box-shadow:0 4px 24px rgba(0,0,0,0.3)}
+.header-info{flex:1;min-width:0}
+.header-info h1{font-size:26px;font-weight:800;letter-spacing:-0.03em;line-height:1.2}
+.header-info .subtitle{font-size:13px;color:var(--text-sub);margin-top:6px;line-height:1.7}
+.header-info .subtitle span{color:var(--accent-light);font-weight:500}
+.header-badges{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.badge{font-size:11px;padding:5px 12px;border-radius:20px;font-weight:600;
+  border:1px solid var(--border);letter-spacing:.01em;transition:all .2s}
+.badge:hover{transform:translateY(-1px)}
+.header-signal{margin-top:12px;display:inline-flex;align-items:center;gap:6px;
+  padding:6px 14px;border-radius:20px;font-size:11px;font-weight:600;
+  background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);color:var(--gold)}
+
+/* ═══ 탭 네비게이션 ═══ */
+.tabs-wrap{max-width:1100px;margin:0 auto;padding:0 1.5rem}
+.tabs{display:flex;gap:4px;padding:1rem 0 0;border-bottom:1px solid var(--border);overflow-x:auto;
+  scrollbar-width:none;-ms-overflow-style:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 20px;font-size:13px;font-weight:500;color:var(--text-sub);cursor:pointer;
+  border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;
+  border-radius:var(--radius-xs) var(--radius-xs) 0 0;user-select:none}
+.tab:hover{color:var(--text);background:rgba(255,255,255,0.03)}
+.tab.active{color:var(--accent-light);border-bottom-color:var(--accent);
+  background:var(--accent-bg);font-weight:600}
+.tab-hidden{display:none}
+
+/* ═══ 메인 콘텐츠 ═══ */
+.main{max-width:1100px;margin:0 auto;padding:1.5rem}
+.tab-content{display:none;animation:fadeUp .3s ease}
+.tab-content.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ═══ 피드 (프리미엄) ═══ */
+.feed-section{margin-bottom:2rem}
+.feed-title{font-size:15px;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:8px;
+  cursor:pointer;padding:12px 0;border-radius:8px;transition:background .15s;user-select:none}
 .feed-title:hover{background:rgba(255,255,255,0.03)}
-.feed-title .dot{width:8px;height:8px;border-radius:50%}.feed-title::after{content:'▸';float:right;font-size:10px;color:var(--text-muted);transition:transform .25s;margin-top:3px}
+.feed-title .dot{width:8px;height:8px;border-radius:50%}
+.feed-title::after{content:'\25B8';float:right;font-size:10px;color:var(--text-muted);
+  transition:transform .25s;margin-top:3px}
 .feed-section.expanded .feed-title::after{transform:rotate(90deg)}
 .feed-list{display:none;flex-direction:column;gap:10px;animation:feedSlide .3s ease}
 .feed-section.expanded .feed-list{display:flex}
-@keyframes feedSlide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
-.feed-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;transition:all .2s}
-.feed-item:hover{border-color:var(--border-hover);background:var(--surface2)}
+@keyframes feedSlide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.feed-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:1.25rem;transition:all .2s}
+.feed-item:hover{border-color:var(--border-hover);background:var(--surface2);
+  transform:translateX(4px)}
 .feed-item a{display:block;color:var(--text)}
 .feed-item-title{font-size:14px;font-weight:600;line-height:1.5;margin-bottom:4px}
-.feed-item-meta{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;display:flex;gap:12px;margin-top:6px}
-.feed-item-desc{font-size:12px;color:var(--text-sub);line-height:1.6;margin-top:8px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.feed-source{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500;background:var(--accent-bg);color:var(--accent-light)}
+.feed-item-title-orig{font-size:11px;color:var(--text-muted);margin-bottom:6px;font-style:italic}
+.feed-item-meta{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;
+  display:flex;gap:12px;align-items:center;margin-top:6px}
+.feed-item-desc{font-size:12px;color:var(--text-sub);line-height:1.6;margin-top:8px;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.feed-source{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500}
+.feed-count{font-size:10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;
+  margin-left:auto;opacity:0;transition:opacity .3s}
+.feed-section.loaded .feed-count{opacity:1}
+.refresh-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
+.refresh-btn{font-size:12px;padding:8px 16px;border-radius:var(--radius-xs);
+  border:1px solid var(--border);background:var(--surface);color:var(--text-sub);
+  cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.refresh-btn:hover{border-color:var(--accent);color:var(--accent-light)}
+.last-updated{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
 
-/* Profile */
-.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.profile-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem}
-.profile-card h3{font-size:13px;font-weight:600;margin-bottom:10px;color:var(--accent-light)}
+/* ═══ 채널 카드 그리드 (wolfram.html 동일) ═══ */
+.channels-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:2rem}
+.channel-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:1.25rem;transition:all .25s;cursor:pointer;text-decoration:none;color:var(--text);
+  display:flex;flex-direction:column;gap:10px}
+.channel-card:hover{border-color:var(--border-hover);transform:translateY(-3px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+.ch-icon{font-size:28px}
+.ch-name{font-size:14px;font-weight:600}
+.ch-desc{font-size:11px;color:var(--text-sub);line-height:1.5}
+.ch-tag{font-size:10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;margin-top:auto}
+
+/* ═══ 프로필 2열 그리드 (wolfram.html 동일) ═══ */
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.profile-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:1.5rem;transition:border-color .2s}
+.profile-card:hover{border-color:var(--border-hover)}
+.profile-card.full{grid-column:1/-1}
+.profile-card h3{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--accent-light);
+  display:flex;align-items:center;gap:6px}
 .profile-card p,.profile-card li{font-size:12px;color:var(--text-sub);line-height:1.8}
 .profile-card ul{list-style:none;padding:0}
-.profile-card ul li::before{content:'→ ';color:var(--accent)}
-.signal-box{margin-top:12px;padding:10px 14px;border-radius:var(--radius-xs);background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);font-size:11px;color:#fbbf24;display:flex;align-items:center;gap:6px}
-.ai-gen-btn{margin-top:1rem;padding:10px 20px;border-radius:var(--radius-xs);border:none;background:linear-gradient(135deg,#6366f1,#a855f7);color:white;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;display:flex;align-items:center;gap:6px}
-.ai-gen-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(99,102,241,0.3)}
-.ai-gen-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.profile-card ul li{padding:4px 0;border-bottom:1px solid var(--border)}
+.profile-card ul li:last-child{border-bottom:none}
+.profile-card ul li::before{content:'→ ';color:var(--accent);font-weight:600}
+.philosophy-box{font-size:13px;color:var(--text-sub);line-height:1.8;padding:1.25rem 1.5rem;
+  background:var(--surface);border-radius:var(--radius-sm);border-left:4px solid var(--accent);
+  margin-bottom:1.5rem;font-style:italic}
+.signal-box{margin-top:1.5rem;padding:14px 18px;border-radius:var(--radius-sm);
+  background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.12);
+  font-size:12px;color:var(--gold);display:flex;align-items:flex-start;gap:8px;line-height:1.6}
+.book-item{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;
+  border-bottom:1px solid var(--border)}
+.book-item:last-child{border-bottom:none}
+.book-title{font-size:12px;font-weight:600;color:var(--text)}
+.book-year{font-size:10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;flex-shrink:0}
+.book-links{display:flex;gap:6px;margin-top:4px}
+.book-link{font-size:10px;padding:2px 8px;border-radius:4px;background:var(--accent-bg);
+  color:var(--accent-light);text-decoration:none;transition:all .2s}
+.book-link:hover{background:var(--accent);color:white}
 
-/* Loading */
+/* ═══ 타임라인 (wolfram.html 동일 — 버티컬 라인 + 도트) ═══ */
+.timeline{position:relative;padding-left:28px;margin-top:0.5rem}
+.timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;
+  background:var(--surface3);border-radius:1px}
+.tl-item{position:relative;margin-bottom:2rem;animation:fadeUp .3s ease backwards}
+.tl-item:nth-child(1){animation-delay:.1s}.tl-item:nth-child(2){animation-delay:.15s}
+.tl-item:nth-child(3){animation-delay:.2s}.tl-item:nth-child(4){animation-delay:.25s}
+.tl-dot{position:absolute;left:-24px;top:4px;width:12px;height:12px;border-radius:50%;
+  background:var(--accent);border:2px solid var(--bg);box-shadow:0 0 0 2px var(--accent-bg)}
+.tl-year{font-size:14px;font-weight:700;color:var(--accent-light);margin-bottom:4px;
+  font-family:'JetBrains Mono',monospace}
+.tl-text{font-size:12px;color:var(--text-sub);line-height:1.7}
+
+/* ═══ 논문 탭 ═══ */
+.paper-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:1.25rem;margin-bottom:12px;transition:all .2s}
+.paper-card:hover{border-color:var(--border-hover);transform:translateX(4px)}
+.paper-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;line-height:1.4}
+.paper-meta{font-size:11px;color:var(--text-sub);margin-bottom:8px;display:flex;align-items:center;
+  gap:8px;flex-wrap:wrap}
+.paper-journal{padding:2px 8px;border-radius:4px;background:rgba(99,102,241,0.1);
+  color:var(--accent-light);font-size:10px;font-weight:600}
+.paper-year{font-family:'JetBrains Mono',monospace;color:var(--text-muted)}
+.paper-citations{padding:2px 8px;border-radius:4px;background:rgba(239,68,68,0.08);
+  color:#fca5a5;font-size:10px;font-weight:600}
+.paper-impact{font-size:12px;color:var(--text-sub);line-height:1.6;margin-bottom:8px;
+  padding:8px 12px;background:var(--surface2);border-radius:var(--radius-xs)}
+.paper-link{font-size:11px;padding:4px 12px;border-radius:6px;background:var(--accent-bg);
+  color:var(--accent-light);text-decoration:none;transition:all .2s;display:inline-flex;
+  align-items:center;gap:4px}
+.paper-link:hover{background:var(--accent);color:white}
+
+/* ═══ 로딩/에러 ═══ */
 .loading{text-align:center;padding:3rem;color:var(--text-muted)}
-.loading .spinner{width:32px;height:32px;border:3px solid var(--surface3);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+.loading .spinner{width:32px;height:32px;border:3px solid var(--surface3);
+  border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;
+  margin:0 auto 12px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.error-msg{text-align:center;padding:2rem;color:var(--red);font-size:13px;background:rgba(239,68,68,0.08);border-radius:var(--radius-sm)}
-.refresh-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
-.refresh-btn{font-size:12px;padding:6px 14px;border-radius:var(--radius-xs);border:1px solid var(--border);background:var(--surface);color:var(--text-sub);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}.refresh-btn:hover{border-color:var(--accent);color:var(--accent-light)}
-.last-updated{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
-.footer{text-align:center;padding:2rem;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:2rem}
-@media(max-width:768px){.header-inner{flex-direction:column;text-align:center}.header-badges{justify-content:center}.profile-grid{grid-template-columns:1fr}.tabs{gap:0}.tab{padding:10px 12px;font-size:12px}}
+.error-msg{text-align:center;padding:2rem;color:var(--red);font-size:13px;
+  background:rgba(239,68,68,0.08);border-radius:var(--radius-sm)}
+
+/* ═══ 푸터 ═══ */
+.footer{text-align:center;padding:2.5rem 1.5rem;font-size:11px;color:var(--text-muted);
+  border-top:1px solid var(--border);margin-top:3rem}
+.footer a{color:var(--text-sub)}
+
+/* ═══ 라이트 모드 ═══ */
+[data-theme="light"]{
+  --bg:#f5f5f7;--surface:#ffffff;--surface2:#f0f0f3;--surface3:#e8e8ec;
+  --border:rgba(0,0,0,0.08);--border-hover:rgba(0,0,0,0.15);
+  --text:#1a1a2e;--text-sub:#4a4a6a;--text-muted:#8888a0;
+  --accent-bg:rgba(99,102,241,0.06);
+}
+[data-theme="light"] .header{background:linear-gradient(135deg,rgba(99,102,241,0.06),rgba(168,85,247,0.03))}
+[data-theme="light"] .feed-item:hover{background:var(--surface2)}
+[data-theme="light"] .paper-card:hover{background:var(--surface2)}
+
+/* ═══ 반응형 ═══ */
+@media(max-width:768px){
+  .header-inner{flex-direction:column;text-align:center}
+  .header-badges{justify-content:center}
+  .channels-grid{grid-template-columns:1fr 1fr}
+  .profile-grid{grid-template-columns:1fr}
+  .profile-card.full{grid-column:auto}
+  .tabs{gap:0}
+  .tab{padding:10px 14px;font-size:12px}
+  .header-info h1{font-size:22px}
+  .avatar,.avatar-initials{width:72px;height:72px;font-size:28px}
+}
+@media(max-width:480px){
+  .channels-grid{grid-template-columns:1fr}
+  body{font-size:14px}
+  .main{padding:1rem}
+  .header{padding:1.5rem 1rem}
+  .tab{padding:8px 10px;font-size:11px}
+}
 </style>
 </head>
 <body>
 <script src="titans-data.js"></script>
-<script src="titan-nav.js"></script>
 <script src="config.js"></script>
+<script src="titan-nav.js"></script>
 
+<!-- ═══ 헤더 ═══ -->
 <div class="header" id="titan-header">
   <div class="header-inner">
-    <div class="avatar" id="titan-avatar">?</div>
+    <div id="avatar-wrap"></div>
     <div class="header-info">
       <h1 id="titan-name">Loading...</h1>
-      <div class="subtitle" id="titan-role"></div>
+      <div class="subtitle" id="titan-subtitle"></div>
       <div class="header-badges" id="titan-badges"></div>
+      <div id="titan-signal-wrap"></div>
     </div>
   </div>
 </div>
 
-<div class="tabs-wrap"><div class="tabs">
+<!-- ═══ 탭 ═══ -->
+<div class="tabs-wrap"><div class="tabs" id="titan-tabs">
   <div class="tab active" data-tab="feed" onclick="switchTab('feed')">📡 피드</div>
-  <div class="tab" data-tab="profile" onclick="switchTab('profile')">🧬 프로필</div>
+  <div class="tab" data-tab="channels" onclick="switchTab('channels')">🔗 채널</div>
+  <div class="tab" data-tab="profile" onclick="switchTab('profile')">👤 프로필</div>
+  <div class="tab" data-tab="timeline" onclick="switchTab('timeline')">📅 타임라인</div>
+  <div class="tab tab-hidden" data-tab="papers" id="tab-papers-btn" onclick="switchTab('papers')">📄 논문</div>
 </div></div>
 
+<!-- ═══ 메인 ═══ -->
 <div class="main">
+
+  <!-- 피드 탭 -->
   <div class="tab-content active" id="tab-feed">
-    <div class="refresh-bar"><span class="last-updated" id="last-updated">마지막 업데이트: —</span><button class="refresh-btn" onclick="loadAllFeeds()">↻ 새로고침</button></div>
+    <div class="refresh-bar">
+      <span class="last-updated" id="last-updated">마지막 업데이트: —</span>
+      <button type="button" class="refresh-btn" onclick="loadAllFeeds()">↻ 새로고침</button>
+    </div>
     <div id="feed-sections"></div>
   </div>
 
-  <div class="tab-content" id="tab-profile">
-    <div id="profile-content">
-      
-    </div>
+  <!-- 채널 탭 -->
+  <div class="tab-content" id="tab-channels">
+    <div class="channels-grid" id="channels-grid"></div>
   </div>
+
+  <!-- 프로필 탭 -->
+  <div class="tab-content" id="tab-profile">
+    <div id="profile-content"></div>
+  </div>
+
+  <!-- 타임라인 탭 -->
+  <div class="tab-content" id="tab-timeline">
+    <div id="timeline-content"></div>
+  </div>
+
+  <!-- 논문 탭 -->
+  <div class="tab-content" id="tab-papers">
+    <div id="papers-content"></div>
+  </div>
+
 </div>
 
 <div class="footer">
-  <span id="titan-footer-name"></span> Tracker · <a href="index.html">Titan Tracker</a> · <a href="titans-list.html">120 Titans</a> · Point & Line 🌈
+  <span id="footer-name"></span> Tracker · <a href="index.html">Titan Tracker</a> · Point & Line 🌈<br>
+  <span style="color:var(--text-muted);font-size:10px">데이터 출처: Google News RSS, Wikipedia, TITAN_PROFILES</span>
 </div>
 
 <script>
-// URL 파라미터에서 타이탄 정보 추출
-const params = new URLSearchParams(location.search);
-const titanName = params.get('name') || 'Unknown';
-const titanRole = params.get('role') || '';
-const titanKeywords = params.get('k') || '';
-const titanColor = params.get('color') || '#6366f1';
-const titanChannels = (params.get('ch') || '').split(',').filter(Boolean);
+(function(){
+'use strict';
 
-// 페이지 세팅
-document.getElementById('page-title').textContent = titanName + ' Tracker';
-document.getElementById('titan-name').textContent = titanName + ' Tracker';
-document.getElementById('titan-role').innerHTML = titanRole;
-document.getElementById('titan-footer-name').textContent = titanName;
-document.title = titanName + ' Tracker — Titan Tracker';
+// ═══ URL 파라미터 ═══
+var params = new URLSearchParams(location.search);
+var titanName = params.get('name') || 'Stephen Wolfram';
+var titanColor = params.get('color') || '#6366f1';
 
-// 아바타
-const initials = titanName.split(' ').map(w => w[0]).join('').substring(0, 2);
-const avatarEl = document.getElementById('titan-avatar');
-avatarEl.textContent = initials;
-avatarEl.style.background = 'linear-gradient(135deg,' + titanColor + ',' + titanColor + '88)';
-avatarEl.style.borderColor = titanColor;
+// ═══ 유틸 ═══
+function esc(s){if(!s)return '';var d=document.createElement('div');d.appendChild(document.createTextNode(s));return d.innerHTML}
+function safeUrl(u){try{var x=new URL(u);return ['http:','https:'].includes(x.protocol)?u:'#'}catch(e){return '#'}}
+function fmtDate(ds){var d=new Date(ds),now=new Date(),diff=Math.floor((now-d)/864e5);if(!diff)return '오늘';if(diff===1)return '어제';if(diff<7)return diff+'일 전';if(diff<30)return Math.floor(diff/7)+'주 전';return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0')}
+function stripHtml(h){var t=document.createElement('div');t.innerHTML=h;return t.textContent||''}
 
-// CSS 액센트 동적 적용
+// ═══ 데이터 로드 ═══
+var profile = (typeof TITAN_PROFILES !== 'undefined') ? TITAN_PROFILES[titanName] : null;
+var papers = (typeof TITAN_PAPERS !== 'undefined') ? TITAN_PAPERS[titanName] : null;
+var photo = (typeof TITAN_PHOTOS !== 'undefined') ? TITAN_PHOTOS[titanName] : '';
+
+// URL 파라미터 폴백
+var titanRole = profile ? '' : (params.get('role') || '');
+var titanKeywords = params.get('k') || '';
+var titanChannelsParam = (params.get('ch') || '').split(',').filter(Boolean);
+
+// ═══ CSS 액센트 동적 적용 ═══
 document.documentElement.style.setProperty('--accent', titanColor);
+var r = parseInt(titanColor.slice(1,3),16), g = parseInt(titanColor.slice(3,5),16), b = parseInt(titanColor.slice(5,7),16);
 document.documentElement.style.setProperty('--accent-light', titanColor);
-document.documentElement.style.setProperty('--accent-bg', titanColor + '18');
+document.documentElement.style.setProperty('--accent-bg', 'rgba('+r+','+g+','+b+',0.1)');
+document.getElementById('titan-header').style.background = 'linear-gradient(135deg,rgba('+r+','+g+','+b+',0.15),rgba('+r+','+g+','+b+',0.05))';
 
-// 헤더 배경
-document.getElementById('titan-header').style.background = 'linear-gradient(135deg,' + titanColor + '18,' + titanColor + '08)';
+// ═══ 페이지 타이틀 ═══
+var lastName = titanName.split(' ').pop();
+document.title = lastName + ' Tracker — Titan Tracker';
+document.getElementById('page-title').textContent = lastName + ' Tracker — Titan Tracker';
+document.getElementById('titan-name').textContent = titanName + ' Tracker';
+document.getElementById('footer-name').textContent = titanName;
 
-// 배지 (키워드 기반)
-const badges = titanKeywords.split(',').map(k => k.trim()).filter(Boolean);
-document.getElementById('titan-badges').innerHTML = badges.map(b =>
-  '<span class="badge" style="border-color:' + titanColor + '30;background:' + titanColor + '15;color:' + titanColor + '">' + b + '</span>'
-).join('');
+// ═══ 아바타 (실사 or 이니셜) ═══
+var initials = titanName.split(' ').map(function(w){return w[0]}).join('').substring(0,2);
+var avatarWrap = document.getElementById('avatar-wrap');
+if (photo) {
+  avatarWrap.innerHTML = '<img class="avatar" src="'+esc(photo)+'" alt="'+esc(titanName)+'" style="border-color:'+titanColor+'" onerror="this.outerHTML=\'<div class=avatar-initials style=background:linear-gradient(135deg,'+titanColor+','+titanColor+'88);border-color:'+titanColor+'>'+initials+'</div>\'">';
+} else {
+  avatarWrap.innerHTML = '<div class="avatar-initials" style="background:linear-gradient(135deg,'+titanColor+','+titanColor+'88);border-color:'+titanColor+'">'+initials+'</div>';
+}
 
-// === 피드 섹션 동적 생성 ===
-const nameWords = titanName.split(' ');
-const lastName = nameWords[nameWords.length - 1];
-const feedConfigs = [
-  { id: 'main', label: titanName + ' 관련 뉴스', color: titanColor, q: '"' + titanName + '"' },
-  { id: 'keyword', label: badges[0] ? badges[0] + ' 뉴스' : '관련 산업', color: '#a855f7', q: badges.slice(0, 2).join(' ') || titanName },
-  { id: 'trend', label: '트렌드 & 업계 동향', color: '#22c55e', q: badges.slice(1, 3).join(' ') || titanName + ' industry' },
-  { id: 'global', label: titanName + ' (글로벌)', color: '#3b82f6', q: titanName + ' latest', hl: 'en' },
+// ═══ 서브타이틀 ═══
+var subtitleEl = document.getElementById('titan-subtitle');
+if (profile) {
+  var role = (profile.timeline && profile.timeline[0]) ? profile.timeline[0].t : '';
+  var philosophy = profile.philosophy || '';
+  subtitleEl.innerHTML = '<span>' + esc(role) + '</span><br>' + esc(philosophy.substring(0, 120)) + (philosophy.length > 120 ? '...' : '');
+} else {
+  subtitleEl.innerHTML = esc(titanRole);
+}
+
+// ═══ 배지 (키워드 기반 + 색상 변주) ═══
+var badgeColors = [
+  {bg:'rgba('+r+','+g+','+b+',0.15)',color:titanColor,border:'rgba('+r+','+g+','+b+',0.3)'},
+  {bg:'rgba(168,85,247,0.15)',color:'#c084fc',border:'rgba(168,85,247,0.3)'},
+  {bg:'rgba(59,130,246,0.15)',color:'#93c5fd',border:'rgba(59,130,246,0.3)'},
+  {bg:'rgba(34,197,94,0.15)',color:'#86efac',border:'rgba(34,197,94,0.3)'},
+  {bg:'rgba(245,158,11,0.15)',color:'#fcd34d',border:'rgba(245,158,11,0.3)'},
+];
+var keywords = titanKeywords ? titanKeywords.split(',').map(function(k){return k.trim()}).filter(Boolean) : [];
+if (profile && profile.principles) {
+  // principles에서 핵심 키워드 추출
+  keywords = keywords.length ? keywords : profile.principles.slice(0,3).map(function(p){return p.split('—')[0].split('–')[0].trim().substring(0,20)});
+}
+document.getElementById('titan-badges').innerHTML = keywords.slice(0,5).map(function(k,i){
+  var bc = badgeColors[i % badgeColors.length];
+  return '<span class="badge" style="background:'+bc.bg+';color:'+bc.color+';border-color:'+bc.border+'">'+esc(k)+'</span>';
+}).join('');
+
+// ═══ 시그널 배지 ═══
+if (profile && profile.signal) {
+  document.getElementById('titan-signal-wrap').innerHTML = '<div class="header-signal">⚡ '+esc(profile.signal)+'</div>';
+}
+
+// ═══ 논문 탭 표시 여부 ═══
+if (papers && papers.length) {
+  document.getElementById('tab-papers-btn').classList.remove('tab-hidden');
+}
+
+// ═══ OG 메타 ═══
+document.getElementById('meta-desc').content = titanName + '의 활동을 한 곳에서 추적하는 대시보드';
+document.getElementById('og-title').content = titanName + ' Tracker — Titan Tracker';
+document.getElementById('og-desc').content = titanName + '의 모든 활동을 한 곳에서';
+
+// ═══════════════════════════════════════
+// 채널 탭
+// ═══════════════════════════════════════
+var CHANNEL_ICONS = {'X':'𝕏','Twitter':'𝕏','Blog':'📝','Writings':'✍️','YouTube':'▶️','Podcast':'🎙️',
+  'LinkedIn':'💼','GitHub':'🐙','Newsletter':'📨','Discord':'💬','인터뷰':'🎤','논문':'📄',
+  'Google Scholar':'🎓','Website':'🌐','Substack':'📰','Medium':'📖','Reddit':'🔮'};
+
+function renderChannels(){
+  var grid = document.getElementById('channels-grid');
+  var channels = (profile && profile.channels) ? profile.channels : [];
+  if (!channels.length && titanChannelsParam.length) {
+    channels = titanChannelsParam.map(function(c){return {name:c, url:'https://www.google.com/search?q='+encodeURIComponent(titanName+' '+c)}});
+  }
+  if (!channels.length) {
+    grid.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted)">채널 정보 준비 중</div>';
+    return;
+  }
+  grid.innerHTML = channels.map(function(ch){
+    var icon = CHANNEL_ICONS[ch.name] || '🔗';
+    var desc = '';
+    if (ch.name === 'X' || ch.name === 'Twitter') desc = titanName + '의 실시간 생각과 업데이트';
+    else if (ch.name === 'Blog' || ch.name === 'Writings') desc = '깊이 있는 분석과 에세이';
+    else if (ch.name === 'YouTube') desc = '강연, 인터뷰, 튜토리얼 영상';
+    else if (ch.name === 'Podcast') desc = '음성 콘텐츠 & 대화';
+    else if (ch.name === 'LinkedIn') desc = '비즈니스 네트워킹 & 글';
+    else if (ch.name === 'GitHub') desc = '오픈소스 프로젝트 & 코드';
+    else if (ch.name === 'Newsletter') desc = '이메일 구독 뉴스레터';
+    else if (ch.name === 'Google Scholar') desc = '학술 논문 & 인용';
+    else if (ch.name === '인터뷰') desc = '미디어 인터뷰 & 대담';
+    else if (ch.name === '논문') desc = '학술 연구 & 출판물';
+    else desc = titanName + '의 ' + ch.name;
+    return '<a class="channel-card" href="'+safeUrl(ch.url||'#')+'" target="_blank" rel="noopener">'+
+      '<div class="ch-icon">'+icon+'</div>'+
+      '<div class="ch-name">'+esc(ch.name)+'</div>'+
+      '<div class="ch-desc">'+esc(desc)+'</div>'+
+      '<div class="ch-tag">'+esc(ch.url ? new URL(ch.url).hostname.replace('www.','') : '')+'</div>'+
+    '</a>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+// 프로필 탭
+// ═══════════════════════════════════════
+function renderProfile(){
+  var c = document.getElementById('profile-content');
+  if (!profile) { c.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted)">프로필 데이터 준비 중</div>'; return; }
+
+  var html = '';
+  // 철학 박스
+  if (profile.philosophy) {
+    html += '<div class="philosophy-box" style="border-left-color:'+titanColor+'">💭 '+esc(profile.philosophy)+'</div>';
+  }
+  html += '<div class="profile-grid">';
+
+  // 핵심 원칙
+  if (profile.principles && profile.principles.length) {
+    html += '<div class="profile-card"><h3>🎯 핵심 원칙</h3><ul>'+
+      profile.principles.map(function(p){return '<li>'+esc(p)+'</li>'}).join('')+
+    '</ul></div>';
+  }
+
+  // 저서 & 콘텐츠
+  if (profile.books && profile.books.length) {
+    html += '<div class="profile-card"><h3>📚 저서 & 콘텐츠</h3>';
+    html += profile.books.map(function(b){
+      return '<div class="book-item"><div>'+
+        '<div class="book-title">'+esc(b.title)+'</div>'+
+        '<div class="book-links">'+
+          (b.url ? '<a class="book-link" href="'+safeUrl(b.url)+'" target="_blank" rel="noopener">🔗 링크</a>' : '')+
+          '<a class="book-link" href="https://www.amazon.com/s?k='+encodeURIComponent(b.title)+'" target="_blank" rel="noopener">📦 Amazon</a>'+
+        '</div>'+
+      '</div><div class="book-year">'+esc(b.year||'')+'</div></div>';
+    }).join('');
+    html += '</div>';
+  }
+
+  // 투자 인사이트
+  if (profile.invest) {
+    html += '<div class="profile-card"><h3>💰 투자 관점 & 인사이트</h3><p>'+esc(profile.invest)+'</p></div>';
+  }
+
+  // 채널 요약
+  if (profile.channels && profile.channels.length) {
+    html += '<div class="profile-card"><h3>🔗 주요 채널</h3><ul>'+
+      profile.channels.map(function(ch){
+        return '<li><a href="'+safeUrl(ch.url||'#')+'" target="_blank" rel="noopener" style="color:var(--accent-light)">'+esc(ch.name)+'</a></li>';
+      }).join('')+
+    '</ul></div>';
+  }
+
+  html += '</div>'; // close profile-grid
+
+  // 시그널 박스
+  if (profile.signal) {
+    html += '<div class="signal-box">⚡ <div><strong>Signal:</strong> '+esc(profile.signal)+'</div></div>';
+  }
+
+  c.innerHTML = html;
+}
+
+// ═══════════════════════════════════════
+// 타임라인 탭 (버티컬 라인 + 도트)
+// ═══════════════════════════════════════
+function renderTimeline(){
+  var c = document.getElementById('timeline-content');
+  if (!profile || !profile.timeline || !profile.timeline.length) {
+    c.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted)">타임라인 데이터 준비 중</div>';
+    return;
+  }
+  c.innerHTML = '<div class="timeline">' +
+    profile.timeline.map(function(t){
+      return '<div class="tl-item">'+
+        '<div class="tl-dot" style="background:'+titanColor+'"></div>'+
+        '<div class="tl-year">'+esc(t.y)+'</div>'+
+        '<div class="tl-text">'+esc(t.t)+'</div>'+
+      '</div>';
+    }).join('') +
+  '</div>';
+}
+
+// ═══════════════════════════════════════
+// 논문 탭
+// ═══════════════════════════════════════
+function renderPapers(){
+  var c = document.getElementById('papers-content');
+  if (!papers || !papers.length) {
+    c.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted)">이 타이탄의 논문 데이터가 없습니다</div>';
+    return;
+  }
+  c.innerHTML = papers.map(function(p){
+    return '<div class="paper-card">'+
+      '<div class="paper-title">'+esc(p.title)+'</div>'+
+      '<div class="paper-meta">'+
+        (p.journal ? '<span class="paper-journal">'+esc(p.journal)+'</span>' : '')+
+        '<span class="paper-year">'+esc(p.year||'')+'</span>'+
+        (p.citations ? '<span class="paper-citations">인용 '+esc(p.citations)+'</span>' : '')+
+      '</div>'+
+      (p.impact ? '<div class="paper-impact">'+esc(p.impact)+'</div>' : '')+
+      (p.url ? '<a class="paper-link" href="'+safeUrl(p.url)+'" target="_blank" rel="noopener">📎 원문 보기</a>' : '')+
+    '</div>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+// 피드 탭
+// ═══════════════════════════════════════
+var RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
+var TRANSLATE_URL = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ko&dt=t&q=';
+async function translateText(t){if(!t)return '';try{var r=await fetch(TRANSLATE_URL+encodeURIComponent(t.substring(0,500)));var d=await r.json();return d[0].map(function(s){return s[0]}).join('')}catch(e){return t}}
+
+var feedConfigs = [
+  {id:'main', label:titanName+' 뉴스', color:titanColor, q:'"'+titanName+'"', hl:'ko'},
+  {id:'keyword', label:(keywords[0]||lastName)+' 산업 뉴스', color:'#a855f7', q:(keywords.slice(0,2).join(' ')||titanName), hl:'ko'},
+  {id:'global', label:titanName+' (글로벌)', color:'#3b82f6', q:titanName+' latest', hl:'en'},
+  {id:'trend', label:'트렌드 & 분석', color:'#22c55e', q:(keywords.slice(1,3).join(' ')||titanName+' industry'), hl:'en'},
 ];
 
-const feedContainer = document.getElementById('feed-sections');
-feedContainer.innerHTML = feedConfigs.map(f =>
-  '<div class="feed-section" id="fs-' + f.id + '">' +
-    '<div class="feed-title" onclick="toggleAndLoad(\'' + f.id + '\')"><div class="dot" style="background:' + f.color + '"></div>' + f.label + '</div>' +
-    '<div class="feed-list" id="fl-' + f.id + '"></div>' +
-  '</div>'
-).join('');
+var feedContainer = document.getElementById('feed-sections');
+feedContainer.innerHTML = feedConfigs.map(function(f){
+  return '<div class="feed-section expanded" id="fs-'+f.id+'">'+
+    '<div class="feed-title" onclick="toggleFeed(\''+f.id+'\')"><div class="dot" style="background:'+f.color+'"></div>'+esc(f.label)+'<span class="feed-count"></span></div>'+
+    '<div class="feed-list" id="fl-'+f.id+'"><div class="loading"><div class="spinner"></div>'+esc(f.label)+' 로딩 중...</div></div>'+
+  '</div>';
+}).join('');
 
-// 유틸
-function escapeHtml(s) { if (!s) return ''; const d = document.createElement('div'); d.appendChild(document.createTextNode(s)); return d.innerHTML; }
-function sanitizeUrl(u) { try { const x = new URL(u); return ['http:', 'https:'].includes(x.protocol) ? u : '#'; } catch { return '#'; } }
-function formatDate(ds) { const d = new Date(ds), now = new Date(), diff = Math.floor((now - d) / 864e5); if (!diff) return '오늘'; if (diff === 1) return '어제'; if (diff < 7) return diff + '일 전'; if (diff < 30) return Math.floor(diff / 7) + '주 전'; return d.getFullYear() + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + String(d.getDate()).padStart(2, '0'); }
-function stripHtml(h) { const t = document.createElement('div'); t.innerHTML = h; return t.textContent || ''; }
+var _feedLoaded = {};
 
-const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
-const TRANSLATE_URL = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ko&dt=t&q=';
-async function translateText(t) { if (!t) return ''; try { const r = await fetch(TRANSLATE_URL + encodeURIComponent(t.substring(0, 500))); const d = await r.json(); return d[0].map(s => s[0]).join(''); } catch { return t; } }
+window.toggleFeed = function(id){
+  var section = document.getElementById('fs-'+id);
+  section.classList.toggle('expanded');
+};
 
-const _feedLoaded = {};
+async function loadFeed(id){
+  if(_feedLoaded[id])return;
+  _feedLoaded[id]=true;
+  var cfg = feedConfigs.find(function(f){return f.id===id});
+  var list = document.getElementById('fl-'+id);
+  var hl = cfg.hl||'ko', gl = hl==='en'?'US':'KR';
+  var url = 'https://news.google.com/rss/search?q='+encodeURIComponent(cfg.q)+'&hl='+hl+'&gl='+gl;
 
-async function toggleAndLoad(id) {
-  const section = document.getElementById('fs-' + id);
-  const list = document.getElementById('fl-' + id);
-  const isOpen = section.classList.contains('expanded');
+  // 캐시
+  var cacheKey = 'tf_'+titanName.replace(/\s+/g,'_').toLowerCase()+'_'+id;
+  try{
+    var cached = localStorage.getItem(cacheKey);
+    if(cached){var cd=JSON.parse(cached);if(cd.items&&cd.items.length&&Date.now()-cd.ts<15*60*1000){await renderFeedItems(cd.items,list,cfg);return}}
+  }catch(e){}
 
-  if (isOpen) { section.classList.remove('expanded'); return; }
-  section.classList.add('expanded');
-
-  if (_feedLoaded[id]) return;
-  _feedLoaded[id] = true;
-
-  const cfg = feedConfigs.find(f => f.id === id);
-  const hl = cfg.hl || 'ko';
-  const gl = cfg.hl === 'en' ? 'US' : 'KR';
-  const url = 'https://news.google.com/rss/search?q=' + encodeURIComponent(cfg.q) + '&hl=' + hl + '&gl=' + gl;
-
-  list.innerHTML = '<div class="loading"><div class="spinner"></div>로딩 중...</div>';
-
-  // 캐시 체크
-  const cacheKey = 'tf_' + titanName.replace(/\s+/g, '_').toLowerCase() + '_' + id;
-  try {
-    const cached = localStorage.getItem(cacheKey);
-    if (cached) {
-      const { items, ts } = JSON.parse(cached);
-      if (items?.length && Date.now() - ts < 15 * 60 * 1000) {
-        await renderFeed(items, list, cfg);
-        return;
-      }
-    }
-  } catch (e) {}
-
-  try {
-    const res = await fetch(RSS_PROXY + encodeURIComponent(url));
-    const data = await res.json();
-    if (data.status === 'ok' && data.items?.length) {
-      localStorage.setItem(cacheKey, JSON.stringify({ items: data.items, ts: Date.now() }));
-      await renderFeed(data.items, list, cfg);
-    } else { list.innerHTML = '<div class="error-msg">피드를 찾을 수 없습니다</div>'; }
-  } catch (e) { list.innerHTML = '<div class="error-msg">피드 로드 실패</div>'; }
+  try{
+    var res = await fetch(RSS_PROXY+encodeURIComponent(url));
+    var data = await res.json();
+    if(data.status==='ok'&&data.items&&data.items.length){
+      localStorage.setItem(cacheKey,JSON.stringify({items:data.items,ts:Date.now()}));
+      await renderFeedItems(data.items,list,cfg);
+    }else{list.innerHTML='<div class="error-msg">피드를 찾을 수 없습니다</div>'}
+  }catch(e){list.innerHTML='<div class="error-msg">피드 로드 실패 — 잠시 후 다시 시도해주세요</div>'}
 }
 
-async function renderFeed(items, container, cfg) {
-  items.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-  const sliced = items.slice(0, 8);
-  const translations = await Promise.all(sliced.map(async item => {
-    const rawDesc = stripHtml(item.description || item.content || '');
-    const sentences = rawDesc.match(/[^.!?]+[.!?]+/g);
-    const desc = sentences ? sentences.slice(0, 3).join(' ').substring(0, 300) : rawDesc.substring(0, 200);
-    const [titleKo, descKo] = await Promise.all([translateText(item.title), desc ? translateText(desc) : Promise.resolve('')]);
-    return { titleKo, descKo, title: item.title };
+async function renderFeedItems(items,container,cfg){
+  items.sort(function(a,b){return new Date(b.pubDate)-new Date(a.pubDate)});
+  var sliced = items.slice(0,8);
+  var translations = await Promise.all(sliced.map(async function(item){
+    var rawDesc = stripHtml(item.description||item.content||'');
+    var sentences = rawDesc.match(/[^.!?]+[.!?]+/g);
+    var desc = sentences ? sentences.slice(0,3).join(' ').substring(0,300) : rawDesc.substring(0,200);
+    var titleKo = await translateText(item.title);
+    var descKo = desc ? await translateText(desc) : '';
+    return {titleKo:titleKo, descKo:descKo, title:item.title};
   }));
-  container.innerHTML = sliced.map((item, i) => {
-    const { titleKo, descKo, title } = translations[i];
-    return '<div class="feed-item"><a href="' + sanitizeUrl(item.link) + '" target="_blank" rel="noopener">' +
-      '<div class="feed-item-title">' + escapeHtml(titleKo) + '</div>' +
-      '<div style="font-size:11px;color:var(--text-muted);font-style:italic;margin-bottom:6px">' + escapeHtml(title) + '</div>' +
-      '<div class="feed-item-meta"><span class="feed-source">' + escapeHtml(cfg.label) + '</span><span>' + formatDate(item.pubDate) + '</span>' +
-      (item.author ? '<span>by ' + escapeHtml(item.author) + '</span>' : '') + '</div>' +
-      (descKo ? '<div class="feed-item-desc">' + escapeHtml(descKo) + '</div>' : '') +
-      '</a></div>';
+  container.innerHTML = sliced.map(function(item,i){
+    var tr = translations[i];
+    return '<div class="feed-item"><a href="'+safeUrl(item.link)+'" target="_blank" rel="noopener">'+
+      '<div class="feed-item-title">'+esc(tr.titleKo)+'</div>'+
+      '<div class="feed-item-title-orig">'+esc(tr.title)+'</div>'+
+      '<div class="feed-item-meta"><span class="feed-source" style="background:'+cfg.color+'18;color:'+cfg.color+'">'+esc(cfg.label)+'</span><span>'+fmtDate(item.pubDate)+'</span>'+
+      (item.author?'<span>by '+esc(item.author)+'</span>':'')+'</div>'+
+      (tr.descKo?'<div class="feed-item-desc">'+esc(tr.descKo)+'</div>':'')+
+    '</a></div>';
   }).join('');
   // 카운트
-  const title = container.closest('.feed-section').querySelector('.feed-title');
-  if (title && !title.querySelector('.feed-count')) {
-    const cnt = document.createElement('span');
-    cnt.className = 'feed-count';
-    cnt.style.cssText = 'font-size:10px;color:var(--text-muted);font-family:JetBrains Mono,monospace;margin-left:8px';
-    cnt.textContent = sliced.length + '개';
-    title.appendChild(cnt);
-  }
+  var section = container.closest('.feed-section');
+  var countEl = section.querySelector('.feed-count');
+  if(countEl){countEl.textContent=sliced.length+'개';section.classList.add('loaded')}
 }
 
-async function loadAllFeeds() {
-  for (const cfg of feedConfigs) {
-    _feedLoaded[cfg.id] = false;
-    const section = document.getElementById('fs-' + cfg.id);
+window.loadAllFeeds = async function(){
+  for(var i=0;i<feedConfigs.length;i++){
+    _feedLoaded[feedConfigs[i].id]=false;
+    var section = document.getElementById('fs-'+feedConfigs[i].id);
     section.classList.add('expanded');
-    await toggleAndLoad(cfg.id);
+    await loadFeed(feedConfigs[i].id);
   }
-  document.getElementById('last-updated').textContent = '마지막 업데이트: ' + new Date().toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-}
+  document.getElementById('last-updated').textContent='마지막 업데이트: '+new Date().toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+};
 
-function switchTab(id) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === id));
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === 'tab-' + id));
-}
+// ═══ 탭 전환 ═══
+window.switchTab = function(id){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===id)});
+  document.querySelectorAll('.tab-content').forEach(function(c){c.classList.toggle('active',c.id==='tab-'+id)});
+};
 
-// === 팩트 프로필 표시 (titans-data.js) ===
-function loadProfile() {
-  const container = document.getElementById('profile-content');
-  if (typeof TITAN_PROFILES === 'undefined') {
-    container.innerHTML = '<div style="color:var(--text-muted);text-align:center;padding:2rem">데이터 로딩 중...</div>';
-    setTimeout(loadProfile, 500); return;
-  }
-  const p = TITAN_PROFILES[titanName];
-  if (!p) { container.innerHTML = '<div style="color:var(--text-muted);text-align:center;padding:2rem">프로필 데이터 준비 중</div>'; return; }
-  container.innerHTML = 
-    '<div style="font-size:12px;color:var(--text-sub);line-height:1.7;margin-bottom:1rem;padding:14px;background:var(--surface);border-radius:12px;border-left:3px solid '+titanColor+'">💭 '+escapeHtml(p.philosophy||'')+'</div>'+
-    '<div class="profile-grid">'+
-      '<div class="profile-card"><h3>🎯 이론 & 프레임워크</h3><ul>'+(p.principles||[]).map(function(t){return '<li>'+escapeHtml(t)+'</li>'}).join('')+'</ul></div>'+
-      '<div class="profile-card"><h3>📚 저서 & 콘텐츠</h3><ul>'+(p.books||[]).map(function(b){return '<li><a href="'+sanitizeUrl(b.url||'#')+'" target="_blank" rel="noopener" style="color:var(--accent-light)">'+escapeHtml(b.title)+'</a> <span style="color:var(--text-muted);font-size:10px">'+(b.year||'')+'</span></li>'}).join('')+'</ul></div>'+
-      '<div class="profile-card"><h3>💰 투자 관점 & 인사이트</h3><p>'+escapeHtml(p.invest||'')+'</p></div>'+
-      '<div class="profile-card"><h3>📅 타임라인</h3><ul>'+(p.timeline||[]).map(function(t){return '<li><strong>'+escapeHtml(t.y)+'</strong> '+escapeHtml(t.t)+'</li>'}).join('')+'</ul></div>'+
-    '</div>'+
-    (p.signal?'<div style="margin-top:12px;padding:10px 14px;border-radius:8px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);font-size:11px;color:#fbbf24;display:flex;align-items:center;gap:6px">⚡ <strong>Signal:</strong> '+escapeHtml(p.signal)+'</div>':'')+
-    (p.channels?'<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">'+(p.channels||[]).map(function(c){return '<a href="'+sanitizeUrl(c.url||'#')+'" target="_blank" rel="noopener" style="font-size:10px;padding:4px 10px;border-radius:6px;background:var(--surface);border:1px solid var(--border);color:var(--text-sub);text-decoration:none">🔗 '+escapeHtml(c.name)+'</a>'}).join('')+'</div>':'');
-}
-setTimeout(loadProfile, 300);
+// ═══ 초기화 ═══
+renderChannels();
+renderProfile();
+renderTimeline();
+renderPapers();
+
+// 피드 자동 로드 (기본 펼침)
+setTimeout(function(){
+  feedConfigs.forEach(function(cfg){loadFeed(cfg.id)});
+}, 500);
+
+})();
 </script>
 </body>
 </html>

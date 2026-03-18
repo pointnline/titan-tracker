@@ -271,6 +271,7 @@ td{padding:10px;font-size:12px;vertical-align:middle}
     <div class="section-title">🏛️ Titans</div>
     <div class="section-count" id="titan-section-count">Titans</div>
   </div>
+  <div id="card-filters" style="margin-bottom:1rem"></div>
 
   <div class="titans-grid" id="titans-grid"></div>
   <div id="titan-pagination" style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:1.25rem;flex-wrap:wrap"></div>
@@ -478,62 +479,121 @@ const DEDICATED = {
   'Sundar Pichai':'pichai.html'
 };
 
-// 카테고리별 섹터 행 레이아웃
+// ═══ 기업/조직 분류 매핑 ═══
+const ORG_MAP = {
+  'Google/DeepMind':['Sundar Pichai','Demis Hassabis','Jeff Dean','Fei-Fei Li','Geoffrey Hinton','Noam Shazeer','Chris Lattner'],
+  'OpenAI':['Sam Altman','Greg Brockman','Ilya Sutskever','Andrej Karpathy','Mira Murati','Jan Leike','Ian Goodfellow'],
+  'Anthropic':['Dario Amodei','Anthropic (Chris Olah)'],
+  'Meta/Facebook':['Mark Zuckerberg','Yann LeCun'],
+  'Microsoft':['Satya Nadella','Mustafa Suleyman','Reid Hoffman','Bill Gates'],
+  'Tesla/SpaceX/xAI':['Elon Musk','Andrej Karpathy'],
+  'NVIDIA':['Jensen Huang'],
+  'Apple':['Tim Cook','Jony Ive'],
+  'Amazon':['Jeff Bezos'],
+  'PayPal Mafia':['Peter Thiel','Reid Hoffman','Elon Musk'],
+  'Y Combinator':['Paul Graham','Sam Altman'],
+  'Bridgewater':['Ray Dalio'],
+  'Berkshire':['Charlie Munger'],
+  'Stanford':['Andrew Ng','Fei-Fei Li','Andrej Karpathy'],
+  'MIT':['Max Tegmark','Lex Fridman'],
+};
 const CAT_COLORS_INDEX = {AI:'#6366f1',Science:'#0ea5e9',Tech:'#22c55e',Business:'#f59e0b',Philosophy:'#a855f7',Health:'#ec4899',Finance:'#eab308',Design:'#f97316'};
-const CAT_ORDER_INDEX = ['AI','Science','Tech','Business','Philosophy','Health','Finance','Design'];
 
-function renderTitanCards() {
-  const grid = document.getElementById('titans-grid');
-  if (!grid) return;
+// ═══ 3x3 페이지네이션 + 필터 ═══
+const PAGE_SIZE = 9;
+let currentPage = 1;
+let cardFilter = 'all'; // 'all', 카테고리명, 또는 기업명
 
-  // 카테고리별 그룹핑
-  const grouped = {};
-  CAT_ORDER_INDEX.forEach(function(c){ grouped[c] = []; });
-  TITANS.forEach(function(t) {
-    var cat = t.c || '기타';
-    if (!grouped[cat]) grouped[cat] = [];
-    grouped[cat].push(t);
-  });
-
-  var html = '';
-  CAT_ORDER_INDEX.forEach(function(cat) {
-    var items = grouped[cat];
-    if (!items || !items.length) return;
-    var catColor = CAT_COLORS_INDEX[cat] || '#6366f1';
-
-    html += '<div style="margin-bottom:1.5rem">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-left:4px">';
-    html += '<div style="width:8px;height:8px;border-radius:50%;background:'+catColor+'"></div>';
-    html += '<span style="font-size:13px;font-weight:700;color:'+catColor+'">'+cat+'</span>';
-    html += '<span style="font-size:10px;color:var(--text-muted);font-family:JetBrains Mono,monospace">'+items.length+'</span>';
-    html += '</div>';
-    html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">';
-
-    items.forEach(function(t) {
-      var initials = t.n.split(' ').map(function(w){return w[0]}).join('').substring(0,2);
-      var href = DEDICATED[t.n] || ('titan.html?name='+encodeURIComponent(t.n)+'&role='+encodeURIComponent(t.r)+'&k='+encodeURIComponent(t.k)+'&color='+encodeURIComponent(t.color)+'&ch='+encodeURIComponent(t.ch.join(',')));
-      var tags = t.k.split(',').slice(0,3).map(function(k){return '<span class="titan-tag">'+k.trim()+'</span>'}).join('');
-      var channels = t.ch.slice(0,3).map(function(c){return '<span class="titan-ch">'+c+'</span>'}).join('');
-      html += '<a href="'+href+'" class="titan-card" style="--card-accent:'+t.color+'">'+
-        '<div class="titan-top">'+
-          '<div class="titan-avatar" style="background:linear-gradient(135deg,'+t.color+','+t.color+'88);display:flex;align-items:center;justify-content:center;font-size:18px;color:white;font-weight:700">'+initials+'</div>'+
-          '<div><div class="titan-name">'+t.n+'</div><div class="titan-role" style="font-size:10px;-webkit-line-clamp:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px">'+t.r+'</div></div>'+
-        '</div>'+
-        '<div class="titan-tags">'+tags+'</div>'+
-        '<div class="titan-channels">'+channels+'</div>'+
-      '</a>';
-    });
-
-    html += '</div></div>';
-  });
-
-  grid.innerHTML = html;
-  document.getElementById('titan-section-count').textContent = TITANS.length + '명';
-  // 페이지네이션 불필요 (전체 표시)
-  var pag = document.getElementById('titan-pagination');
-  if (pag) pag.innerHTML = '';
+function getFilteredTitans() {
+  if (cardFilter === 'all') return TITANS;
+  // 카테고리 필터
+  if (CAT_COLORS_INDEX[cardFilter]) return TITANS.filter(function(t){ return t.c === cardFilter; });
+  // 기업 필터
+  if (ORG_MAP[cardFilter]) {
+    var names = ORG_MAP[cardFilter];
+    return TITANS.filter(function(t){ return names.indexOf(t.n) !== -1; });
+  }
+  return TITANS;
 }
-renderTitanCards();
+
+function renderTitanCards(page) {
+  currentPage = page || 1;
+  var grid = document.getElementById('titans-grid');
+  if (!grid) return;
+  var filtered = getFilteredTitans();
+  var start = (currentPage - 1) * PAGE_SIZE;
+  var pageItems = filtered.slice(start, start + PAGE_SIZE);
+  var totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+
+  grid.innerHTML = pageItems.map(function(t) {
+    var initials = t.n.split(' ').map(function(w){return w[0]}).join('').substring(0,2);
+    var href = DEDICATED[t.n] || ('titan.html?name='+encodeURIComponent(t.n)+'&role='+encodeURIComponent(t.r)+'&k='+encodeURIComponent(t.k)+'&color='+encodeURIComponent(t.color)+'&ch='+encodeURIComponent(t.ch.join(',')));
+    var tags = t.k.split(',').slice(0,3).map(function(k){return '<span class="titan-tag">'+k.trim()+'</span>'}).join('');
+    var channels = t.ch.slice(0,3).map(function(c){return '<span class="titan-ch">'+c+'</span>'}).join('');
+    return '<a href="'+href+'" class="titan-card" style="--card-accent:'+t.color+'">'+
+      '<div class="titan-top">'+
+        '<div class="titan-avatar" style="background:linear-gradient(135deg,'+t.color+','+t.color+'88);display:flex;align-items:center;justify-content:center;font-size:18px;color:white;font-weight:700">'+initials+'</div>'+
+        '<div style="min-width:0"><div class="titan-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t.n+'</div><div class="titan-role" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px">'+t.r+'</div></div>'+
+      '</div>'+
+      '<div class="titan-tags">'+tags+'</div>'+
+      '<div class="titan-channels">'+channels+'</div>'+
+    '</a>';
+  }).join('');
+
+  // 페이지네이션
+  var pag = document.getElementById('titan-pagination');
+  if (!pag) return;
+  var btnS = 'padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#8b8fa3;font-size:11px;cursor:pointer;font-family:Inter,sans-serif;transition:all .2s';
+  var btnA = 'padding:6px 12px;border-radius:8px;border:1px solid #6366f1;background:#6366f1;color:white;font-size:11px;cursor:default;font-family:Inter,sans-serif';
+  var h = '';
+  if (currentPage > 1) h += '<button type="button" style="'+btnS+'" onclick="renderTitanCards('+(currentPage-1)+')">← 이전</button>';
+  var sp = Math.max(1, currentPage - 3), ep = Math.min(totalPages, sp + 6);
+  if (ep - sp < 6) sp = Math.max(1, ep - 6);
+  for (var p = sp; p <= ep; p++) {
+    h += '<button type="button" style="'+(p===currentPage?btnA:btnS)+'" '+(p!==currentPage?'onclick="renderTitanCards('+p+')"':'')+'>'+p+'</button>';
+  }
+  if (currentPage < totalPages) h += '<button type="button" style="'+btnS+'" onclick="renderTitanCards('+(currentPage+1)+')">다음 →</button>';
+  h += '<span style="font-size:10px;color:#4a4e62;margin-left:8px;font-family:JetBrains Mono,monospace">'+currentPage+'/'+totalPages+' ('+filtered.length+'명)</span>';
+  pag.innerHTML = h;
+
+  document.getElementById('titan-section-count').textContent = filtered.length + '명';
+  if (page && page !== 1) grid.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ═══ 필터 UI 렌더 ═══
+function renderCardFilters() {
+  var wrap = document.getElementById('card-filters');
+  if (!wrap) return;
+  var cats = ['all','AI','Science','Tech','Business','Philosophy','Health','Finance','Design'];
+  var orgs = Object.keys(ORG_MAP);
+  var h = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">';
+  // 카테고리 필터
+  cats.forEach(function(c){
+    var label = c === 'all' ? '전체 '+TITANS.length : c;
+    var color = c === 'all' ? '#8b8fa3' : (CAT_COLORS_INDEX[c]||'#8b8fa3');
+    var active = cardFilter === c;
+    h += '<button type="button" onclick="setCardFilter(\''+c+'\')" style="font-size:10px;padding:4px 12px;border-radius:14px;border:1px solid '+(active?color:'rgba(255,255,255,0.08)')+';background:'+(active?color+'20':'transparent')+';color:'+(active?color:'#8b8fa3')+';cursor:pointer;font-family:Inter,sans-serif;font-weight:'+(active?'600':'400')+';transition:all .2s">'+label+'</button>';
+  });
+  h += '</div>';
+  // 기업 필터
+  h += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
+  orgs.forEach(function(org){
+    var active = cardFilter === org;
+    var cnt = ORG_MAP[org].length;
+    h += '<button type="button" onclick="setCardFilter(\''+org.replace(/'/g,"\\'")+'\')" style="font-size:9px;padding:3px 10px;border-radius:10px;border:1px solid '+(active?'#818cf8':'rgba(255,255,255,0.06)')+';background:'+(active?'rgba(99,102,241,0.15)':'transparent')+';color:'+(active?'#818cf8':'#5a5e72')+';cursor:pointer;font-family:Inter,sans-serif;transition:all .2s">🏢 '+org+' <span style="opacity:.6">'+cnt+'</span></button>';
+  });
+  h += '</div>';
+  wrap.innerHTML = h;
+}
+
+function setCardFilter(f) {
+  cardFilter = f;
+  renderCardFilters();
+  renderTitanCards(1);
+}
+
+renderCardFilters();
+renderTitanCards(1);
 
 let currentFilter='all',searchQuery='';
 

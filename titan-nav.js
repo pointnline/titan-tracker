@@ -220,6 +220,13 @@
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(function(){});
   }
+  // favicon 주입 (전 페이지)
+  if (!document.querySelector('link[rel="icon"]')) {
+    var fi = document.createElement('link');
+    fi.rel = 'icon';
+    fi.href = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>🔭</text></svg>";
+    document.head.appendChild(fi);
+  }
   // manifest + theme-color 메타 태그 주입
   if (!document.querySelector('link[rel="manifest"]')) {
     var mf = document.createElement('link');
@@ -445,7 +452,7 @@
       <button class="hp-close" onclick="window._hermesToggle()">✕</button>
     </div>
     <div class="hp-msgs" id="hm-msgs">
-      <div class="hp-msg ai" id="hm-welcome">안녕하세요! <strong>Hermes</strong> ⚡입니다.<br><br>타이탄의 <strong>철학, 전략, 기술</strong>에 대해 무엇이든 물어보세요!</div>
+      <div class="hp-msg ai" id="hm-welcome">⚡ <strong>Hermes</strong> — Titan AI Assistant<br><br>137명 거장의 데이터를 기반으로 답변합니다.<br><br>💡 이렇게 물어보세요:<br>• "Sam Altman과 Dario Amodei의 AI 관점 차이는?"<br>• "Ray Dalio의 투자 원칙 요약해줘"<br>• "자기계발 분야 타이탄 추천해줘"</div>
     </div>
     <div id="hm-key-area" style="display:none;padding:8px 18px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;gap:6px;align-items:center">
       <span id="hm-key-dot" style="width:6px;height:6px;border-radius:50%;background:#ef4444;flex-shrink:0"></span>

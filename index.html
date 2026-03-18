@@ -3,6 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>🔭</text></svg>">
+<meta property="og:title" content="Titan Tracker — 137명 거장의 시그널을 AI가 교차분석">
+<meta property="og:description" content="AI, 과학, 기술, 투자 거장 137명의 활동을 추적하고 AI 교차분석하는 인텔리전스 플랫폼">
+<meta property="og:image" content="https://pointnline.github.io/titan-tracker/rainbowmoon-logo.jpg">
+<meta property="og:url" content="https://pointnline.github.io/titan-tracker/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Titan Tracker — 거인의 어깨 위에서">
+<meta name="twitter:description" content="137명 거장의 시그널을 AI가 교차분석하는 인텔리전스 플랫폼">
+<meta name="description" content="AI, 과학, 기술, 투자 거장 137명의 활동을 추적하고 AI 교차분석하는 인텔리전스 플랫폼. Tony Robbins, Sam Altman, Elon Musk 등.">
 <title>Titan Tracker — 거인의 어깨 위에서</title>
 <meta name="description" content="AI, 과학, 기술 분야 거인들의 활동을 한 곳에서 추적하는 대시보드">
 <meta property="og:title" content="Titan Tracker — 거인의 어깨 위에서">
@@ -156,12 +166,22 @@ td{padding:10px;font-size:12px;vertical-align:middle}
   td:nth-child(6),th:nth-child(6){display:none}
 }
 @media(max-width:640px){
-  .hero{padding:3rem 1rem 2rem}
+  .hero{padding:2.5rem 1rem 1.5rem}
+  .hero h1{font-size:28px}
   .stats-bar{gap:1.5rem}
   .stat-val{font-size:22px}
-  .titans-grid{grid-template-columns:1fr}
+  .nav-grid{grid-template-columns:repeat(4,1fr)!important;gap:8px!important}
+  .nav-icon{padding:12px 6px!important;gap:6px!important}
+  .nav-icon .ico{font-size:20px!important}
+  .nav-icon .lbl{font-size:9px!important}
+  .titans-grid{grid-template-columns:1fr!important}
   .titan-card{padding:1.25rem}
   td:nth-child(4),th:nth-child(4){display:none}
+  td:nth-child(5),th:nth-child(5){display:none}
+  td:nth-child(6),th:nth-child(6){display:none}
+  .titan-modal{margin:0.5rem;max-height:90vh;padding:1.25rem}
+  .modal-title{font-size:14px}
+  #popular-grid{grid-template-columns:repeat(3,1fr)!important}
 }
 [data-theme="light"]{
   --bg:#f5f5f7;--surface:#ffffff;--surface2:#f0f0f3;--surface3:#e8e8ec;

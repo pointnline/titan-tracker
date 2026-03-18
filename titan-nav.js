@@ -126,7 +126,7 @@
   // === 피드 자동 새로고침 (5분) + 카운트다운 UI ===
   setTimeout(function() {
     if (typeof window.loadAllFeeds !== 'function') return;
-    var REFRESH_SEC = 300; // 5분
+    var REFRESH_SEC = 1800; // 30분
     var remaining = REFRESH_SEC;
 
     // 카운트다운 배지 생성

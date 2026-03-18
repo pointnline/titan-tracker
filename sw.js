@@ -1,5 +1,5 @@
 // Titan Tracker — Service Worker (PWA)
-var CACHE_NAME = 'titan-tracker-v1';
+var CACHE_NAME = 'titan-tracker-v2';
 var PRECACHE = [
   './', './index.html', './titans-data.js', './titan-nav.js', './config.js',
   './study.html', './search.html', './report.html', './dashboard.html',

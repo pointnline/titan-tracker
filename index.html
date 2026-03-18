@@ -197,7 +197,7 @@ td{padding:10px;font-size:12px;vertical-align:middle}
   <h1>Titan Tracker</h1>
   <div class="subtitle">
     <em>거인의 어깨 위에서</em> 더 멀리 바라보다<br>
-    117명 거장의 시그널을 AI가 교차분석하는 인텔리전스 플랫폼
+    137명 거장의 시그널을 AI가 교차분석하는 인텔리전스 플랫폼
   </div>
   <div class="hero-quote">"If I have seen further, it is by standing on the shoulders of giants." — Isaac Newton</div>
 </div>
@@ -205,11 +205,11 @@ td{padding:10px;font-size:12px;vertical-align:middle}
 <!-- 통계 -->
 <div class="stats-bar">
   <div class="stat">
-    <div class="stat-val">117</div>
+    <div class="stat-val">137</div>
     <div class="stat-label">추적 대상 거인</div>
   </div>
   <div class="stat">
-    <div class="stat-val">8</div>
+    <div class="stat-val">9</div>
     <div class="stat-label">카테고리</div>
   </div>
   <div class="stat">
@@ -284,7 +284,7 @@ td{padding:10px;font-size:12px;vertical-align:middle}
 <!-- 구분선 -->
 <div class="divider">
   <div class="divider-line"></div>
-  <div class="divider-label"><span>ALL 117 TITANS</span></div>
+  <div class="divider-label"><span>ALL 137 TITANS</span></div>
 </div>
 
 <!-- 100 Titans 전체 목록 -->
@@ -466,10 +466,31 @@ const TITANS = [
   {n:"Jony Ive",r:"전 Apple 수석 디자이너 · LoveFrom",c:"Design",ch:["인터뷰"],k:"산업디자인, 미니멀리즘",color:"#14b8a6",impact:94},
   {n:"Don Norman",r:"UX의 아버지 · 디자인과 일상",c:"Design",ch:["Book","인터뷰","X"],k:"UX, 인간중심설계, 어포던스",color:"#0d9488",impact:92},
   {n:"John Maeda",r:"디자인+AI · 전 MIT Media Lab",c:"Design",ch:["X","Book","인터뷰"],k:"디자인인AI, 단순함, 기술예술",color:"#0f766e",impact:85},
+  // SelfDev (20)
+  {n:"Tony Robbins",r:"세계 최고 동기부여 연사 · UPW",c:"SelfDev",ch:["YouTube","Podcast","X"],k:"잠재력, NLP, 6 Human Needs",color:"#ef4444",impact:93},
+  {n:"James Clear",r:"Atomic Habits 저자 · 습관 시스템",c:"SelfDev",ch:["Newsletter","X","Book"],k:"원자적 습관, 1% 개선, 시스템",color:"#f59e0b",impact:91},
+  {n:"Tim Ferriss",r:"4시간 시리즈 · 팟캐스트 · 엔젤투자",c:"SelfDev",ch:["Podcast","Blog","X"],k:"라이프해킹, 생산성, 투자",color:"#8b5cf6",impact:90},
+  {n:"Ryan Holiday",r:"Daily Stoic · 스토아철학 대중화",c:"SelfDev",ch:["YouTube","Newsletter","Book"],k:"스토아철학, 장애물이 곧 길, Ego",color:"#0ea5e9",impact:88},
+  {n:"Simon Sinek",r:"Start with Why · 리더십 전문가",c:"SelfDev",ch:["YouTube","X","Book"],k:"Why, 무한게임, 리더십",color:"#f97316",impact:90},
+  {n:"Brené Brown",r:"휴스턴대 교수 · 취약성 연구자",c:"SelfDev",ch:["Podcast","Book","X"],k:"취약성, 용기, 리더십",color:"#ec4899",impact:89},
+  {n:"Cal Newport",r:"조지타운대 교수 · Deep Work",c:"SelfDev",ch:["Podcast","Blog","Book"],k:"딥워크, 디지털미니멀리즘, 집중",color:"#6366f1",impact:88},
+  {n:"Adam Grant",r:"워튼스쿨 조직심리학 교수",c:"SelfDev",ch:["Podcast","X","Book"],k:"Give and Take, 재고, 조직문화",color:"#14b8a6",impact:89},
+  {n:"Mark Manson",r:"신경 끄기의 기술 저자",c:"SelfDev",ch:["Blog","YouTube","Book"],k:"반직관, 가치관, 행복의 역설",color:"#e11d48",impact:85},
+  {n:"Angela Duckworth",r:"펜실베이니아대 교수 · GRIT",c:"SelfDev",ch:["Book","Podcast","X"],k:"그릿, 끈기, 열정+인내",color:"#7c3aed",impact:87},
+  {n:"Carol Dweck",r:"스탠포드 교수 · Growth Mindset",c:"SelfDev",ch:["Book","인터뷰"],k:"성장마인드셋, 고정vs성장, 학습",color:"#2563eb",impact:90},
+  {n:"Robert Greene",r:"48 Laws of Power · Mastery",c:"SelfDev",ch:["YouTube","Book","Podcast"],k:"권력, 마스터리, 인간본성",color:"#991b1b",impact:88},
+  {n:"Robin Sharma",r:"5AM Club · 리더십 코치",c:"SelfDev",ch:["YouTube","Book","X"],k:"새벽루틴, 리더십, 자기혁신",color:"#b45309",impact:84},
+  {n:"BJ Fogg",r:"스탠포드 행동디자인랩 · Tiny Habits",c:"SelfDev",ch:["Book","인터뷰","Website"],k:"작은습관, 행동디자인, 동기",color:"#059669",impact:86},
+  {n:"Ali Abdaal",r:"생산성 유튜버 · 전 의사",c:"SelfDev",ch:["YouTube","Podcast","Newsletter"],k:"생산성, 파트타임유튜버, Feel-Good",color:"#0891b2",impact:84},
+  {n:"Tiago Forte",r:"Building a Second Brain · PKM",c:"SelfDev",ch:["YouTube","Newsletter","Book"],k:"세컨드브레인, PARA, 디지털정리",color:"#7c3aed",impact:85},
+  {n:"David Allen",r:"GTD 창시자 · Getting Things Done",c:"SelfDev",ch:["Book","Podcast","Website"],k:"GTD, 생산성, 스트레스프리",color:"#475569",impact:87},
+  {n:"Martin Seligman",r:"펜실베이니아대 · 긍정심리학 창시",c:"SelfDev",ch:["Book","인터뷰","논문"],k:"긍정심리학, PERMA, 학습된 무력감",color:"#4f46e5",impact:89},
+  {n:"Eckhart Tolle",r:"The Power of Now · 영적 각성",c:"SelfDev",ch:["YouTube","Book","인터뷰"],k:"현재, 의식, 에고 해체",color:"#a3a3a3",impact:88},
+  {n:"Sahil Bloom",r:"뉴스레터 크리에이터 · 자기계발+투자",c:"SelfDev",ch:["Newsletter","X","YouTube"],k:"프레임워크, 커리어, 투자원칙",color:"#d97706",impact:83},
 ];
 
 const CAT_CLASS={AI:'cat-ai',Science:'cat-science',Tech:'cat-tech',Business:'cat-business',
-  Philosophy:'cat-philosophy',Health:'cat-health',Finance:'cat-finance',Design:'cat-design'};
+  Philosophy:'cat-philosophy',Health:'cat-health',Finance:'cat-finance',Design:'cat-design',SelfDev:'cat-selfdev'};
 // === 120명 타이탄 카드 동적 생성 ===
 const DEDICATED = {
   'Stephen Wolfram':'wolfram.html','Bill Gates':'gates.html','Elon Musk':'musk.html',
@@ -481,23 +502,23 @@ const DEDICATED = {
 
 // ═══ 기업/조직 분류 매핑 ═══
 const ORG_MAP = {
-  'Google/DeepMind':['Sundar Pichai','Demis Hassabis','Jeff Dean','Fei-Fei Li','Geoffrey Hinton','Noam Shazeer','Chris Lattner'],
-  'OpenAI':['Sam Altman','Greg Brockman','Ilya Sutskever','Andrej Karpathy','Mira Murati','Jan Leike','Ian Goodfellow'],
-  'Anthropic':['Dario Amodei','Anthropic (Chris Olah)'],
-  'Meta/Facebook':['Mark Zuckerberg','Yann LeCun'],
-  'Microsoft':['Satya Nadella','Mustafa Suleyman','Reid Hoffman','Bill Gates'],
-  'Tesla/SpaceX/xAI':['Elon Musk','Andrej Karpathy'],
-  'NVIDIA':['Jensen Huang'],
-  'Apple':['Tim Cook','Jony Ive'],
-  'Amazon':['Jeff Bezos'],
-  'PayPal Mafia':['Peter Thiel','Reid Hoffman','Elon Musk'],
-  'Y Combinator':['Paul Graham','Sam Altman'],
-  'Bridgewater':['Ray Dalio'],
-  'Berkshire':['Charlie Munger'],
-  'Stanford':['Andrew Ng','Fei-Fei Li','Andrej Karpathy'],
-  'MIT':['Max Tegmark','Lex Fridman'],
+  'Google/DeepMind':{members:['Sundar Pichai','Demis Hassabis','Jeff Dean','Fei-Fei Li','Geoffrey Hinton','Noam Shazeer','Chris Lattner'],logo:'https://logo.clearbit.com/google.com'},
+  'OpenAI':{members:['Sam Altman','Greg Brockman','Ilya Sutskever','Andrej Karpathy','Mira Murati','Jan Leike','Ian Goodfellow'],logo:'https://logo.clearbit.com/openai.com'},
+  'Anthropic':{members:['Dario Amodei','Anthropic (Chris Olah)'],logo:'https://logo.clearbit.com/anthropic.com'},
+  'Meta':{members:['Mark Zuckerberg','Yann LeCun'],logo:'https://logo.clearbit.com/meta.com'},
+  'Microsoft':{members:['Satya Nadella','Mustafa Suleyman','Reid Hoffman','Bill Gates'],logo:'https://logo.clearbit.com/microsoft.com'},
+  'Tesla/SpaceX':{members:['Elon Musk','Andrej Karpathy'],logo:'https://logo.clearbit.com/tesla.com'},
+  'NVIDIA':{members:['Jensen Huang'],logo:'https://logo.clearbit.com/nvidia.com'},
+  'Apple':{members:['Tim Cook','Jony Ive'],logo:'https://logo.clearbit.com/apple.com'},
+  'Amazon':{members:['Jeff Bezos'],logo:'https://logo.clearbit.com/amazon.com'},
+  'PayPal Mafia':{members:['Peter Thiel','Reid Hoffman','Elon Musk'],logo:'https://logo.clearbit.com/paypal.com'},
+  'Y Combinator':{members:['Paul Graham','Sam Altman'],logo:'https://logo.clearbit.com/ycombinator.com'},
+  'Bridgewater':{members:['Ray Dalio'],logo:'https://logo.clearbit.com/bridgewater.com'},
+  'Berkshire':{members:['Charlie Munger'],logo:'https://logo.clearbit.com/berkshirehathaway.com'},
+  'Stanford':{members:['Andrew Ng','Fei-Fei Li','Andrej Karpathy'],logo:'https://logo.clearbit.com/stanford.edu'},
+  'MIT':{members:['Max Tegmark','Lex Fridman'],logo:'https://logo.clearbit.com/mit.edu'},
 };
-const CAT_COLORS_INDEX = {AI:'#6366f1',Science:'#0ea5e9',Tech:'#22c55e',Business:'#f59e0b',Philosophy:'#a855f7',Health:'#ec4899',Finance:'#eab308',Design:'#f97316'};
+const CAT_COLORS_INDEX = {AI:'#6366f1',Science:'#0ea5e9',Tech:'#22c55e',Business:'#f59e0b',Philosophy:'#a855f7',Health:'#ec4899',Finance:'#eab308',Design:'#f97316',SelfDev:'#f43f5e'};
 
 // ═══ 3x3 페이지네이션 + 필터 ═══
 const PAGE_SIZE = 9;
@@ -510,7 +531,7 @@ function getFilteredTitans() {
   if (CAT_COLORS_INDEX[cardFilter]) return TITANS.filter(function(t){ return t.c === cardFilter; });
   // 기업 필터
   if (ORG_MAP[cardFilter]) {
-    var names = ORG_MAP[cardFilter];
+    var names = ORG_MAP[cardFilter].members;
     return TITANS.filter(function(t){ return names.indexOf(t.n) !== -1; });
   }
   return TITANS;
@@ -575,12 +596,16 @@ function renderCardFilters() {
     h += '<button type="button" onclick="setCardFilter(\''+c+'\')" style="font-size:10px;padding:4px 12px;border-radius:14px;border:1px solid '+(active?color:'rgba(255,255,255,0.08)')+';background:'+(active?color+'20':'transparent')+';color:'+(active?color:'#8b8fa3')+';cursor:pointer;font-family:Inter,sans-serif;font-weight:'+(active?'600':'400')+';transition:all .2s">'+label+'</button>';
   });
   h += '</div>';
-  // 기업 필터
-  h += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
+  // 기업 필터 (로고 포함)
+  h += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">';
   orgs.forEach(function(org){
     var active = cardFilter === org;
-    var cnt = ORG_MAP[org].length;
-    h += '<button type="button" onclick="setCardFilter(\''+org.replace(/'/g,"\\'")+'\')" style="font-size:9px;padding:3px 10px;border-radius:10px;border:1px solid '+(active?'#818cf8':'rgba(255,255,255,0.06)')+';background:'+(active?'rgba(99,102,241,0.15)':'transparent')+';color:'+(active?'#818cf8':'#5a5e72')+';cursor:pointer;font-family:Inter,sans-serif;transition:all .2s">🏢 '+org+' <span style="opacity:.6">'+cnt+'</span></button>';
+    var info = ORG_MAP[org];
+    var cnt = info.members.length;
+    var logo = info.logo;
+    h += '<button type="button" onclick="setCardFilter(\''+org.replace(/'/g,"\\'")+'\')" style="font-size:10px;padding:4px 12px 4px 6px;border-radius:12px;border:1px solid '+(active?'#818cf8':'rgba(255,255,255,0.08)')+';background:'+(active?'rgba(99,102,241,0.12)':'rgba(255,255,255,0.02)')+';color:'+(active?'#c7d2fe':'#8b8fa3')+';cursor:pointer;font-family:Inter,sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:6px;font-weight:'+(active?'600':'400')+'">';
+    h += '<img src="'+logo+'" alt="" style="width:16px;height:16px;border-radius:3px;object-fit:contain;background:white;padding:1px" onerror="this.style.display=\'none\'">';
+    h += org+' <span style="opacity:.5;font-family:JetBrains Mono,monospace;font-size:9px">'+cnt+'</span></button>';
   });
   h += '</div>';
   wrap.innerHTML = h;
